@@ -1,0 +1,8 @@
+2022-07-21 19:02:43,434 INFO [PUSH] Task merge for Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=1}
+
+2022-07-21 19:02:43,973 INFO [PUSH-SUCC] 82ms, all delay time 646ms, SLA 539ms, Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=1}, DataSize=1, target=172.30.193.226
+
+2022-07-21 19:55:34,491 INFO [PUSH] Task merge for Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=1}
+
+2022-07-21 19:55:34,921 INFO [PUSH-SUCC] 178ms, all delay time 733ms, SLA 430ms, Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=1}, DataSize=1, target=172.24.146.184
+

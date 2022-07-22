@@ -1,0 +1,160 @@
+2022-07-21 16:47:12,681 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 16:47:12,681 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 16:47:13,013 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 16:47:13,016 INFO listen for service meta change
+
+2022-07-21 16:47:13,023 INFO upgrade.state file is not exist
+
+2022-07-21 16:47:54,349 INFO [SelectorManager] Load SelectorContextBuilder(class com.alibaba.nacos.naming.selector.context.CmdbSelectorContextBuilder) contextType(CMDB) successfully.
+
+2022-07-21 16:47:54,349 INFO [SelectorManager] Load SelectorContextBuilder(class com.alibaba.nacos.naming.selector.context.NoneSelectorContextBuilder) contextType(NONE) successfully.
+
+2022-07-21 16:47:54,352 INFO [SelectorManager] Load Selector(class com.alibaba.nacos.naming.selector.LabelSelector) type(label) contextType(CMDB) successfully.
+
+2022-07-21 16:47:54,352 INFO [SelectorManager] Load Selector(class com.alibaba.nacos.naming.selector.NoneSelector) type(none) contextType(NONE) successfully.
+
+2022-07-21 16:48:15,844 INFO Load instance extension handler []
+
+2022-07-21 16:55:39,035 INFO Client connection 1658393721127_127.0.0.1_35248 disconnect, remove instances and subscribers
+
+2022-07-21 16:58:11,295 INFO Client connection 1658393877062_127.0.0.1_35270 disconnect, remove instances and subscribers
+
+2022-07-21 17:01:04,412 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 17:01:04,413 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 17:01:07,232 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 17:01:07,240 INFO listen for service meta change
+
+2022-07-21 17:01:07,248 INFO upgrade.state file is not exist
+
+2022-07-21 18:30:36,607 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 18:30:36,608 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 18:30:36,891 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 18:30:36,892 INFO listen for service meta change
+
+2022-07-21 18:30:51,430 INFO [SelectorManager] Load SelectorContextBuilder(class com.alibaba.nacos.naming.selector.context.CmdbSelectorContextBuilder) contextType(CMDB) successfully.
+
+2022-07-21 18:30:51,430 INFO [SelectorManager] Load SelectorContextBuilder(class com.alibaba.nacos.naming.selector.context.NoneSelectorContextBuilder) contextType(NONE) successfully.
+
+2022-07-21 18:30:51,430 INFO [SelectorManager] Load Selector(class com.alibaba.nacos.naming.selector.LabelSelector) type(label) contextType(CMDB) successfully.
+
+2022-07-21 18:30:51,431 INFO [SelectorManager] Load Selector(class com.alibaba.nacos.naming.selector.NoneSelector) type(none) contextType(NONE) successfully.
+
+2022-07-21 18:30:56,582 INFO Load instance extension handler []
+
+2022-07-21 18:39:08,949 INFO Client connection 1658399940165_127.0.0.1_36448 disconnect, remove instances and subscribers
+
+2022-07-21 18:44:15,015 INFO Client connection 1658400247494_127.0.0.1_36486 disconnect, remove instances and subscribers
+
+2022-07-21 18:55:01,509 INFO Client connection 1658400899988_127.0.0.1_36638 disconnect, remove instances and subscribers
+
+2022-07-21 18:56:29,101 INFO Client connection 1658400987591_127.0.0.1_36662 disconnect, remove instances and subscribers
+
+2022-07-21 18:59:08,510 INFO Client connection 1658401147038_127.0.0.1_36718 disconnect, remove instances and subscribers
+
+2022-07-21 19:00:58,871 INFO Client connection 1658401257403_127.0.0.1_36740 disconnect, remove instances and subscribers
+
+2022-07-21 19:02:43,211 INFO Client connection 1658401363177_127.0.0.1_36762 connect
+
+2022-07-21 19:02:43,433 INFO Client change for service Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=0}, 1658401363177_127.0.0.1_36762
+
+2022-07-21 19:04:16,618 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:04:16,618 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:04:16,803 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:04:16,805 INFO listen for service meta change
+
+2022-07-21 19:04:38,458 INFO Client remove for service Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=1}, 1658401363177_127.0.0.1_36762
+
+2022-07-21 19:04:38,770 INFO Client connection 1658401363177_127.0.0.1_36762 disconnect, remove instances and subscribers
+
+2022-07-21 19:04:39,114 INFO Client connection 1658401358607_127.0.0.1_36760 disconnect, remove instances and subscribers
+
+2022-07-21 19:04:52,788 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:04:52,788 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:04:53,020 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:04:53,021 INFO listen for service meta change
+
+2022-07-21 19:06:23,499 WARN namespace : public, [DEFAULT_GROUP@@coupon] services are automatically cleaned
+
+2022-07-21 19:38:41,061 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:38:41,061 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:38:41,264 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:38:41,265 INFO listen for service meta change
+
+2022-07-21 19:39:00,906 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:39:00,906 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:39:01,125 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:39:01,127 INFO listen for service meta change
+
+2022-07-21 19:39:54,151 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:39:54,152 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:39:54,392 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:39:54,393 INFO listen for service meta change
+
+2022-07-21 19:42:27,343 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:42:27,343 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:42:27,603 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:42:27,604 INFO listen for service meta change
+
+2022-07-21 19:42:29,086 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:42:29,086 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:42:29,252 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:42:29,253 INFO listen for service meta change
+
+2022-07-21 19:53:25,868 WARN naming.distro config will be removed, please use core.protocol.distro replace.
+
+2022-07-21 19:53:25,869 WARN Using naming.distro config to replace core.distro config
+
+2022-07-21 19:53:26,285 INFO open empty service auto clean job, initialDelay : 50000 ms, period : 30000 ms
+
+2022-07-21 19:53:26,288 INFO listen for service meta change
+
+2022-07-21 19:53:42,627 INFO [SelectorManager] Load SelectorContextBuilder(class com.alibaba.nacos.naming.selector.context.CmdbSelectorContextBuilder) contextType(CMDB) successfully.
+
+2022-07-21 19:53:42,627 INFO [SelectorManager] Load SelectorContextBuilder(class com.alibaba.nacos.naming.selector.context.NoneSelectorContextBuilder) contextType(NONE) successfully.
+
+2022-07-21 19:53:42,628 INFO [SelectorManager] Load Selector(class com.alibaba.nacos.naming.selector.LabelSelector) type(label) contextType(CMDB) successfully.
+
+2022-07-21 19:53:42,628 INFO [SelectorManager] Load Selector(class com.alibaba.nacos.naming.selector.NoneSelector) type(none) contextType(NONE) successfully.
+
+2022-07-21 19:53:49,249 INFO Load instance extension handler []
+
+2022-07-21 19:55:33,928 INFO Client connection 1658404533902_127.0.0.1_35394 connect
+
+2022-07-21 19:55:34,490 INFO Client change for service Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=0}, 1658404533902_127.0.0.1_35394
+
+2022-07-21 23:54:58,559 INFO Client remove for service Service{namespace='public', group='DEFAULT_GROUP', name='coupon', ephemeral=true, revision=1}, 1658404533902_127.0.0.1_35394
+
+2022-07-21 23:54:58,875 INFO Client connection 1658404533902_127.0.0.1_35394 disconnect, remove instances and subscribers
+
+2022-07-21 23:54:59,206 INFO Client connection 1658404527766_127.0.0.1_35392 disconnect, remove instances and subscribers
+
