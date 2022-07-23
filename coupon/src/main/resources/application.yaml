@@ -1,17 +1,17 @@
-spring:
-  datasource:
-    username: master
-    password: 981221
-    url: jdbc:mysql://localhost:3300/gulimall_sms
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  cloud:
-    nacos:
-      discovery:
-        server-addr: localhost:8848
-  application:
-    name: coupon
-mybatis-plus:
-  mapper-locations: classpath*:/mapper/**/*.xml
-  global-config:
-    db-config:
-      id-type: auto
+#spring:
+#  datasource:
+#    username: master
+#    password: 981221
+#    url: jdbc:mysql://localhost:3300/gulimall_sms
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: localhost:8848
+#  application:
+#    name: coupon
+#mybatis-plus:
+#  mapper-locations: classpath*:/mapper/**/*.xml
+#  global-config:
+#    db-config:
+#      id-type: auto

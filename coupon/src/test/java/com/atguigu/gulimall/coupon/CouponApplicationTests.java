@@ -20,6 +20,7 @@ class CouponApplicationTests {
         list.forEach((item)->{
             System.out.println(item);
         });
+        System.out.println("Success!");
     }
 
 }
