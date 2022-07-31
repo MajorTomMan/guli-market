@@ -40,3 +40,8 @@ build/
 
 ## nacos ##
 /references
+/references/nacos
+/references/nacos/logs
+/fast
+/generator
+/fast-vue
