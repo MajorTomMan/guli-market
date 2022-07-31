@@ -1,1 +1,0 @@
-bash -f ./startup.sh -m standalone
