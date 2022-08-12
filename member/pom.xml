@@ -6,7 +6,7 @@
     <artifactId>member</artifactId>
     <version>1.0</version>
     <name>member</name>
-    <description>谷粒商城-用户服务</description>
+    <description>谷粒商城-会员服务</description>
 
     <properties>
         <java.version>11</java.version>
