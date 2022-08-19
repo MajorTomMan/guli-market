@@ -2,7 +2,7 @@
 <template>
   <div>
     <el-tree :data="menus" :props="defaultProps" :expand-on-click-node="false" show-checkbox node-key="catId"
-      :default-expanded-keys="expandedKey">
+      :default-expanded-keys="expandedKey" :draggable="draggable" :allow-drop="allowDrop" @node-drop="handleDrop">
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
         <span>
@@ -49,8 +49,11 @@ export default {
   data() {
     //这里存放数据
     return {
+      updateNodes: [],
       title: "",
       dialogType: "",
+      draggable: true,
+      maxLevel: 0,
       category: {
         name: "",
         parentCid: 0,
@@ -85,19 +88,77 @@ export default {
         this.menus = data.data;
       });
     },
+    allowDrop(draggingNode, dropNode, type) {
+      console.log("allowDrop:", draggingNode, dropNode, type)
+      this.countNodeLevel(draggingNode.data)
+      const deep = this.maxLevel - draggingNode.data.catLevel + 1
+      console.log("深度", deep)
+      if (type == "inner") {
+        return (deep + dropNode.level) <= 3
+      }
+      else {
+        return (deep + dropNode.parent.level) <= 3
+      }
+    },
+    countNodeLevel(node) {
+      if (node.children != null && node.children.length > 0) {
+        for (const i = 0; i < node.children.length; i++) {
+          if (node.children[i].catLevel > this.maxLevel) {
+            this.maxLevel = node.children[i].catLevel;
+          }
+          this.countNodeLevel(node.children[i])
+        }
+      }
+    },
+    handleDrop(draggingNode, dropNode, dropType, ev) {
+      console.log('tree drop: ', draggingNode, dropNode.label, dropType);
+      let pCid = 0
+      let siblings = null
+      if (dropType == "before" || dropType == "after") {
+        pCid = dropNode.parent.data.catId == undefined ? 0 : dropNode.parent.data.catId
+        siblings = dropNode.parent.childNodes
+      }
+      else {
+        pCid = dropNode.data.catId
+        siblings = dropNode.childNodes
+      }
+      for (let index = 0; index < siblings.length; index++) {
+        if (siblings[index].data.catId == draggingNode.data.catId) {
+          let catLevel = draggingNode.data.catLevel
+          if (siblings[index].level != draggingNode.data.level) {
+            catLevel = siblings[index].level
+            this.updateChildNodeLevel(siblings[index])
+          }
+          this.updateNodes.push({ catId: siblings[index].data.catId, sort: index, parentCid: pCid })
+        }
+        else {
+          this.updateNodes.push({ catId: siblings[index].data.catId, sort: index })
+        }
+      }
+      console.log("updateNodes", this.updateNodes);
+    },
+    updateChildNodeLevel(node) {
+      if (node.childNodes.length > 0) {
+        for (let index = 0; index < node.childNodes.length; index++) {
+          let cNode = node.childNodes[index].data;
+          this.updateNodes.push({ catId: cNode.catId, catLevel: node.childNodes[index].level })
+          this.updateChildNodeLevel(node.childNodes[index])
+        }
+      }
+    },
     append(data) {
       console.log("append", data);
-      this.dialogType="add"
-      this.title="添加分类"
-      this.dialogVisible=true
+      this.dialogType = "add"
+      this.title = "添加分类"
+      this.dialogVisible = true
       this.category.catId = null
       this.category.icon = ""
       this.category.productUnit = ""
       this.category.parentCid = data.catId
       this.category.sort = 0
       this.category.showStatus = 1
-      this.category.catLevel = data.catLevel+1
-      this.category.name=""
+      this.category.catLevel = data.catLevel + 1
+      this.category.name = ""
     },
     remove(node, data) {
       const ids = [data.catId]
@@ -214,7 +275,7 @@ export default {
       this.dialogVisible = false
       this.getMenus()
       this.expandedKey = [this.category.parentCid]
-    }
+    },
   },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
