@@ -1,8 +1,14 @@
+
+import { Tree } from 'element-ui'
 <!--  -->
 <template>
   <div>
+    <el-switch v-model="draggable" active-text="开启拖拽" inactive-text="关闭拖拽"></el-switch>
+    <el-button v-if="draggable" @click="batchSave">批量保存</el-button>
+    <el-button type="danger" @click="batchDelete">批量删除</el-button>
     <el-tree :data="menus" :props="defaultProps" :expand-on-click-node="false" show-checkbox node-key="catId"
-      :default-expanded-keys="expandedKey" :draggable="draggable" :allow-drop="allowDrop" @node-drop="handleDrop">
+      :default-expanded-keys="expandedKey" :draggable="draggable" :allow-drop="allowDrop" @node-drop="handleDrop"
+      ref="menuTree">
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
         <span>
@@ -49,6 +55,7 @@ export default {
   data() {
     //这里存放数据
     return {
+      pCid: [],
       updateNodes: [],
       title: "",
       dialogType: "",
@@ -90,28 +97,88 @@ export default {
     },
     allowDrop(draggingNode, dropNode, type) {
       console.log("allowDrop:", draggingNode, dropNode, type)
-      this.countNodeLevel(draggingNode.data)
-      const deep = this.maxLevel - draggingNode.data.catLevel + 1
+      this.countNodeLevel(draggingNode)
+      const deep = Math.abs(this.maxLevel - draggingNode.level) + 1
       console.log("深度", deep)
       if (type == "inner") {
+        //  console.log(`this.maxLevel:${this.maxLevel}; draggingNode.data.catLevel: ${draggingNode.data.catLevel};dropNode.level:${dropNode.level}`)
         return (deep + dropNode.level) <= 3
       }
       else {
         return (deep + dropNode.parent.level) <= 3
       }
     },
+    batchDelete() {
+      let catIds = []
+      let names = []
+      let checkedNodes = this.$refs.menuTree.getCheckedNodes()
+      console.log("被选中的元素", checkedNodes)
+      for (let index = 0; index < checkedNodes.length; index++) {
+        catIds.push(checkedNodes[index].catId)
+        names.push(checkedNodes[index].name)
+      }
+      console.log("被选中的元素名字", names)
+      this.$confirm(`是否批量删除[${names}]菜单?`, `提示`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http({
+          url: this.$http.adornUrl('/product/category/delete'),
+          method: 'post',
+          data: this.$http.adornData(catIds, false)
+        }).then(({ data }) => {
+          this.$message(
+            {
+              type: 'success',
+              message: '菜单批量删除成功'
+            }
+          );
+          this.getMenus()
+        });
+      }
+      ).catch(
+        () => {
+          this.$message(
+            {
+              type: 'error',
+              message: '菜单批量删除失败'
+            }
+          );
+        }
+      )
+    },
+    batchSave() {
+      this.$http({
+        url: this.$http.adornUrl('/product/category/update/sort'),
+        method: 'post',
+        data: this.$http.adornData(this.updateNodes, false)
+      }).then(({ data }) => {
+        this.$message(
+          {
+            type: 'success',
+            message: '菜单顺序修改成功!'
+          }
+        );
+      });
+      this.getMenus()
+      this.expandedKey = [this.pCid]
+      this.updateNodes = []
+      this.maxLevel = 0
+      // this.pCid = 0
+    },
     countNodeLevel(node) {
       if (node.children != null && node.children.length > 0) {
         for (const i = 0; i < node.children.length; i++) {
-          if (node.children[i].catLevel > this.maxLevel) {
-            this.maxLevel = node.children[i].catLevel;
+          if (node.childNodes[i].Level > this.maxLevel) {
+            this.maxLevel = node.childNodes[i].level;
           }
-          this.countNodeLevel(node.children[i])
+          this.countNodeLevel(node.childNodes[i])
         }
       }
     },
     handleDrop(draggingNode, dropNode, dropType, ev) {
-      console.log('tree drop: ', draggingNode, dropNode.label, dropType);
+      console.log('handleDrop: ', draggingNode, dropNode.label, dropType);
       let pCid = 0
       let siblings = null
       if (dropType == "before" || dropType == "after") {
@@ -122,6 +189,7 @@ export default {
         pCid = dropNode.data.catId
         siblings = dropNode.childNodes
       }
+      this.pCid.push(pCid)
       for (let index = 0; index < siblings.length; index++) {
         if (siblings[index].data.catId == draggingNode.data.catId) {
           let catLevel = draggingNode.data.catLevel
