@@ -27,6 +27,7 @@
     <module>gateway</module>
     <module>fast</module>
     <module>generator</module>
+    <module>thirdparty</module>
   </modules>
   <build>
     <!--设置对应生成的xml文件路径??-->

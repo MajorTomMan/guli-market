@@ -7,7 +7,7 @@ spring:
           predicates:
             - Path=/api/product/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填renren-fast的路径名
+            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填product的路径名
         - id: admin_route
           uri: lb://fast # 该处填nacos上的服务名(即spring.application.name中的值)
           predicates:
@@ -15,6 +15,11 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment} #该处填renren-fast的路径名
     # 使用spring loadbalancer，弃用ribbon
+    alicloud:
+      access-key: LTAI5tFTuxihS14y9KnvpyVD
+      secret-key: yU9sCevNg0pkjtQudwfaVnqfgXTjUV
+      oss:
+        endpoint: oss-cn-hangzhou.aliyuncs.com
     loadbalancer:
       ribbon:
         enabled: false
