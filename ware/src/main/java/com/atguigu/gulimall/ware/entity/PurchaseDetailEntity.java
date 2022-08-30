@@ -5,13 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 
 /**
  * 采购需求
  * 
- * @author majorTom
+ * @autho6 majorTom
  * @email flashnamesl@gmail.com
  * @date 2022-07-19 21:08:09
  */

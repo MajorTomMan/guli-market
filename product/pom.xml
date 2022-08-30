@@ -7,6 +7,7 @@
     <version>1.0</version>
     <name>product</name>
     <description>谷粒商城-商品服务</description>
+    
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
