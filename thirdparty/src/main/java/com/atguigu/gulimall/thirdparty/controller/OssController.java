@@ -8,6 +8,7 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
+import com.atguigu.gulimall.common.utils.R;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,11 +23,12 @@ public class OssController {
     String accessId;
     @Value(value = "${spring.cloud.alicloud.oss.endpoint}")
     String endpoint;
-
+    @Value(value = "${spring.cloud.alicloud.oss.bucket}")
+    String bucket;
     @RequestMapping("/oss/policy")
-    public Map<String, String> policy() {
+    public R policy() {
         // 填写Host地址，格式为https://bucketname.endpoint。
-        String host = "https://" + endpoint + ".oss-cn-hangzhou.aliyuncs.com";
+        String host = "https://" + bucket + "."+endpoint;
         // 设置上传到OSS文件的前缀，可置空此项。置空后，文件将上传至Bucket的根目录下。
         String dir = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + "/";
         Map<String, String> respMap = new LinkedHashMap<String, String>();
@@ -53,6 +55,6 @@ public class OssController {
             // Assert.fail(e.getMessage());
             System.out.println(e.getMessage());
         }
-        return respMap;
+        return R.ok().put("data", respMap);
     }
 }
