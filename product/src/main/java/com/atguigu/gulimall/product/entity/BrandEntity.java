@@ -3,8 +3,16 @@ package com.atguigu.gulimall.product.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import org.hibernate.validator.constraints.URL;
+
 import java.io.Serializable;
-import java.util.Date;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
 import lombok.Data;
 
 /**
@@ -27,10 +35,13 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 品牌名
 	 */
+	@NotBlank(message="品牌名不能为空")
 	private String name;
 	/**
 	 * 品牌logo地址
 	 */
+	@NotEmpty
+	@URL(message = "Logo必须为合法url地址")
 	private String logo;
 	/**
 	 * 介绍
@@ -43,10 +54,14 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 检索首字母
 	 */
+	@NotEmpty(message = "首字母不能为空")
+	@Pattern(regexp = "/^[a-zA-Z]$/",message = "检索首字母必须是一个英文字母")
 	private String firstLetter;
 	/**
 	 * 排序
 	 */
+	@NotNull(message = "排序不能为空")
+	@Min(value = 0,message = "排序必须大于等于0")
 	private Integer sort;
 
 }
