@@ -26,6 +26,7 @@ import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.common.valid.AddGroup;
 import com.atguigu.gulimall.common.valid.UpdateGroup;
+import com.atguigu.gulimall.common.valid.UpdateStatusGroup;
 
 /**
  * 品牌
@@ -67,7 +68,7 @@ public class BrandController {
      */
     @RequestMapping("/save")
     // @RequiresPermissions("product:brand:save")
-    public R save(@Validated(value = {AddGroup.class}) @RequestBody BrandEntity brand/* ,BindingResult result */) {
+    public R save(@Validated(value = { AddGroup.class }) @RequestBody BrandEntity brand/* ,BindingResult result */) {
         /*
          * if(result.hasErrors()){
          * Map<String,String> map=new HashMap<>();
@@ -89,7 +90,17 @@ public class BrandController {
      */
     @RequestMapping("/update")
     // @RequiresPermissions("product:brand:update")
-    public R update(@Validated(value={UpdateGroup.class}) @RequestBody BrandEntity brand) {
+    public R update(@Validated(value = { UpdateGroup.class }) @RequestBody BrandEntity brand) {
+        brandService.updateById(brand);
+        return R.ok();
+    }
+
+    /**
+     * 修改状态
+     */
+    @RequestMapping("/update/status")
+    // @RequiresPermissions("product:brand:update")
+    public R updateStatus(@Validated(value = { UpdateStatusGroup.class }) @RequestBody BrandEntity brand) {
         brandService.updateById(brand);
         return R.ok();
     }

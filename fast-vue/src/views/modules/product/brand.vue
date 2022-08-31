@@ -28,8 +28,8 @@
       </el-table-column>
       <el-table-column prop="showStatus" header-align="center" align="center" label="显示状态">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.showStatus" active-color="#13ce66" inactive-color="#ff4949"
-            @change="updateBrandStatus(scope.row)" :active-value="1" :inactive-value="0">
+          <el-switch v-model="scope.row.showStatus" active-color="#13ce66" inactive-color="#ff4949" :active-value="1"
+            :inactive-value="0" @change="updateBrandStatus(scope.row)">
           </el-switch>
         </template>
       </el-table-column>
@@ -103,21 +103,21 @@ export default {
       console.log("最新信息:", data);
       let { brandId, showStatus } = data;
       this.$http({
-        url: this.$http.adornUrl('/product/brand/update'),
+        url: this.$http.adornUrl('/product/brand/update/status'),
         method: 'post',
         data: this.$http.adornData({ brandId, showStatus }, false)
       }).then(({ data }) => {
         this.$message(
           {
             type: 'success',
-            message: '操作成功'
+            message: '状态更新成功'
           }
         );
       }).catch(({ data }) => {
         this.$message(
           {
             type: 'error',
-            message: '操作失败'
+            message: '状态更新失败'
           }
         );
       })

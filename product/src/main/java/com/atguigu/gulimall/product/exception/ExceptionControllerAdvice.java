@@ -32,6 +32,7 @@ public class ExceptionControllerAdvice {
     }
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable t){
+        log.error("错误打印:{}\n异常类打印:{}",t.getMessage(),t.getClass());
         return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
     }
 }
