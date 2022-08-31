@@ -1,5 +1,7 @@
 package com.atguigu.gulimall.product.entity;
 
+import com.atguigu.gulimall.common.valid.AddGroup;
+import com.atguigu.gulimall.common.valid.UpdateGroup;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -11,6 +13,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 
 import lombok.Data;
@@ -30,18 +33,20 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 品牌id
 	 */
+	@NotNull(message = "修改时必须指定品牌ID", groups = { UpdateGroup.class })
+	@Null(message = "新建时不能指定品牌ID", groups = { AddGroup.class })
 	@TableId
 	private Long brandId;
 	/**
 	 * 品牌名
 	 */
-	@NotBlank(message="品牌名不能为空")
+	@NotBlank(message = "品牌名不能为空", groups = { AddGroup.class, UpdateGroup.class })
 	private String name;
 	/**
 	 * 品牌logo地址
 	 */
-	@NotEmpty
-	@URL(message = "Logo必须为合法url地址")
+	@NotBlank(groups = { AddGroup.class })
+	@URL(message = "Logo必须为合法url地址", groups = { AddGroup.class, UpdateGroup.class })
 	private String logo;
 	/**
 	 * 介绍
@@ -54,14 +59,14 @@ public class BrandEntity implements Serializable {
 	/**
 	 * 检索首字母
 	 */
-	@NotEmpty(message = "首字母不能为空")
-	@Pattern(regexp = "/^[a-zA-Z]$/",message = "检索首字母必须是一个英文字母")
+	@NotEmpty(message = "首字母不能为空", groups = { AddGroup.class })
+	@Pattern(regexp = "/^[a-zA-Z]$/", message = "检索首字母必须是一个英文字母", groups = { AddGroup.class, UpdateGroup.class })
 	private String firstLetter;
 	/**
 	 * 排序
 	 */
-	@NotNull(message = "排序不能为空")
-	@Min(value = 0,message = "排序必须大于等于0")
+	@NotNull(message = "排序不能为空", groups = { AddGroup.class })
+	@Min(value = 0, message = "排序必须大于等于0", groups = { AddGroup.class, UpdateGroup.class })
 	private Integer sort;
 
 }
