@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
+
 import java.util.Map;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.AttrGroupEntity;
 import com.atguigu.gulimall.product.service.AttrGroupService;
+import com.atguigu.gulimall.product.service.CategoryService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
@@ -28,6 +30,8 @@ import com.atguigu.gulimall.common.utils.R;
 public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
+    @Autowired
+    private CategoryService categoryService;
 
     /**
      * 列表
@@ -47,10 +51,11 @@ public class AttrGroupController {
     // @RequiresPermissions("product:attrgroup:info")
     public R info(@PathVariable("attrGroupId") Long attrGroupId) {
         AttrGroupEntity attrGroup = attrGroupService.getById(attrGroupId);
-
+        Long cateLogId=attrGroup.getCatelogId();
+        Long[] path = categoryService.findCateLogPath(cateLogId);
+        attrGroup.setCatelogPath(path);
         return R.ok().put("attrGroup", attrGroup);
     }
-
     /**
      * 保存
      */

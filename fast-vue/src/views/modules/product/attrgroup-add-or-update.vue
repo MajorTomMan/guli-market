@@ -1,5 +1,6 @@
 <template>
-  <el-dialog :title="!dataForm.attrGroupId ? '新增' : '修改'" :close-on-click-modal="false" :visible.sync="visible">
+  <el-dialog :title="!dataForm.attrGroupId ? '新增' : '修改'" :close-on-click-modal="false" :visible.sync="visible"
+    @closed="dialogClose">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()"
       label-width="80px">
       <el-form-item label="组名" prop="attrGroupName">
@@ -16,7 +17,7 @@
       </el-form-item>
       <el-form-item label="所属分类id" prop="catelogId">
         <!--    <el-input v-model="dataForm.catelogId" placeholder="所属分类id"></el-input> -->
-        <el-cascader :options="categorys" v-model="dataForm.catelogIds" :props="props"></el-cascader>
+        <el-cascader :options="categorys" v-model="dataForm.catelogPath" :props="props" filterable placeholder="试试搜素 手机"></el-cascader>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -43,7 +44,7 @@ export default {
         sort: '',
         descript: '',
         icon: '',
-        catelogIds: [],
+        catelogPath: [],
         catelogId: 0
       },
       dataRule: {
@@ -66,6 +67,9 @@ export default {
     }
   },
   methods: {
+    dialogClose(){
+      this.dataForm.catelogPath=[]
+    },
     getCategorys() {
       this.$http({
         url: this.$http.adornUrl("/product/category/list/tree"),
@@ -99,6 +103,7 @@ export default {
               this.dataForm.descript = data.attrGroup.descript
               this.dataForm.icon = data.attrGroup.icon
               this.dataForm.catelogId = data.attrGroup.catelogId
+              this.dataForm.catelogPath = data.attrGroup.catelogPath
             }
           })
         }
@@ -117,7 +122,7 @@ export default {
               'sort': this.dataForm.sort,
               'descript': this.dataForm.descript,
               'icon': this.dataForm.icon,
-              'catelogId': this.dataForm.catelogIds[this.dataForm.catelogIds.length-1]
+              'catelogId': this.dataForm.catelogPath[this.dataForm.catelogPath.length-1]
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
