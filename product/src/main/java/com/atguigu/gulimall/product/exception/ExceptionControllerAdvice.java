@@ -21,7 +21,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public R handleValidException(MethodArgumentNotValidException e) {
         for ( FieldError error : e.getBindingResult().getFieldErrors()) {
-            log.error("错误字段出现在:{} 错误原因:{}",error.getField(),error.getDefaultMessage());
+            log.error("错误字段出现在:{} 错误原因:{}\n",error.getField(),error.getDefaultMessage());
         }
         log.error("异常类:{}",e.getClass());
         BindingResult bindingResult = e.getBindingResult();
@@ -32,7 +32,12 @@ public class ExceptionControllerAdvice {
     }
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable t){
-        log.error("错误打印:{}\n异常类打印:{}",t.getMessage(),t.getClass());
+        log.error("错误打印:{}\n异常类打印:{}\n",t.getMessage(),t.getClass());
+        return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
+    }
+    @ExceptionHandler(value = Exception.class)
+    public R handleException(Exception t){
+        log.error("错误打印:{}\n异常类打印:{}\n",t.getMessage(),t.getClass());
         return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
     }
 }

@@ -2,6 +2,7 @@ package com.atguigu.gulimall.product.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,12 +20,15 @@ import com.atguigu.gulimall.common.utils.Query;
 
 import com.atguigu.gulimall.product.dao.CategoryDao;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
+import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 import com.atguigu.gulimall.product.service.CategoryService;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
     @Autowired
     CategoryDao categoryDao;
+    @Autowired
+    CategoryBrandRelationService relationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -38,34 +42,34 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public List<CategoryEntity> listWithTree() {
         List<CategoryEntity> entities = baseMapper.selectList(null);
         List<CategoryEntity> topLevelMenus = entities.stream().filter(
-                categoryEntity-> categoryEntity.getParentCid() == 0
-            ).map(
-            (menu)->{
-                menu.setChildren(getChildrens(menu, entities));
-                return menu;
-            }
-        ).sorted(
-            (menu1,menu2)->{
-                return menu1.getSort()-menu2.getSort();
-            }
-        ).collect(Collectors.toList());
+                categoryEntity -> categoryEntity.getParentCid() == 0).map(
+                        (menu) -> {
+                            menu.setChildren(getChildrens(menu, entities));
+                            return menu;
+                        })
+                .sorted(
+                        (menu1, menu2) -> {
+                            return menu1.getSort() - menu2.getSort();
+                        })
+                .collect(Collectors.toList());
         return topLevelMenus;
     }
-    private List<CategoryEntity> getChildrens(CategoryEntity root,List<CategoryEntity> all){
+
+    private List<CategoryEntity> getChildrens(CategoryEntity root, List<CategoryEntity> all) {
         List<CategoryEntity> children = all.stream().filter(
-            categoryEntity->{
-                return categoryEntity.getParentCid()==root.getCatId();
-            }
-        ).map(
-            categoryEntity->{
-                categoryEntity.setChildren(getChildrens(categoryEntity, all));
-                return categoryEntity;
-            }
-        ).sorted(
-            (menu1,menu2)->{
-                return (menu1.getSort()==null?0:menu1.getSort())-(menu2.getSort()==null?0:menu2.getSort());
-            }
-        ).collect(Collectors.toList());
+                categoryEntity -> {
+                    return categoryEntity.getParentCid() == root.getCatId();
+                }).map(
+                        categoryEntity -> {
+                            categoryEntity.setChildren(getChildrens(categoryEntity, all));
+                            return categoryEntity;
+                        })
+                .sorted(
+                        (menu1, menu2) -> {
+                            return (menu1.getSort() == null ? 0 : menu1.getSort())
+                                    - (menu2.getSort() == null ? 0 : menu2.getSort());
+                        })
+                .collect(Collectors.toList());
         return children;
     }
 
@@ -78,17 +82,27 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public Long[] findCateLogPath(Long cateLogId) {
         // TODO Auto-generated method stub
-        List<Long> paths=new ArrayList<>();
-        List<Long> parentPath=findParentPath(cateLogId, paths);
+        List<Long> paths = new ArrayList<>();
+        List<Long> parentPath = findParentPath(cateLogId, paths);
         Collections.reverse(parentPath);
         return parentPath.toArray(new Long[parentPath.size()]);
     }
-    private List<Long> findParentPath(Long catelogId,List<Long> paths){
+
+    private List<Long> findParentPath(Long catelogId, List<Long> paths) {
         paths.add(catelogId);
         CategoryEntity byId = this.getById(catelogId);
-        if(byId.getParentCid()!=0){
+        if (byId.getParentCid() != 0) {
             findParentPath(byId.getParentCid(), paths);
         }
         return paths;
+    }
+
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        // TODO Auto-generated method stub
+        this.updateById(category);
+        if (!StringUtils.isEmpty(category.getName())) {
+            relationService.updateCategory(category.getCatId(), category.getName());
+        }
     }
 }
