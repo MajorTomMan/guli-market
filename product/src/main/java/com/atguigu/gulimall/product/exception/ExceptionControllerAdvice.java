@@ -35,9 +35,12 @@ public class ExceptionControllerAdvice {
         log.error("错误打印:{}\n异常类打印:{}\n",t.getMessage(),t.getClass());
         return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
     }
-    @ExceptionHandler(value = Exception.class)
-    public R handleException(Exception t){
-        log.error("错误打印:{}\n异常类打印:{}\n",t.getMessage(),t.getClass());
+    @ExceptionHandler(value = NullPointerException.class)
+    public R handleException(NullPointerException nullPtrs){
+        log.error("错误打印:{}\n异常类打印:{}\n",nullPtrs.getMessage(),nullPtrs.getClass());
+        log.error("报错原因:{}\n",nullPtrs.getCause().getMessage());
+        log.error("打印堆栈:");
+        nullPtrs.printStackTrace();
         return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
     }
 }
