@@ -1,3 +1,11 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-08-31 18:27:21
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-09-20 22:24:11
+ * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/exception/ExceptionControllerAdvice.java
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 package com.atguigu.gulimall.product.exception;
 
 import java.util.HashMap;
@@ -33,6 +41,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable t){
         log.error("错误打印:{}\n异常类打印:{}\n",t.getMessage(),t.getClass());
+        t.printStackTrace();
         return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
     }
     @ExceptionHandler(value = NullPointerException.class)

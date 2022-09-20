@@ -31,9 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service("attrService")
 public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements AttrService {
 
@@ -62,7 +59,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attr, attrEntity);
         this.save(attrEntity);
-        if (attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()) {
+        if (attr.getAttrType() == ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode() && attr.getAttrGroupId() != null) {
             AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
             relationEntity.setAttrGroupId(attr.getAttrGroupId());
             relationEntity.setAttrId(attrEntity.getAttrId());
@@ -92,14 +89,13 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         PageUtils pageUtils = new PageUtils(page);
         List<AttrRespVo> respVos = records.stream().map(
                 (attrEntity) -> {
-                    log.info("a loop has start");
                     AttrRespVo attrRespVo = new AttrRespVo();
                     BeanUtils.copyProperties(attrEntity, attrRespVo);
                     if ("base".equalsIgnoreCase(type)) {
                         AttrAttrgroupRelationEntity attrId = relationDao
                                 .selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id",
                                         attrEntity.getAttrId()));
-                        if (attrId != null) {
+                        if (attrId != null && attrId.getAttrGroupId() != null) {
                             AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrId.getAttrGroupId());
                             attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
                         }
@@ -108,7 +104,6 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
                     if (categoryEntity != null) {
                         attrRespVo.setCatelogName(categoryEntity.getName());
                     }
-                    log.info("a loop has end");
                     return attrRespVo;
                 }).collect(Collectors.toList());
         pageUtils.setList(respVos);
@@ -191,7 +186,8 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         List<Long> attrIds = groupId.stream().map((item) -> {
             return item.getAttrGroupId();
         }).collect(Collectors.toList());
-        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>().eq("catelog_id", catelogId).eq("attr_type",ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode());
+        QueryWrapper<AttrEntity> wrapper = new QueryWrapper<AttrEntity>().eq("catelog_id", catelogId).eq("attr_type",
+                ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode());
         if (attrIds != null && attrIds.size() > 0) {
             wrapper.notIn("attr_id", attrIds);
         }

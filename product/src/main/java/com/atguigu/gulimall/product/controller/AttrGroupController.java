@@ -6,8 +6,10 @@ import java.util.Map;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.groovy.GroovyBeanDefinitionReader;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.AttrEntity;
 import com.atguigu.gulimall.product.entity.AttrGroupEntity;
+import com.atguigu.gulimall.product.service.AttrAttrgroupRelationService;
 import com.atguigu.gulimall.product.service.AttrGroupService;
 import com.atguigu.gulimall.product.service.AttrService;
 import com.atguigu.gulimall.product.service.CategoryService;
+import com.atguigu.gulimall.product.vo.AttrGroupRelationVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
@@ -37,7 +41,14 @@ public class AttrGroupController {
     private CategoryService categoryService;
     @Autowired
     private AttrService attrService;
+    @Autowired
+    private AttrAttrgroupRelationService groupRelationService;
 
+    @PostMapping("/attr/relation")
+    public R addRelation(@RequestBody List<AttrGroupRelationVo> vos){
+        groupRelationService.saveBatch(vos);
+        return R.ok();
+    }
     @GetMapping("/{attrgroupId}/attr/relation")
     public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId){
         List<AttrEntity> entities=attrService.getRelationAttr(attrgroupId);
