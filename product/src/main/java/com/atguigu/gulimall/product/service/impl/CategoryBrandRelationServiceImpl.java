@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-09-22 09:18:43
+ * @LastEditTime: 2022-09-28 21:49:15
  * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/impl/CategoryBrandRelationServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,10 +11,13 @@ package com.atguigu.gulimall.product.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import javax.validation.constraints.Null;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -84,11 +87,14 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     public List<BrandEntity> getBrandsByCatId(Long catId) {
         // TODO Auto-generated method stub
         List<CategoryBrandRelationEntity> catelogId = relationDao.selectList(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
-        List<BrandEntity> collect = catelogId.stream().map(item->{
+        List<BrandEntity> collect = new ArrayList<>();
+        catelogId.stream().forEach(item->{
             Long brandId=item.getBrandId();
             BrandEntity byId = brandService.getById(brandId);
-            return byId;
-        }).collect(Collectors.toList());
+            if(byId!=null){
+                collect.add(byId);
+            }
+        });
         return collect;
     }
 }

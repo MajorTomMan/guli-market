@@ -22,6 +22,7 @@ import com.atguigu.gulimall.product.service.AttrGroupService;
 import com.atguigu.gulimall.product.service.AttrService;
 import com.atguigu.gulimall.product.service.CategoryService;
 import com.atguigu.gulimall.product.vo.AttrGroupRelationVo;
+import com.atguigu.gulimall.product.vo.AttrGroupWithAttrsVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
@@ -115,5 +116,9 @@ public class AttrGroupController {
 
         return R.ok();
     }
-
+    @GetMapping("/{catelogId}/withattr")
+    public R getAttrGroupWithAttr(@PathVariable("catelogId")Long catelogId){
+        List<AttrGroupWithAttrsVo> vos=attrGroupService.getAttrGroupWithAttrByCatelogId(catelogId);
+        return R.ok().put("data", vos);
+    }
 }

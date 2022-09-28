@@ -1,3 +1,13 @@
+<!--
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-09-05 23:15:18
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-09-28 22:01:22
+ * @FilePath: /common/home/master/project/gulimall/fast-vue/src/views/modules/product/spu.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+-->
 <template>
   <div>
     <el-row>

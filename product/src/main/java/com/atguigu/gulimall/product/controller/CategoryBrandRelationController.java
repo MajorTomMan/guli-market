@@ -47,7 +47,7 @@ public class CategoryBrandRelationController {
 
         return R.ok().put("data", data);
     }
-
+    
     /**
      * 列表
      */
@@ -107,8 +107,10 @@ public class CategoryBrandRelationController {
         List<BrandEntity> brandEntities = categoryBrandRelationService.getBrandsByCatId(catId);
         List<BrandVo> collect = brandEntities.stream().map(item -> {
             BrandVo vos = new BrandVo();
-            vos.setBrandId(item.getBrandId());
-            vos.setBrandName(item.getName());
+            if(item!=null){
+                vos.setBrandId(item.getBrandId());
+                vos.setBrandName(item.getName());
+            }
             return vos;
         }).collect(Collectors.toList());
         return R.ok().put("data", collect);
