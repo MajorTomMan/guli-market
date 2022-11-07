@@ -2,8 +2,8 @@
  # @Author: flashnames 765719516@qq.com
  # @Date: 2022-05-14 11:02:02
  # @LastEditors: flashnames 765719516@qq.com
- # @LastEditTime: 2022-11-02 00:11:20
- # @FilePath: /common/home/master/dockerCommand/dockerContainer.sh
+ # @LastEditTime: 2022-11-07 20:33:44
+ # @FilePath: /common/home/master/project/gulimall/dockerCommand/dockerContainer.sh
  # @Description: 
  # 
  # Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -78,3 +78,7 @@ sudo docker run -d -p 8848:8848 -p 9848:9848 -p 9849:9849 \
 
 sudo docker cp -a bdf60dc2ada3:/home/nacos/conf ./nacos/conf
 
+# nacos 备忘
+# Mysql的版本和Mysql-Connector版本必须一致且不能为最新版本
+# 用于nacos的MySQL-Connector的版本必须和docker上正在跑的一致
+# 必须满足有Mysql-Connector和nacos_config数据库都有的情况下nacos才能跑起来
