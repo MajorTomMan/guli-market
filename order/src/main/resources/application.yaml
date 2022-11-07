@@ -1,11 +1,13 @@
-spring:
+
+
+#spring:
   datasource:
     username: master
     password: 981221
     url: jdbc:mysql://localhost:3300/gulimall_oms
     driver-class-name: com.mysql.cj.jdbc.Driver
-mybatis-plus:
-  mapper-locations: classpath*:/mapper/**/*.xml
-  global-config:
-    db-config:
-      id-type: auto
+#mybatis-plus:
+#  mapper-locations: classpath*:/mapper/**/*.xml
+#  global-config:
+#    db-config:
+#      id-type: auto

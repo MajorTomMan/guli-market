@@ -6,7 +6,7 @@
     <artifactId>order</artifactId>
     <version>1.0</version>
     <name>order</name>
-    <description>谷粒商城-优惠卷服务</description>
+    <description>谷粒商城-订单服务</description>
 
     <properties>
         <java.version>11</java.version>
