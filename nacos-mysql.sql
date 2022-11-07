@@ -1,3 +1,4 @@
+-- Active: 1658586000645@@127.0.0.1@3300
 /*
  * Copyright 1999-2018 Alibaba Group Holding Ltd.
  *
@@ -19,8 +20,8 @@
 /*   表名称 = config_info   */
 /******************************************/
 
-
-create database nacos_config default CHARACTER set utf8mb4;
+drop database if EXISTS nacos_config;
+create database if NOT EXISTS nacos_config default CHARACTER set utf8mb4;
 use nacos_config;
 grant all on nacos_config.* to master;
 CREATE TABLE `config_info` (
