@@ -2,7 +2,7 @@
  # @Author: flashnames 765719516@qq.com
  # @Date: 2022-05-14 11:02:02
  # @LastEditors: flashnames 765719516@qq.com
- # @LastEditTime: 2022-11-07 20:33:44
+ # @LastEditTime: 2022-12-18 20:56:47
  # @FilePath: /common/home/master/project/gulimall/dockerCommand/dockerContainer.sh
  # @Description: 
  # 
@@ -11,11 +11,11 @@
 
 
 sudo docker run -p 3300:3306 --name mysql --restart=always \
--v /home/master/mysql_use/sql:/sql \
--v /home/master/mysql_use/conf:/etc/mysql/conf.d \
--v /home/master/mysql_use/data:/var/lib/mysql \
--v /home/master/mysql_use/logs:/var/log/mysql \
--v /home/master/mysql_use/mysql-files:/var/lib/mysql-files \
+-v /home/master/mysql/sql:/sql \
+-v /home/master/mysql/conf:/etc/mysql/conf.d \
+-v /home/master/mysql/data:/var/lib/mysql \
+-v /home/master/mysql/logs:/var/log/mysql \
+-v /home/master/mysql/mysql-files:/var/lib/mysql-files \
 -e MYSQL_ROOT_PASSWORD=981221 \
 -d mysql:8.0.27
 
