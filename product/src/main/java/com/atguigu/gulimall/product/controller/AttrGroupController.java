@@ -117,8 +117,8 @@ public class AttrGroupController {
         return R.ok();
     }
     @GetMapping("/{catelogId}/withattr")
-    public R getAttrGroupWithAttr(@PathVariable("catelogId")Long catelogId){
-        List<AttrGroupWithAttrsVo> vos=attrGroupService.getAttrGroupWithAttrByCatelogId(catelogId);
+    public R getAttrGroupWithAttrs(@PathVariable("catelogId")Long catelogId){
+        List<AttrGroupWithAttrsVo> vos=attrGroupService.getAttrGroupWithAttrsByCatelogId(catelogId);
         return R.ok().put("data", vos);
     }
 }
