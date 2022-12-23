@@ -1,8 +1,19 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-21 16:08:04
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-23 22:31:17
+ * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/SpuInfoService.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 package com.atguigu.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.SpuInfoEntity;
+import com.atguigu.gulimall.product.vo.SpuSaveVo;
 
 import java.util.Map;
 
@@ -16,5 +27,8 @@ import java.util.Map;
 public interface SpuInfoService extends IService<SpuInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void saveSpuInfo(SpuSaveVo vo);
+
 }
 

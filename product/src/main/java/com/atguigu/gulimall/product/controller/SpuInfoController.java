@@ -1,3 +1,13 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-21 16:08:04
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-23 22:31:10
+ * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/controller/SpuInfoController.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
@@ -13,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SpuInfoEntity;
 import com.atguigu.gulimall.product.service.SpuInfoService;
+import com.atguigu.gulimall.product.vo.SpuSaveVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
@@ -59,9 +70,9 @@ public class SpuInfoController {
      */
     @RequestMapping("/save")
     // @RequiresPermissions("product:spuinfo:save")
-    public R save(@RequestBody SpuInfoEntity spuInfo){
-		spuInfoService.save(spuInfo);
-
+    public R save(@RequestBody SpuSaveVo vo){
+		//spuInfoService.save(spuInfo);
+        spuInfoService.saveSpuInfo(vo);
         return R.ok();
     }
 
