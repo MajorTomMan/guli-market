@@ -1,3 +1,13 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-21 16:08:04
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-24 22:47:04
+ * @FilePath: /common/home/master/project/gulimall/coupon/src/main/java/com/atguigu/gulimall/coupon/controller/SpuBoundsController.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 package com.atguigu.gulimall.coupon.controller;
 
 import java.util.Arrays;
@@ -6,6 +16,7 @@ import java.util.Map;
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,7 +68,7 @@ public class SpuBoundsController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     // @RequiresPermissions("coupon:spubounds:save")
     public R save(@RequestBody SpuBoundsEntity spuBounds){
 		spuBoundsService.save(spuBounds);

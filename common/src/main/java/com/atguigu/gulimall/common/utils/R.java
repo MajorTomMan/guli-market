@@ -1,3 +1,13 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-21 16:08:04
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-24 23:31:48
+ * @FilePath: /common/src/main/java/com/atguigu/gulimall/common/utils/R.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -61,4 +71,8 @@ public class R extends HashMap<String, Object> {
 		super.put(key, value);
 		return this;
 	}
+
+    public int getCode() {
+        return Integer.parseInt((String)this.get("code"));
+    }
 }

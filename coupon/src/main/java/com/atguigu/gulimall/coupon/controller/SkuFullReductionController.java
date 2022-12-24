@@ -1,3 +1,13 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-21 16:08:04
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-24 23:07:39
+ * @FilePath: /common/home/master/project/gulimall/coupon/src/main/java/com/atguigu/gulimall/coupon/controller/SkuFullReductionController.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 package com.atguigu.gulimall.coupon.controller;
 
 import java.util.Arrays;
@@ -13,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.coupon.entity.SkuFullReductionEntity;
 import com.atguigu.gulimall.coupon.service.SkuFullReductionService;
+import com.atguigu.gulimall.common.to.SkuReductionTo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
@@ -30,7 +41,16 @@ import com.atguigu.gulimall.common.utils.R;
 public class SkuFullReductionController {
     @Autowired
     private SkuFullReductionService skuFullReductionService;
+    /**
+     * 列表
+     */
+    @RequestMapping("/saveinfo")
+    // @RequiresPermissions("coupon:skufullreduction:list")
+    public R saveinfo(@RequestBody SkuReductionTo reductionTo){
+        skuFullReductionService.saveSkuReduction(reductionTo);
 
+        return R.ok();
+    }
     /**
      * 列表
      */
