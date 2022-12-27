@@ -1,3 +1,13 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-21 16:08:04
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-27 15:49:37
+ * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/controller/SkuInfoController.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
@@ -37,7 +47,7 @@ public class SkuInfoController {
     @RequestMapping("/list")
     // @RequiresPermissions("product:skuinfo:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = skuInfoService.queryPage(params);
+        PageUtils page = skuInfoService.queryPageByCondition(params);
 
         return R.ok().put("page", page);
     }

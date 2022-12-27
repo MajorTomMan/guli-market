@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-23 22:31:10
+ * @LastEditTime: 2022-12-27 15:28:46
  * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/controller/SpuInfoController.java
  * @Description: 
  * 
@@ -48,7 +48,7 @@ public class SpuInfoController {
     @RequestMapping("/list")
     // @RequiresPermissions("product:spuinfo:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = spuInfoService.queryPage(params);
+        PageUtils page = spuInfoService.queryPageByCondition(params);
 
         return R.ok().put("page", page);
     }

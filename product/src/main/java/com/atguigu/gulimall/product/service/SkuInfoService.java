@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-24 23:35:05
+ * @LastEditTime: 2022-12-27 15:50:03
  * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/SkuInfoService.java
  * @Description: 
  * 
@@ -29,5 +29,7 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     void saveSkuInfo(SkuInfoEntity skuInfoEntity);
+
+    PageUtils queryPageByCondition(Map<String, Object> params);
 }
 

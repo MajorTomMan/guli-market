@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 12:19:05
+ * @LastEditTime: 2022-12-27 16:10:16
  * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
  * @Description: 
  * 
@@ -150,7 +150,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     skuImagesEntity.setImgUrl(img.getImgUrl());
                     skuImagesEntity.setDefaultImg(img.getDefaultImg());
                     return skuImagesEntity;
-                }).filter(entity->{
+                }).filter(entity -> {
                     return StringUtils.isNotEmpty(entity.getImgUrl());
                 }).collect(Collectors.toList());
                 /* 5.2 SKU的图片信息: PMS_SKU_IMAGES */
@@ -172,7 +172,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 SkuReductionTo skuReductionTo = new SkuReductionTo();
                 BeanUtils.copyProperties(item, skuReductionTo);
                 skuReductionTo.setSkuId(skuId);
-                if(skuReductionTo.getFullCount()>0||skuReductionTo.getFullPrice().compareTo(new BigDecimal("0"))==1){
+                if (skuReductionTo.getFullCount() > 0
+                        || skuReductionTo.getFullPrice().compareTo(new BigDecimal("0")) == 1) {
                     R rc = couponFeignService.saveSpuReduction(skuReductionTo);
                     if (rc.getCode() != 0) {
                         log.error("远程保存SKU积分信息失败");
@@ -184,5 +185,34 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     private void saveBaseSpuInfo(SpuInfoEntity infoEntity) {
         this.baseMapper.insert(infoEntity);
+    }
+
+    @Override
+    public PageUtils queryPageByCondition(Map<String, Object> params) {
+        // TODO Auto-generated method stub
+        QueryWrapper<SpuInfoEntity> wrapper = new QueryWrapper<SpuInfoEntity>();
+        String key = (String) params.get("key");
+        String status = (String) params.get("status");
+        String brandId = (String) params.get("brandId");
+        String catelogId = (String) params.get("catelogId");
+        if (!StringUtils.isEmpty(key)) {
+            wrapper.and((w) -> {
+                w.eq("id", key).or().like("spu_name", key);
+            });
+        }
+        if (!StringUtils.isEmpty(status)) {
+            wrapper.eq("publish_status", status);
+        }
+        if (!StringUtils.isEmpty(brandId)&&!"0".equalsIgnoreCase(brandId)) {
+            wrapper.eq("brand_id", brandId);
+        }
+        if (!StringUtils.isEmpty(catelogId)&&!"0".equalsIgnoreCase(catelogId)) {
+            wrapper.eq("catelog_Id", catelogId);
+        }
+        IPage<SpuInfoEntity> page = this.page(
+                new Query<SpuInfoEntity>().getPage(params),
+                wrapper
+        );
+        return new PageUtils(page);
     }
 }
