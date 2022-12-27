@@ -13,13 +13,19 @@ spring:
           predicates:
             - Path=/api/third/**
           filters:
-            - RewritePath=/api/third/(?<segment>.*),/$\{segment} #该处填product的路径名
+            - RewritePath=/api/third/(?<segment>.*),/$\{segment} #该处填third的路径名
         - id: member_route
           uri: lb://member
           predicates:
             - Path=/api/member/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填product的路径名
+            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填member的路径名
+        - id: member_route
+          uri: lb://ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填ware的路径名
         - id: admin_route
           uri: lb://fast # 该处填nacos上的服务名(即spring.application.name中的值)
           predicates:

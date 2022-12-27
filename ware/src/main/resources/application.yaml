@@ -9,3 +9,9 @@
 #  global-config:
 #    db-config:
 #     id-type: auto
+logging:
+  level:
+    com.atguigu: debug
+Spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
