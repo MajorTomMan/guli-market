@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 17:46:10
+ * @LastEditTime: 2022-12-27 20:27:37
  * @FilePath: /common/home/master/project/gulimall/ware/src/main/java/com/atguigu/gulimall/ware/controller/PurchaseController.java
  * @Description: 
  * 
@@ -11,6 +11,7 @@
 package com.atguigu.gulimall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.atguigu.gulimall.ware.entity.PurchaseEntity;
 import com.atguigu.gulimall.ware.service.PurchaseService;
 import com.atguigu.gulimall.ware.vo.MergeVo;
+import com.atguigu.gulimall.ware.vo.PurchaseFinishVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
@@ -42,6 +44,17 @@ import com.atguigu.gulimall.common.utils.R;
 public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
+    @PostMapping("/done")
+    public R finish(@RequestBody PurchaseFinishVo finishVo){
+        purchaseService.done(finishVo);
+        return R.ok();
+    }
+    @PostMapping("/received")
+    public R received(@RequestBody List<Long> ids){
+        purchaseService.recevied(ids);
+        return R.ok();
+    }
+
     @PostMapping("/merge")
     public R merge(@RequestBody MergeVo mergeVo){
         purchaseService.mergePurchase(mergeVo);
