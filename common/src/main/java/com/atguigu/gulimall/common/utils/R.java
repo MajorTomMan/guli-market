@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-24 23:31:48
+ * @LastEditTime: 2022-12-26 21:37:31
  * @FilePath: /common/src/main/java/com/atguigu/gulimall/common/utils/R.java
  * @Description: 
  * 
@@ -73,6 +73,6 @@ public class R extends HashMap<String, Object> {
 	}
 
     public int getCode() {
-        return Integer.parseInt((String)this.get("code"));
+        return (Integer)this.get("code");
     }
 }

@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-12-24 22:31:21
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-24 23:03:45
+ * @LastEditTime: 2022-12-27 12:15:32
  * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/feign/CouponFeignService.java
  * @Description: 
  * 

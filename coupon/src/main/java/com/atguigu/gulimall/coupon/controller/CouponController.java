@@ -1,3 +1,13 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-21 16:08:04
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-26 19:36:40
+ * @FilePath: /common/home/master/project/gulimall/coupon/src/main/java/com/atguigu/gulimall/coupon/controller/CouponController.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 package com.atguigu.gulimall.coupon.controller;
 
 import java.util.Arrays;
@@ -27,24 +37,11 @@ import com.atguigu.gulimall.common.utils.R;
  * @email flashnamesl@gmail.com
  * @date 2022-07-21 11:00:44
  */
-@RefreshScope
 @RestController
 @RequestMapping("coupon/coupon")
 public class CouponController {
     @Autowired
     private CouponService couponService;
-
-    @Value("${coupon.user.name}")
-    private String name;
-    @Value("${coupon.user.age}")
-    private Integer age;
-    @Value("${coupon.user.password}")
-    private String password;
-
-    @RequestMapping("/test")
-    public R test(){
-        return R.ok().put("name",name).put("age", age).put("password", password);
-    }
 
     @RequestMapping("/member/list")
     public R memberCoupons(){

@@ -40,12 +40,6 @@
             <groupId>com.atguigu.gulimall</groupId>
             <artifactId>common</artifactId>
             <version>1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba.cloud</groupId>
-                    <artifactId>spring-cloud-starter-alicloud-oss</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
