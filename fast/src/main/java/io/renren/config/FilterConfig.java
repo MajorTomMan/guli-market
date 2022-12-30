@@ -1,3 +1,13 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2022-07-17 23:20:19
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2022-12-30 13:50:41
+ * @FilePath: /common/home/master/project/gulimall/fast/src/main/java/io/renren/config/FilterConfig.java
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
+ */
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -8,13 +18,14 @@
 
 package io.renren.config;
 
-import io.renren.common.xss.XssFilter;
+import javax.servlet.DispatcherType;
+
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
-import javax.servlet.DispatcherType;
+import io.renren.common.xss.XssFilter;
 
 /**
  * Filter配置

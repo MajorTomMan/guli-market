@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -9,7 +10,6 @@
 package io.renren.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
