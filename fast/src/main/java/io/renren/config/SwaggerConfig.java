@@ -24,8 +24,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig implements WebMvcConfigurer {
@@ -54,7 +52,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     }
 
     private List<SecurityScheme> security() {
-        return newArrayList(
+        return List.of(
             new ApiKey("token", "token", "header")
         );
     }
