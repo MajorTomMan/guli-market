@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:16:00
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-01-30 16:18:37
+ * @LastEditTime: 2023-01-30 18:14:37
  * @FilePath: /common/home/master/project/GuliMall/search/src/main/java/com/atguigu/gulimall/search/SearchApplication.java
  * @Description: 
  * 
