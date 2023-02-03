@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:16:00
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-03 12:18:20
+ * @LastEditTime: 2023-02-03 13:40:46
  * @FilePath: /common/home/master/project/GuliMall/search/src/test/java/com/atguigu/gulimall/search/SearchApplicationTests.java
  * @Description: 
  * 
@@ -19,6 +19,7 @@ import java.util.Map;
 
 import com.alibaba.nacos.common.utils.JacksonUtils;
 import com.atguigu.gulimall.search.enitty.TestEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -32,15 +33,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
+import co.elastic.clients.elasticsearch.core.DeleteResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import lombok.extern.slf4j.Slf4j;
-
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.UpdateResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.elasticsearch.core.search.TotalHits;
+import co.elastic.clients.elasticsearch.core.search.TotalHitsRelation;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
-
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
@@ -48,11 +52,11 @@ class SearchApplicationTests {
     @Autowired
     private RestClient restClient;
 
-    private ElasticsearchClient init(){
-         // Create the transport with a Jackson mapper
-         ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-         ElasticsearchClient esClient = new ElasticsearchClient(transport);
-         return esClient;
+    private ElasticsearchClient init() {
+        // Create the transport with a Jackson mapper
+        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        ElasticsearchClient esClient = new ElasticsearchClient(transport);
+        return esClient;
     }
 
     @Test
@@ -78,25 +82,51 @@ class SearchApplicationTests {
 
     @Test
     public void deleteData() throws IOException {
-        String index = "tttttest";
+        /* String index = "tttttest";
         String type = "_doc";
         String id = "1";
         String path = createPath(index, type, id);
-        SendData("delete", path, Collections.emptyMap());
+        SendData("delete", path, Collections.emptyMap()); */
+        ElasticsearchClient esClient = init();
+        DeleteResponse response = esClient.delete(
+            d->d.index("testentity").id("1")
+        );
+        log.info("Indexed with version " + response.version());
     }
 
     @Test
     public void queryData() throws IOException {
-        String index = "tttttest";
-        String type = "_doc";
-        String id = "1";
-        String path = createPath(index, type, id);
-        SendData("get", path, Collections.emptyMap());
+        /*
+         * String index = "tttttest";
+         * String type = "_doc";
+         * String id = "1";
+         * String path = createPath(index, type, id);
+         * SendData("get", path, Collections.emptyMap());
+         */
+        ElasticsearchClient esClient = init();
+        SearchResponse<TestEntity> response = esClient.search(
+                s -> s.index("testentity").query(
+                        q -> q.match(
+                                t -> t.field("name").query("gg"))),
+                TestEntity.class);
+        TotalHits total = response.hits().total();
+        Boolean isExactResult = total.relation() == TotalHitsRelation.Eq;
+        if (isExactResult) {
+            log.info("总共有" + total.value() + "条结果");
+        } else {
+            log.info("总共有" + total.value() + "条以上结果");
+        }
+        List<Hit<TestEntity>> hits = response.hits().hits();
+        for (Hit<TestEntity> hit : hits) {
+            TestEntity entity = hit.source();
+            System.out.println(entity);
+            System.out.println("找到ID:"+hit.id()+"分数:"+hit.score());
+        }
     }
 
     @Test
     public void updateData() throws IOException {
-        String index = "tttttest";
+/*         String index = "tttttest";
         String type = "_update";
         String id = "1";
         String path = createPath(index, type, id);
@@ -104,7 +134,13 @@ class SearchApplicationTests {
         List<TestEntity> list = new ArrayList<>();
         list.add(new TestEntity("gg", "gg"));
         data.put("doc", list);
-        SendData("post", path, data);
+        SendData("post", path, data); */
+        TestEntity testEntity = new TestEntity("TT", "TT");
+        ElasticsearchClient esClient = init();
+        UpdateResponse<TestEntity> response = esClient.update(
+            u->u.index("testentity").id("1").doc(testEntity)
+        , TestEntity.class);
+        log.info("Indexed with version " + response.version());
     }
 
     public void matchData() {
