@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 15:28:44
- * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/SpuInfoService.java
+ * @LastEditTime: 2023-02-04 21:00:05
+ * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/SpuInfoService.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -32,5 +32,6 @@ public interface SpuInfoService extends IService<SpuInfoEntity> {
 
     PageUtils queryPageByCondition(Map<String, Object> params);
 
-}
+    void up(Long spuId);
 
+}

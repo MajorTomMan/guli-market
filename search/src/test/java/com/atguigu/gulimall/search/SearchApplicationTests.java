@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:16:00
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-03 13:40:46
+ * @LastEditTime: 2023-02-03 16:27:17
  * @FilePath: /common/home/master/project/GuliMall/search/src/test/java/com/atguigu/gulimall/search/SearchApplicationTests.java
  * @Description: 
  * 
@@ -33,6 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.DeleteResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
@@ -41,6 +45,7 @@ import co.elastic.clients.elasticsearch.core.UpdateResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.TotalHits;
 import co.elastic.clients.elasticsearch.core.search.TotalHitsRelation;
+import co.elastic.clients.json.JsonData;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
 import co.elastic.clients.transport.ElasticsearchTransport;
 import co.elastic.clients.transport.rest_client.RestClientTransport;
@@ -73,7 +78,7 @@ class SearchApplicationTests {
          * SendData("post",path,data);
          */
         ElasticsearchClient esClient = init();
-        TestEntity testEntity = new TestEntity("gg", "gg");
+        TestEntity testEntity = new TestEntity("hh", "hh");
         IndexResponse response = esClient.index(
                 i -> i.index("testentity")
                         .id("1").document(testEntity));
@@ -82,15 +87,16 @@ class SearchApplicationTests {
 
     @Test
     public void deleteData() throws IOException {
-        /* String index = "tttttest";
-        String type = "_doc";
-        String id = "1";
-        String path = createPath(index, type, id);
-        SendData("delete", path, Collections.emptyMap()); */
+        /*
+         * String index = "tttttest";
+         * String type = "_doc";
+         * String id = "1";
+         * String path = createPath(index, type, id);
+         * SendData("delete", path, Collections.emptyMap());
+         */
         ElasticsearchClient esClient = init();
         DeleteResponse response = esClient.delete(
-            d->d.index("testentity").id("1")
-        );
+                d -> d.index("testentity").id("1"));
         log.info("Indexed with version " + response.version());
     }
 
@@ -120,31 +126,47 @@ class SearchApplicationTests {
         for (Hit<TestEntity> hit : hits) {
             TestEntity entity = hit.source();
             System.out.println(entity);
-            System.out.println("找到ID:"+hit.id()+"分数:"+hit.score());
+            System.out.println("找到ID:" + hit.id() + "分数:" + hit.score());
         }
     }
 
     @Test
     public void updateData() throws IOException {
-/*         String index = "tttttest";
-        String type = "_update";
-        String id = "1";
-        String path = createPath(index, type, id);
-        Map<String, List<TestEntity>> data = new HashMap<>();
-        List<TestEntity> list = new ArrayList<>();
-        list.add(new TestEntity("gg", "gg"));
-        data.put("doc", list);
-        SendData("post", path, data); */
+        /*
+         * String index = "tttttest";
+         * String type = "_update";
+         * String id = "1";
+         * String path = createPath(index, type, id);
+         * Map<String, List<TestEntity>> data = new HashMap<>();
+         * List<TestEntity> list = new ArrayList<>();
+         * list.add(new TestEntity("gg", "gg"));
+         * data.put("doc", list);
+         * SendData("post", path, data);
+         */
         TestEntity testEntity = new TestEntity("TT", "TT");
         ElasticsearchClient esClient = init();
         UpdateResponse<TestEntity> response = esClient.update(
-            u->u.index("testentity").id("1").doc(testEntity)
-        , TestEntity.class);
+                u -> u.index("testentity").id("1").doc(testEntity), TestEntity.class);
         log.info("Indexed with version " + response.version());
     }
-
-    public void matchData() {
-
+    @Test
+    public void matchData() throws ElasticsearchException, IOException {
+        ElasticsearchClient esClient = init();
+        Query byName = MatchQuery.of(
+                m -> m.field("name").query("hh"))._toQuery();
+        Query byMaxPrice = RangeQuery.of(
+                r -> r.field("sex").gte(JsonData.of("hh")))._toQuery();
+        SearchResponse<TestEntity> response = esClient.search(
+                s -> s.index("testentity").query(
+                        q -> q.bool(
+                                b -> b.must(byName).must(byMaxPrice))),
+                TestEntity.class);
+        List<Hit<TestEntity>> hits = response.hits().hits();
+        for (Hit<TestEntity> hit : hits) {
+            TestEntity entity = hit.source();
+            System.out.println(entity);
+            System.out.println("找到ID:" + hit.id() + "分数:" + hit.score());
+        }
     }
 
     private void SendData(String method, String path, Map<String, List<TestEntity>> entities) throws IOException {

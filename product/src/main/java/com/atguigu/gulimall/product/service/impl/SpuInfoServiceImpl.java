@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 16:10:16
- * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
+ * @LastEditTime: 2023-02-08 22:06:59
+ * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -12,17 +12,22 @@ package com.atguigu.gulimall.product.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.atguigu.gulimall.common.to.SkuReductionTo;
 import com.atguigu.gulimall.common.to.SpuBoundTo;
+import com.atguigu.gulimall.common.to.es.SkuEsModel;
+import com.atguigu.gulimall.common.to.es.SkuEsModel.Attrs;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.product.dao.SpuInfoDao;
+import com.atguigu.gulimall.product.entity.BrandEntity;
+import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.entity.ProductAttrValueEntity;
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
 import com.atguigu.gulimall.product.entity.SkuInfoEntity;
@@ -30,7 +35,10 @@ import com.atguigu.gulimall.product.entity.SkuSaleAttrValueEntity;
 import com.atguigu.gulimall.product.entity.SpuInfoDescEntity;
 import com.atguigu.gulimall.product.entity.SpuInfoEntity;
 import com.atguigu.gulimall.product.feign.CouponFeignService;
+import com.atguigu.gulimall.product.feign.WareFeignService;
 import com.atguigu.gulimall.product.service.AttrService;
+import com.atguigu.gulimall.product.service.BrandService;
+import com.atguigu.gulimall.product.service.CategoryService;
 import com.atguigu.gulimall.product.service.ProductAttrValueService;
 import com.atguigu.gulimall.product.service.SkuImagesService;
 import com.atguigu.gulimall.product.service.SkuInfoService;
@@ -61,7 +69,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     @Autowired
     SpuImagesService spuImagesService;
     @Autowired
-    AttrService AttrService;
+    AttrService attrService;
     @Autowired
     ProductAttrValueService attrValueService;
     @Autowired
@@ -72,6 +80,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     SkuSaleAttrValueService skuSaleAttrValueService;
     @Autowired
     CouponFeignService couponFeignService;
+    @Autowired
+    BrandService brandService;
+    @Autowired
+    CategoryService categoryService;
+    @Autowired
+    WareFeignService wareFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -203,16 +217,61 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         if (!StringUtils.isEmpty(status)) {
             wrapper.eq("publish_status", status);
         }
-        if (!StringUtils.isEmpty(brandId)&&!"0".equalsIgnoreCase(brandId)) {
+        if (!StringUtils.isEmpty(brandId) && !"0".equalsIgnoreCase(brandId)) {
             wrapper.eq("brand_id", brandId);
         }
-        if (!StringUtils.isEmpty(catelogId)&&!"0".equalsIgnoreCase(catelogId)) {
+        if (!StringUtils.isEmpty(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
             wrapper.eq("catelog_Id", catelogId);
         }
         IPage<SpuInfoEntity> page = this.page(
                 new Query<SpuInfoEntity>().getPage(params),
-                wrapper
-        );
+                wrapper);
         return new PageUtils(page);
+    }
+
+    @Override
+    public void up(Long spuId) {
+        // TODO Auto-generated method stub
+        List<SkuInfoEntity> skuInfoEntities = skuInfoService.getSkusBySpuId(spuId);
+        List<SkuEsModel> models = skuInfoEntities.stream().map(
+                sku -> {
+                    SkuEsModel esModel = new SkuEsModel();
+                    BeanUtils.copyProperties(sku, esModel);
+                    // TODO 发送远程调用查询库存
+                    R r = wareFeignService.queryStock(sku.getSkuId());
+                    if (r.getCode() != 0) {
+                        log.error("远程查询库存信息失败");
+                    }
+                    //TODO 构造SKU检索属性
+                    List<ProductAttrValueEntity> baseAttrs = attrValueService.baseAttrListForSpu(sku.getSpuId());
+                    List<Long> attrIds = baseAttrs.stream().map(attr->{
+                        return attr.getAttrId();
+                    }).collect(Collectors.toList());
+                    List<Long> searchAttrIds=attrService.selectSearchAttrs(attrIds);
+                    Set<Long> idSet=new HashSet<>(searchAttrIds);
+                    List<Attrs> attrsList = baseAttrs.stream().filter(
+                        item->{
+                            return idSet.contains(item.getAttrId());
+                        }
+                    ).map(
+                        item->{
+                            Attrs attrs=new Attrs();
+                            BeanUtils.copyProperties(item, attrs);
+                            return attrs;
+                        }
+                    ).collect(Collectors.toList());
+                    esModel.setSkuPrice(sku.getPrice());
+                    esModel.setSkuImg(sku.getSkuDefaultImg());
+                    BrandEntity brand = brandService.getById(esModel.getBrandId());
+                    CategoryEntity category = categoryService.getById(esModel.getCatelogId());
+                    esModel.setBrandName(brand.getName());
+                    esModel.setBrandImg(brand.getLogo());
+                    esModel.setCatelogId(category.getCatId());
+                    esModel.setCatelogName(category.getName());
+                    esModel.setHotScore(0L);
+                    //设置构造属性
+                    esModel.setAttrs(attrsList);
+                    return esModel;
+                }).collect(Collectors.toList());
     }
 }

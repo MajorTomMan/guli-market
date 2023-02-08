@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 15:50:03
- * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/SkuInfoService.java
+ * @LastEditTime: 2023-02-04 21:16:54
+ * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/SkuInfoService.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -15,6 +15,7 @@ import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.SkuInfoEntity;
 import com.atguigu.gulimall.product.vo.SpuSaveVo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,5 +32,7 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     void saveSkuInfo(SkuInfoEntity skuInfoEntity);
 
     PageUtils queryPageByCondition(Map<String, Object> params);
+
+    List<SkuInfoEntity> getSkusBySpuId(Long spuId);
 }
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.gulimall.product.dao.AttrDao">
+    <resultMap type="com.atguigu.gulimall.product.entity.AttrEntity" id="attrMap">
+        <result column="attr_id" jdbcType="BIGINT" property="attrId" />
+        <result column="attr_name" jdbcType="VARCHAR" property="attrName" />
+        <result column="search_type" jdbcType="INTEGER" property="searchType" />
+        <result column="value_type" jdbcType="INTEGER" property="valueType" />
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="value_select" jdbcType="VARCHAR" property="valueSelect" />
+        <result column="attr_type" jdbcType="INTEGER" property="attrType" />
+        <result column="enable" jdbcType="BIGINT" property="enable" />
+        <result column="catelog_id" jdbcType="BIGINT" property="catelogId" />
+        <result column="show_desc" jdbcType="INTEGER" property="showDesc" />
+    </resultMap>
+    <select id="selectSearchAttrs" resultType="java.lang.Long">
+        select attr_id from `pms_attr` where attr_id in
+        <foreach collection="attrIds" item="id" separator="," open="(" close=")"
+            #{id} 
+        </foreach>
+        and search_type = 1
+    </select>
+
+</mapper>

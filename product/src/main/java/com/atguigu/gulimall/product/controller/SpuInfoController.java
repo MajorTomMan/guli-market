@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 15:28:46
- * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/controller/SpuInfoController.java
+ * @LastEditTime: 2023-02-04 20:59:02
+ * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/controller/SpuInfoController.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -16,6 +16,7 @@ import java.util.Map;
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +64,11 @@ public class SpuInfoController {
 		SpuInfoEntity spuInfo = spuInfoService.getById(id);
 
         return R.ok().put("spuInfo", spuInfo);
+    }
+    @PostMapping("/{spuId}/up")
+    public R spuUp(@PathVariable("spuId") Long spuId){
+        spuInfoService.up(spuId);
+        return R.ok();
     }
 
     /**
