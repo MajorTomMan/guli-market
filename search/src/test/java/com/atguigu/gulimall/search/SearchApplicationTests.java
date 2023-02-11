@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:16:00
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-03 16:27:17
- * @FilePath: /common/home/master/project/GuliMall/search/src/test/java/com/atguigu/gulimall/search/SearchApplicationTests.java
+ * @LastEditTime: 2023-02-11 22:45:15
+ * @FilePath: /GuliMall/search/src/test/java/com/atguigu/gulimall/search/SearchApplicationTests.java
  * @Description: 
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
@@ -11,15 +11,11 @@
 package com.atguigu.gulimall.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.nacos.common.utils.JacksonUtils;
 import com.atguigu.gulimall.search.enitty.TestEntity;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -37,7 +33,6 @@ import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.DeleteResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -46,24 +41,15 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.TotalHits;
 import co.elastic.clients.elasticsearch.core.search.TotalHitsRelation;
 import co.elastic.clients.json.JsonData;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
 class SearchApplicationTests {
     @Autowired
-    private RestClient restClient;
-
-    private ElasticsearchClient init() {
-        // Create the transport with a Jackson mapper
-        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
-        ElasticsearchClient esClient = new ElasticsearchClient(transport);
-        return esClient;
-    }
-
+    RestClient restClient;
+    @Autowired
+    ElasticsearchClient esClient;
     @Test
     public void insertData() throws IOException {
         /*
@@ -77,7 +63,6 @@ class SearchApplicationTests {
          * data.put("doc", list);
          * SendData("post",path,data);
          */
-        ElasticsearchClient esClient = init();
         TestEntity testEntity = new TestEntity("hh", "hh");
         IndexResponse response = esClient.index(
                 i -> i.index("testentity")
@@ -94,7 +79,6 @@ class SearchApplicationTests {
          * String path = createPath(index, type, id);
          * SendData("delete", path, Collections.emptyMap());
          */
-        ElasticsearchClient esClient = init();
         DeleteResponse response = esClient.delete(
                 d -> d.index("testentity").id("1"));
         log.info("Indexed with version " + response.version());
@@ -109,7 +93,6 @@ class SearchApplicationTests {
          * String path = createPath(index, type, id);
          * SendData("get", path, Collections.emptyMap());
          */
-        ElasticsearchClient esClient = init();
         SearchResponse<TestEntity> response = esClient.search(
                 s -> s.index("testentity").query(
                         q -> q.match(
@@ -144,14 +127,12 @@ class SearchApplicationTests {
          * SendData("post", path, data);
          */
         TestEntity testEntity = new TestEntity("TT", "TT");
-        ElasticsearchClient esClient = init();
         UpdateResponse<TestEntity> response = esClient.update(
                 u -> u.index("testentity").id("1").doc(testEntity), TestEntity.class);
         log.info("Indexed with version " + response.version());
     }
     @Test
     public void matchData() throws ElasticsearchException, IOException {
-        ElasticsearchClient esClient = init();
         Query byName = MatchQuery.of(
                 m -> m.field("name").query("hh"))._toQuery();
         Query byMaxPrice = RangeQuery.of(
