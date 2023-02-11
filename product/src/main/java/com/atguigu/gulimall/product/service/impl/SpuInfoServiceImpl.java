@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-11 22:25:29
+ * @LastEditTime: 2023-02-11 22:29:15
  * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
  * @Description: 
  * 
@@ -254,7 +254,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     try {
                         R<List<SkuHasStockVo>> r = wareFeignService.queryHasStock(skuIdList);
                         List<SkuHasStockVo> data = r.getData();
-                        data.stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, item -> item.getHasStock()));
+                        stockMap = data.stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, item -> item.getHasStock()));
                     } catch (Exception e) {
                         // TODO: handle exception
                         log.error("远程查询库存信息失败 原因为:{}", e);
@@ -280,10 +280,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     esModel.setHotScore(0L);
                     /* 设置库存信息 */
                     /* 若远程调用没有问题则插入数据 */
-                    if (stockMap != null) {
-                        esModel.setHasStock(stockMap.get(sku.getSkuId()));
-                    } else {
+                    if (stockMap == null) {
                         esModel.setHasStock(true);
+                    } else {
+                        esModel.setHasStock(stockMap.get(sku.getSkuId()));
                     }
                     // 设置构造属性
                     esModel.setAttrs(attrsList);
