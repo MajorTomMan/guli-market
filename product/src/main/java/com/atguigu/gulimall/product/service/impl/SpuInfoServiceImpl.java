@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-08 22:06:59
+ * @LastEditTime: 2023-02-11 22:25:29
  * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
  * @Description: 
  * 
@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.to.SkuReductionTo;
 import com.atguigu.gulimall.common.to.SpuBoundTo;
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
@@ -233,33 +234,41 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     public void up(Long spuId) {
         // TODO Auto-generated method stub
         List<SkuInfoEntity> skuInfoEntities = skuInfoService.getSkusBySpuId(spuId);
+        List<Long> skuIdList = skuInfoEntities.stream().map(
+                sku -> {
+                    return sku.getSkuId();
+                }).collect(Collectors.toList());
         List<SkuEsModel> models = skuInfoEntities.stream().map(
                 sku -> {
                     SkuEsModel esModel = new SkuEsModel();
                     BeanUtils.copyProperties(sku, esModel);
-                    // TODO 发送远程调用查询库存
-                    R r = wareFeignService.queryStock(sku.getSkuId());
-                    if (r.getCode() != 0) {
-                        log.error("远程查询库存信息失败");
-                    }
-                    //TODO 构造SKU检索属性
+                    // TODO 构造SKU检索属性
                     List<ProductAttrValueEntity> baseAttrs = attrValueService.baseAttrListForSpu(sku.getSpuId());
-                    List<Long> attrIds = baseAttrs.stream().map(attr->{
+                    List<Long> attrIds = baseAttrs.stream().map(attr -> {
                         return attr.getAttrId();
                     }).collect(Collectors.toList());
-                    List<Long> searchAttrIds=attrService.selectSearchAttrs(attrIds);
-                    Set<Long> idSet=new HashSet<>(searchAttrIds);
+                    List<Long> searchAttrIds = attrService.selectSearchAttrs(attrIds);
+                    Set<Long> idSet = new HashSet<>(searchAttrIds);
+                    // TODO 发送远程调用查询库存
+                    Map<Long, Boolean> stockMap = null;
+                    try {
+                        R<List<SkuHasStockVo>> r = wareFeignService.queryHasStock(skuIdList);
+                        List<SkuHasStockVo> data = r.getData();
+                        data.stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, item -> item.getHasStock()));
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        log.error("远程查询库存信息失败 原因为:{}", e);
+                    }
                     List<Attrs> attrsList = baseAttrs.stream().filter(
-                        item->{
-                            return idSet.contains(item.getAttrId());
-                        }
-                    ).map(
-                        item->{
-                            Attrs attrs=new Attrs();
-                            BeanUtils.copyProperties(item, attrs);
-                            return attrs;
-                        }
-                    ).collect(Collectors.toList());
+                            item -> {
+                                return idSet.contains(item.getAttrId());
+                            }).map(
+                                    item -> {
+                                        Attrs attrs = new Attrs();
+                                        BeanUtils.copyProperties(item, attrs);
+                                        return attrs;
+                                    })
+                            .collect(Collectors.toList());
                     esModel.setSkuPrice(sku.getPrice());
                     esModel.setSkuImg(sku.getSkuDefaultImg());
                     BrandEntity brand = brandService.getById(esModel.getBrandId());
@@ -269,7 +278,14 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     esModel.setCatelogId(category.getCatId());
                     esModel.setCatelogName(category.getName());
                     esModel.setHotScore(0L);
-                    //设置构造属性
+                    /* 设置库存信息 */
+                    /* 若远程调用没有问题则插入数据 */
+                    if (stockMap != null) {
+                        esModel.setHasStock(stockMap.get(sku.getSkuId()));
+                    } else {
+                        esModel.setHasStock(true);
+                    }
+                    // 设置构造属性
                     esModel.setAttrs(attrsList);
                     return esModel;
                 }).collect(Collectors.toList());

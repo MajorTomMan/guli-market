@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 21:37:14
- * @FilePath: /common/home/master/project/gulimall/ware/src/main/java/com/atguigu/gulimall/ware/service/impl/WareSkuServiceImpl.java
+ * @LastEditTime: 2023-02-11 22:11:10
+ * @FilePath: /GuliMall/ware/src/main/java/com/atguigu/gulimall/ware/service/impl/WareSkuServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -16,10 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
+import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.common.utils.R;
@@ -78,6 +82,19 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         } else {
             wareSkuDao.addStock(skuId, wareId, skuNum);
         }
+    }
+
+    @Override
+    public List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
+        // TODO Auto-generated method stub
+        List<SkuHasStockVo> collect = skuIds.stream().map(skuId->{
+            SkuHasStockVo vo=new SkuHasStockVo();
+            Long count =baseMapper.getSkuStock(skuId);
+            vo.setSkuId(skuId);
+            vo.setHasStock(count>0);
+            return vo;
+        }).collect(Collectors.toList());
+        return collect;
     }
 
 }

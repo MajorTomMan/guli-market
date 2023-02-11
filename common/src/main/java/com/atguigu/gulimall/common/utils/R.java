@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-26 21:37:31
- * @FilePath: /common/src/main/java/com/atguigu/gulimall/common/utils/R.java
+ * @LastEditTime: 2023-02-11 22:03:56
+ * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/utils/R.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -28,9 +28,24 @@ import java.util.Map;
  *
  * @author Mark sunlightcs@gmail.com
  */
-public class R extends HashMap<String, Object> {
+public class R<T> extends HashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
+	private T data;
 	
+	/**
+	 * @return the data
+	 */
+	public T getData() {
+		return data;
+	}
+
+	/**
+	 * @param data the data to set
+	 */
+	public void setData(T data) {
+		this.data = data;
+	}
+
 	public R() {
 		put("code", 0);
 		put("msg", "success");

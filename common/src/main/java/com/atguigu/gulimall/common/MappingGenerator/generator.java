@@ -2,13 +2,13 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-08 19:03:16
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-08 21:07:14
- * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MapGenerator/generator.java
+ * @LastEditTime: 2023-02-11 22:07:26
+ * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MappingGenerator/generator.java
  * @Description: 
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
  */
-package com.atguigu.gulimall.common.MapGenerator;
+package com.atguigu.gulimall.common.MappingGenerator;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.atguigu.gulimall.common.MapGenerator.entity.AttrEntity;
+import com.atguigu.gulimall.common.MappingGenerator.entity.WareSkuEntity;
 
 public class generator {
     private static Pattern humpPattern = Pattern.compile("[A-Z]");// 匹配大写字母的正则
@@ -92,6 +92,6 @@ public class generator {
     }
 
     public static void main(String[] args) {
-        System.out.println(generator.generate(AttrEntity.class));
+        System.out.println(generator.generate(WareSkuEntity.class));
     }
 }
