@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-08 19:03:16
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-11 22:07:26
+ * @LastEditTime: 2023-02-12 16:06:04
  * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MappingGenerator/generator.java
  * @Description: 
  * 
@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.atguigu.gulimall.common.MappingGenerator.entity.SpuInfoEntity;
 import com.atguigu.gulimall.common.MappingGenerator.entity.WareSkuEntity;
 
 public class generator {
@@ -92,6 +93,6 @@ public class generator {
     }
 
     public static void main(String[] args) {
-        System.out.println(generator.generate(WareSkuEntity.class));
+        System.out.println(generator.generate(SpuInfoEntity.class));
     }
 }

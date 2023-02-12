@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-11 22:11:10
+ * @LastEditTime: 2023-02-12 16:20:17
  * @FilePath: /GuliMall/ware/src/main/java/com/atguigu/gulimall/ware/service/impl/WareSkuServiceImpl.java
  * @Description: 
  * 
@@ -91,7 +91,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             SkuHasStockVo vo=new SkuHasStockVo();
             Long count =baseMapper.getSkuStock(skuId);
             vo.setSkuId(skuId);
-            vo.setHasStock(count>0);
+            vo.setHasStock(count==null?false:count>0);
             return vo;
         }).collect(Collectors.toList());
         return collect;

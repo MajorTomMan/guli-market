@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:16:00
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-11 22:45:15
+ * @LastEditTime: 2023-02-12 12:19:15
  * @FilePath: /GuliMall/search/src/test/java/com/atguigu/gulimall/search/SearchApplicationTests.java
  * @Description: 
  * 
@@ -11,11 +11,14 @@
 package com.atguigu.gulimall.search;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.alibaba.nacos.common.utils.JacksonUtils;
 import com.atguigu.gulimall.search.enitty.TestEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -27,6 +30,7 @@ import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
@@ -37,10 +41,14 @@ import co.elastic.clients.elasticsearch.core.DeleteResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.UpdateResponse;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.TotalHits;
 import co.elastic.clients.elasticsearch.core.search.TotalHitsRelation;
 import co.elastic.clients.json.JsonData;
+import co.elastic.clients.json.JsonpUtils;
+import co.elastic.clients.util.ObjectBuilder;
+import jakarta.json.Json;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -149,11 +157,23 @@ class SearchApplicationTests {
             System.out.println("找到ID:" + hit.id() + "分数:" + hit.score());
         }
     }
-
+    public void BulkData() throws ElasticsearchException, IOException{
+        List<TestEntity> entities=new ArrayList<>();
+        entities.add(new TestEntity("1","2"));
+        entities.add(new TestEntity("3","4"));
+        entities.add(new TestEntity("5","6"));
+        List<BulkOperation> bulk = entities.stream().map(entity->{
+          return new BulkOperation.Builder().create(
+            c->c.index("testentity").id(entity.getName())
+            .document(entity)
+          ).build();
+        }).collect(Collectors.toList());
+        esClient.bulk(b->b.operations(bulk));
+    } 
     private void SendData(String method, String path, Map<String, List<TestEntity>> entities) throws IOException {
         Request request = new Request(method, path);
         if (!entities.isEmpty()) {
-            String json = JacksonUtils.toJson(entities);
+            String json = new ObjectMapper().writeValueAsString(entities);
             HttpEntity entity = new NStringEntity(json, ContentType.APPLICATION_JSON);
             request.setEntity(entity);
         }

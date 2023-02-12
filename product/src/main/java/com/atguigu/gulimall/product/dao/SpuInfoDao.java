@@ -1,8 +1,19 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2023-01-30 00:27:09
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2023-02-12 14:30:11
+ * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/dao/SpuInfoDao.java
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
+ */
 package com.atguigu.gulimall.product.dao;
 
 import com.atguigu.gulimall.product.entity.SpuInfoEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * spu信息
@@ -13,5 +24,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SpuInfoDao extends BaseMapper<SpuInfoEntity> {
+
+    void updateSpuStatus(@Param("spuId")Long spuId,@Param("code") int code);
 	
 }
