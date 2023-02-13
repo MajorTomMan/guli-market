@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 21:27:34
- * @FilePath: /common/home/master/project/gulimall/ware/src/main/java/com/atguigu/gulimall/ware/WareApplication.java
+ * @LastEditTime: 2023-02-13 11:52:05
+ * @FilePath: /common/home/master/project/GuliMall/ware/src/main/java/com/atguigu/gulimall/ware/WareApplication.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 

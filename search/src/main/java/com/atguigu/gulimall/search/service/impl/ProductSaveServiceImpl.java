@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-12 16:33:30
- * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
+ * @LastEditTime: 2023-02-13 16:15:53
+ * @FilePath: /common/home/master/project/GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
@@ -54,11 +54,12 @@ public class ProductSaveServiceImpl implements ProductSaveService {
         }).collect(Collectors.toList());
         /* 将索引请求通过bulkRequest发送出去 */
         BulkResponse response = client.bulk(b -> b.operations(skus));
+        log.info("响应结果:{}",response.toString());
         if (response.errors()) {
             log.error("批量处理失败");
             response.items().stream().forEach(item -> {
                 log.error("{}操作失败", item.operationType());
-                log.error("原因是{}", item.error());
+                log.error("状态码是:{}",item.status());
                 log.error("位置是索引:{}处,Id:{}处", item.index(), item.id());
                 log.error("类名是:{}", item.getClass());
             });

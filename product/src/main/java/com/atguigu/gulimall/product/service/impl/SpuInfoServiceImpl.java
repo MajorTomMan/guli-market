@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-12 14:29:37
- * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
+ * @LastEditTime: 2023-02-13 15:59:15
+ * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -12,9 +12,11 @@ package com.atguigu.gulimall.product.service.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,7 +61,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,6 +93,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     WareFeignService wareFeignService;
     @Autowired
     SearchFeignService searchFeignService;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<SpuInfoEntity> page = this.page(
@@ -201,10 +204,6 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }
     }
 
-    private void saveBaseSpuInfo(SpuInfoEntity infoEntity) {
-        this.baseMapper.insert(infoEntity);
-    }
-
     @Override
     public PageUtils queryPageByCondition(Map<String, Object> params) {
         // TODO Auto-generated method stub
@@ -256,8 +255,15 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     Map<Long, Boolean> stockMap = null;
                     try {
                         R<List<SkuHasStockVo>> r = wareFeignService.queryHasStock(skuIdList);
-                        List<SkuHasStockVo> data = r.getData();
-                        stockMap = data.stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, item -> item.getHasStock()));
+                        List<SkuHasStockVo> data = r.getData(new TypeReference<List<SkuHasStockVo>>() {
+                        });
+                        if (data != null) {
+                            stockMap = new HashMap<>();
+                            Map<Long, Boolean> finalstockMap = stockMap;
+                            data.stream().forEach(item -> {
+                                finalstockMap.put(item.getSkuId(), item.getHasStock());
+                            });
+                        }
                     } catch (Exception e) {
                         // TODO: handle exception
                         log.error("远程查询库存信息失败 原因为:{}", e);
@@ -276,11 +282,13 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     esModel.setSkuImg(sku.getSkuDefaultImg());
                     BrandEntity brand = brandService.getById(esModel.getBrandId());
                     CategoryEntity category = categoryService.getById(esModel.getCatelogId());
-                    esModel.setBrandName(brand.getName());
-                    esModel.setBrandImg(brand.getLogo());
-                    esModel.setCatelogId(category.getCatId());
-                    esModel.setCatelogName(category.getName());
-                    esModel.setHotScore(0L);
+                    if (brand != null && category != null) {
+                        esModel.setBrandName(brand.getName());
+                        esModel.setBrandImg(brand.getLogo());
+                        esModel.setCatelogId(category.getCatId());
+                        esModel.setCatelogName(category.getName());
+                        esModel.setHotScore(0L);
+                    }
                     /* 设置库存信息 */
                     /* 若远程调用没有问题则插入数据 */
                     if (stockMap == null) {
@@ -292,13 +300,20 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     esModel.setAttrs(attrsList);
                     return esModel;
                 }).collect(Collectors.toList());
-            //TODO 远程调用ES中的保存SKU接口,将数据保存到ES中
-                R r = searchFeignService.productStatusUp(models);
-                if (r.getCode()!=0) {
-                    // 远程调用失败
-                } else {
-                    //远程调用成功
-                    baseMapper.updateSpuStatus(spuId,ProductConstant.StatusEnum.SPU_UP.getCode());
-                }
+        // TODO 远程调用ES中的保存SKU接口,将数据保存到ES中
+        R r = searchFeignService.productStatusUp(models);
+        if (r.getCode() != 0) 
+        {
+            // 远程调用失败
+            log.error("远程调用商品上架服务失败");
+            log.error("原因是:"+r);
+        } else {
+            // 远程调用成功
+            baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());
+        }
+    }
+
+    private void saveBaseSpuInfo(SpuInfoEntity infoEntity) {
+        this.baseMapper.insert(infoEntity);
     }
 }
