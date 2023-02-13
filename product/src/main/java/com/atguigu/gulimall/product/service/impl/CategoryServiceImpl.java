@@ -103,4 +103,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             relationService.updateCategory(category.getCatId(), category.getName());
         }
     }
+
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        // TODO Auto-generated method stub
+        List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+        return categoryEntities;
+    }
 }
