@@ -1,5 +1,15 @@
+/*
+ * @Author: flashnames 765719516@qq.com
+ * @Date: 2023-02-13 23:00:36
+ * @LastEditors: flashnames 765719516@qq.com
+ * @LastEditTime: 2023-02-14 13:14:56
+ * @FilePath: /GuliMall/product/src/main/resources/static/index/js/catalogLoader.js
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
+ */
 $(function(){
-    $.getJSON("index/catalog.json",function (data) {
+    $.getJSON("/static/index/catalog.json",function (data) {
 
         var ctgall=data;
         $(".header_main_left_a").each(function(){

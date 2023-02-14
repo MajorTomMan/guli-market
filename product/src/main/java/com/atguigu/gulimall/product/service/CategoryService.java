@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 00:27:09
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-13 23:30:03
- * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/CategoryService.java
+ * @LastEditTime: 2023-02-14 12:20:30
+ * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/CategoryService.java
  * @Description: 
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
@@ -13,6 +13,7 @@ package com.atguigu.gulimall.product.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
+import com.atguigu.gulimall.product.vo.Catelog2Vo;
 
 import java.util.List;
 import java.util.Map;
@@ -32,5 +33,6 @@ public interface CategoryService extends IService<CategoryEntity> {
     Long[] findCateLogPath(Long cateLogId);
     void updateCascade(CategoryEntity category);
     List<CategoryEntity> getLevel1Categorys();
+    Map<String, List<Catelog2Vo>> getCatalogJson();
 }
 
