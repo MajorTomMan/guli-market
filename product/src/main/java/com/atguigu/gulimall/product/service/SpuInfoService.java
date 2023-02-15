@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-04 21:00:05
- * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/SpuInfoService.java
+ * @LastEditTime: 2023-02-14 16:48:52
+ * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/SpuInfoService.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 

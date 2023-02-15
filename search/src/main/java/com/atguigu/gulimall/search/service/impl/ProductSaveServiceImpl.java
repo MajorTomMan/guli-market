@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-13 16:15:53
- * @FilePath: /common/home/master/project/GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
+ * @LastEditTime: 2023-02-14 18:45:15
+ * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
@@ -15,11 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
-import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.search.constant.EsContant;
 import com.atguigu.gulimall.search.service.ProductSaveService;
 
-import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
