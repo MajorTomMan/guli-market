@@ -116,18 +116,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
         // TODO Auto-generated method stub
-        List<CategoryEntity> level1Categorys=getLevel1Categorys();
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+        List<CategoryEntity> level1Categorys=getParent_cid(selectList,0L);
 
         Map<String, List<Catelog2Vo>> parent_cid = level1Categorys.stream().collect(Collectors.toMap(k->{
             return k.getCatId().toString();
         },v->{
-            List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid",v.getCatId()));
+            List<CategoryEntity> categoryEntities = getParent_cid(selectList,v.getCatId());
             List<Catelog2Vo> catelog2Vos=null;
             if(categoryEntities!=null){
                 catelog2Vos=categoryEntities.stream().map(l2->
                 {
                     Catelog2Vo catelog2Vo=new Catelog2Vo(v.getCatId().toString(),null,l2.getCatId().toString(),l2.getName());
-                    List<CategoryEntity> level3Catelog = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid",l2.getCatId()));
+                    List<CategoryEntity> level3Catelog = getParent_cid(selectList,l2.getCatId());
                     if(level3Catelog!=null){
                         List<Category3Vo> catalog3vo = level3Catelog.stream().map(l3->{
                             Category3Vo catelog3Vo= new Category3Vo(l2.getCatId().toString(), l3.getCatId().toString(), l3.getName());
@@ -141,5 +142,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return catelog2Vos;
         }));
         return parent_cid;
+    }
+
+    private List<CategoryEntity> getParent_cid(List<CategoryEntity> selectList,Long parent_cid) {
+        List<CategoryEntity> collect = selectList.stream().filter(
+            item->item.getParentCid()==parent_cid
+        ).collect(Collectors.toList());
+        return collect;
     }
 }
