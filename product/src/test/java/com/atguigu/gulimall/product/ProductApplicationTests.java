@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-09-20 23:05:05
- * @FilePath: /common/home/master/project/gulimall/product/src/test/java/com/atguigu/gulimall/product/ProductApplicationTests.java
+ * @LastEditTime: 2023-02-18 17:50:18
+ * @FilePath: /common/home/master/project/GuliMall/product/src/test/java/com/atguigu/gulimall/product/ProductApplicationTests.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.product;
@@ -18,6 +18,8 @@ import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +30,8 @@ class ProductApplicationTests {
     BrandService service;
     @Autowired
     CategoryService categoryService;
-
+    @Autowired
+    StringRedisTemplate redis;
     @Test
     void contextLoads() {
         BrandEntity brandEntity = new BrandEntity();
@@ -55,5 +58,10 @@ class ProductApplicationTests {
         Long[] paths = categoryService.findCateLogPath(225L);
         log.info("完整路径:{}", Arrays.asList(paths));
         System.out.println();
+    }
+    @Test
+    void testRedis(){
+        ValueOperations<String, String> ops = redis.opsForValue();
+        ops.set("key","value",60);
     }
 }

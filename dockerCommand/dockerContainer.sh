@@ -2,8 +2,8 @@
  # @Author: flashnames 765719516@qq.com
  # @Date: 2022-05-14 11:02:02
  # @LastEditors: flashnames 765719516@qq.com
- # @LastEditTime: 2022-12-18 20:56:47
- # @FilePath: /common/home/master/project/gulimall/dockerCommand/dockerContainer.sh
+ # @LastEditTime: 2023-02-18 17:40:56
+ # @FilePath: /common/home/master/project/GuliMall/dockerCommand/dockerContainer.sh
  # @Description: 
  # 
  # Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -19,11 +19,12 @@ sudo docker run -p 3300:3306 --name mysql --restart=always \
 -e MYSQL_ROOT_PASSWORD=981221 \
 -d mysql:8.0.27
 
-docker run -p 6379:6379 --name redis --restart=always \
+docker run -p 6379:6379 --name redis --restart=always   \
 -v /home/master/redis/data:/data \
 -v /home/master/redis/conf/redis.conf:/etc/redis/redis.conf \
--d redis redis-server /etc/redis/redis.conf
+-d redis redis-server /etc/redis/redis.conf --appendonly yes
 
+sudo docker cp -a 04728f6460d8:/etc/redis/redis.conf /home/master/redis/conf/redis.conf
  
 sudo docker run -it --name=nginx --privileged=true --restart=always -p 80:80 \
 -v /home/master/nginx/nginx.conf:/etc/nginx/nginx.conf \
