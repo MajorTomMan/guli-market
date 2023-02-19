@@ -2,13 +2,15 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-18 17:50:18
+ * @LastEditTime: 2023-02-18 17:56:56
  * @FilePath: /common/home/master/project/GuliMall/product/src/test/java/com/atguigu/gulimall/product/ProductApplicationTests.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.product;
 
 import java.util.List;
+import java.util.UUID;
+
 import com.atguigu.gulimall.product.entity.BrandEntity;
 import com.atguigu.gulimall.product.service.BrandService;
 import com.atguigu.gulimall.product.service.CategoryService;

@@ -11,6 +11,7 @@
 package com.atguigu.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.vo.Catelog2Vo;
@@ -33,6 +34,6 @@ public interface CategoryService extends IService<CategoryEntity> {
     Long[] findCateLogPath(Long cateLogId);
     void updateCascade(CategoryEntity category);
     List<CategoryEntity> getLevel1Categorys();
-    Map<String, List<Catelog2Vo>> getCatalogJson();
+    Map<String, List<Catelog2Vo>> getCatalogJson() throws JsonProcessingException;
 }
 

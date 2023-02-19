@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -8,11 +9,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
 
@@ -29,6 +35,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     CategoryDao categoryDao;
     @Autowired
     CategoryBrandRelationService relationService;
+    @Autowired
+    StringRedisTemplate redisClient;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -109,29 +117,57 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
         // TODO Auto-generated method stub
-        List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+        List<CategoryEntity> categoryEntities = baseMapper
+                .selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
         return categoryEntities;
     }
 
     @Override
-    public Map<String, List<Catelog2Vo>> getCatalogJson() {
+    public Map<String, List<Catelog2Vo>> getCatalogJson() throws JsonProcessingException {
         // TODO Auto-generated method stub
-        List<CategoryEntity> selectList = baseMapper.selectList(null);
-        List<CategoryEntity> level1Categorys=getParent_cid(selectList,0L);
+        ObjectMapper mapper = new ObjectMapper();
+        String catalogJSON = redisClient.opsForValue().get("catalogJSON");
+        if (StringUtils.isEmpty(catalogJSON)) {
+            System.out.println("缓存未命中...开始查询数据库.....");
+            Map<String, List<Catelog2Vo>> catalogJsonFromDB = getCatalogJsonFromDB();
+            
+            return catalogJsonFromDB;
+        }
+        System.out.println("缓存命中...");
+        Map<String, List<Catelog2Vo>> result = mapper.readValue(catalogJSON,
+                new TypeReference<Map<String, List<Catelog2Vo>>>() {
+                });
+        return result;
+    }
 
-        Map<String, List<Catelog2Vo>> parent_cid = level1Categorys.stream().collect(Collectors.toMap(k->{
+    public synchronized Map<String, List<Catelog2Vo>> getCatalogJsonFromDB()
+            throws JsonMappingException, JsonProcessingException {
+        // TODO Auto-generated method stub
+        ObjectMapper mapper = new ObjectMapper();
+        String catalogJSON = redisClient.opsForValue().get("catalogJSON");
+        if (!StringUtils.isEmpty(catalogJSON)) {
+            Map<String, List<Catelog2Vo>> result = mapper.readValue(catalogJSON,
+                    new TypeReference<Map<String, List<Catelog2Vo>>>() {
+                    });
+            return result;
+        }
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+        List<CategoryEntity> level1Categorys = getParent_cid(selectList, 0L);
+
+        Map<String, List<Catelog2Vo>> parent_cid = level1Categorys.stream().collect(Collectors.toMap(k -> {
             return k.getCatId().toString();
-        },v->{
-            List<CategoryEntity> categoryEntities = getParent_cid(selectList,v.getCatId());
-            List<Catelog2Vo> catelog2Vos=null;
-            if(categoryEntities!=null){
-                catelog2Vos=categoryEntities.stream().map(l2->
-                {
-                    Catelog2Vo catelog2Vo=new Catelog2Vo(v.getCatId().toString(),null,l2.getCatId().toString(),l2.getName());
-                    List<CategoryEntity> level3Catelog = getParent_cid(selectList,l2.getCatId());
-                    if(level3Catelog!=null){
-                        List<Category3Vo> catalog3vo = level3Catelog.stream().map(l3->{
-                            Category3Vo catelog3Vo= new Category3Vo(l2.getCatId().toString(), l3.getCatId().toString(), l3.getName());
+        }, v -> {
+            List<CategoryEntity> categoryEntities = getParent_cid(selectList, v.getCatId());
+            List<Catelog2Vo> catelog2Vos = null;
+            if (categoryEntities != null) {
+                catelog2Vos = categoryEntities.stream().map(l2 -> {
+                    Catelog2Vo catelog2Vo = new Catelog2Vo(v.getCatId().toString(), null, l2.getCatId().toString(),
+                            l2.getName());
+                    List<CategoryEntity> level3Catelog = getParent_cid(selectList, l2.getCatId());
+                    if (level3Catelog != null) {
+                        List<Category3Vo> catalog3vo = level3Catelog.stream().map(l3 -> {
+                            Category3Vo catelog3Vo = new Category3Vo(l2.getCatId().toString(), l3.getCatId().toString(),
+                                    l3.getName());
                             return catelog3Vo;
                         }).collect(Collectors.toList());
                         catelog2Vo.setCatalog3List(catalog3vo);
@@ -141,13 +177,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             }
             return catelog2Vos;
         }));
+        String s = mapper.writeValueAsString(parent_cid);
+            redisClient.opsForValue().set("catalogJSON", s,1,TimeUnit.DAYS);
         return parent_cid;
     }
 
-    private List<CategoryEntity> getParent_cid(List<CategoryEntity> selectList,Long parent_cid) {
+    private List<CategoryEntity> getParent_cid(List<CategoryEntity> selectList, Long parent_cid) {
         List<CategoryEntity> collect = selectList.stream().filter(
-            item->item.getParentCid()==parent_cid
-        ).collect(Collectors.toList());
+                item -> item.getParentCid() == parent_cid).collect(Collectors.toList());
         return collect;
     }
 }
