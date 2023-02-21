@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-18 17:56:56
- * @FilePath: /common/home/master/project/GuliMall/product/src/test/java/com/atguigu/gulimall/product/ProductApplicationTests.java
+ * @LastEditTime: 2023-02-21 11:45:17
+ * @FilePath: /GuliMall/product/src/test/java/com/atguigu/gulimall/product/ProductApplicationTests.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.product;
@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -34,6 +35,8 @@ class ProductApplicationTests {
     CategoryService categoryService;
     @Autowired
     StringRedisTemplate redis;
+    @Autowired
+    RedissonClient redissonClient;
     @Test
     void contextLoads() {
         BrandEntity brandEntity = new BrandEntity();
@@ -46,7 +49,10 @@ class ProductApplicationTests {
         service.updateById(brandEntity);
         System.out.println("Success!");
     }
-
+    @Test
+    public void testRediss(){
+        System.out.println(redissonClient);
+    }
     @Test
     void getAllInformation() {
         List<BrandEntity> list = service.list(new QueryWrapper<BrandEntity>());

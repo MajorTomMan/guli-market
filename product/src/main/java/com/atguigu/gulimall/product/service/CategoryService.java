@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 00:27:09
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-14 12:20:30
+ * @LastEditTime: 2023-02-19 18:31:02
  * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/CategoryService.java
  * @Description: 
  * 
@@ -34,6 +34,6 @@ public interface CategoryService extends IService<CategoryEntity> {
     Long[] findCateLogPath(Long cateLogId);
     void updateCascade(CategoryEntity category);
     List<CategoryEntity> getLevel1Categorys();
-    Map<String, List<Catelog2Vo>> getCatalogJson() throws JsonProcessingException;
+    Map<String, List<Catelog2Vo>> getCatalogJson() throws JsonProcessingException, InterruptedException;
 }
 

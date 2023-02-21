@@ -1,14 +1,22 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import io.lettuce.core.RedisClient;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -37,6 +45,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     CategoryBrandRelationService relationService;
     @Autowired
     StringRedisTemplate redisClient;
+    @Autowired
+    RedissonClient redissonClient;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -123,14 +133,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     }
 
     @Override
-    public Map<String, List<Catelog2Vo>> getCatalogJson() throws JsonProcessingException {
+    public Map<String, List<Catelog2Vo>> getCatalogJson() throws JsonProcessingException, InterruptedException {
         // TODO Auto-generated method stub
         ObjectMapper mapper = new ObjectMapper();
         String catalogJSON = redisClient.opsForValue().get("catalogJSON");
         if (StringUtils.isEmpty(catalogJSON)) {
             System.out.println("缓存未命中...开始查询数据库.....");
-            Map<String, List<Catelog2Vo>> catalogJsonFromDB = getCatalogJsonFromDB();
-            
+            Map<String, List<Catelog2Vo>> catalogJsonFromDB = getCatalogJsonFromDBWithRedisLock();
             return catalogJsonFromDB;
         }
         System.out.println("缓存命中...");
@@ -140,9 +149,24 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return result;
     }
 
-    public synchronized Map<String, List<Catelog2Vo>> getCatalogJsonFromDB()
-            throws JsonMappingException, JsonProcessingException {
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDBWithRedisLock()
+            throws JsonMappingException, JsonProcessingException, InterruptedException {
         // TODO Auto-generated method stub
+        System.out.println("获取分布式锁成功");
+        Map<String, List<Catelog2Vo>> dataFromDB;
+        RLock lock = redissonClient.getLock("catalogJson-lock");
+        lock.lock();
+
+        try {
+            System.out.println("查询数据库");
+            dataFromDB = getDataFromDB();
+        } finally {
+            // TODO: handle exception
+            lock.unlock();
+        }
+        return dataFromDB;
+    }
+    private Map<String, List<Catelog2Vo>> getDataFromDB() throws JsonProcessingException, JsonMappingException {
         ObjectMapper mapper = new ObjectMapper();
         String catalogJSON = redisClient.opsForValue().get("catalogJSON");
         if (!StringUtils.isEmpty(catalogJSON)) {
@@ -174,12 +198,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                     }
                     return catelog2Vo;
                 }).collect(Collectors.toList());
-            }
-            return catelog2Vos;
-        }));
-        String s = mapper.writeValueAsString(parent_cid);
-            redisClient.opsForValue().set("catalogJSON", s,1,TimeUnit.DAYS);
-        return parent_cid;
+            }return catelog2Vos;}));
+
+    String s = mapper.writeValueAsString(
+            parent_cid);redisClient.opsForValue().set("catalogJSON",s,1,TimeUnit.DAYS);return parent_cid;
+    }
+
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDB()
+            throws JsonMappingException, JsonProcessingException {
+        return getDataFromDB();
     }
 
     private List<CategoryEntity> getParent_cid(List<CategoryEntity> selectList, Long parent_cid) {
