@@ -19,8 +19,6 @@ import io.renren.modules.sys.service.SysConfigService;
  *
  * @author Mark sunlightcs@gmail.com
  */
-
-/* 
 public final class OSSFactory {
     private static SysConfigService sysConfigService;
 
@@ -44,4 +42,3 @@ public final class OSSFactory {
     }
 
 }
- */

@@ -26,9 +26,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service("categoryService")
@@ -109,6 +111,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return paths;
     }
 
+    @CacheEvict(value="category",key = "'getLevel1Categorys'")
+    @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
         // TODO Auto-generated method stub
@@ -117,7 +121,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             relationService.updateCategory(category.getCatId(), category.getName());
         }
     }
-    @Cacheable(value={"category"},key = "'level1Categorys'")
+
+    @Cacheable(value = { "category" }, key = "#root.method.name")
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
         // TODO Auto-generated method stub
@@ -125,9 +130,40 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                 .selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
         return categoryEntities;
     }
-
+    @Cacheable(value="category",key="#root.methodName")
     @Override
-    public Map<String, List<Catelog2Vo>> getCatalogJson() throws JsonProcessingException, InterruptedException {
+    public Map<String, List<Catelog2Vo>> getCatalogJson()
+            throws JsonProcessingException, InterruptedException {
+        // TODO Auto-generated method stub
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+        List<CategoryEntity> level1Categorys = getParent_cid(selectList, 0L);
+
+        Map<String, List<Catelog2Vo>> parent_cid = level1Categorys.stream().collect(Collectors.toMap(k -> {
+            return k.getCatId().toString();
+        }, v -> {
+            List<CategoryEntity> categoryEntities = getParent_cid(selectList, v.getCatId());
+            List<Catelog2Vo> catelog2Vos = null;
+            if (categoryEntities != null) {
+                catelog2Vos = categoryEntities.stream().map(l2 -> {
+                    Catelog2Vo catelog2Vo = new Catelog2Vo(v.getCatId().toString(), null, l2.getCatId().toString(),
+                            l2.getName());
+                    List<CategoryEntity> level3Catelog = getParent_cid(selectList, l2.getCatId());
+                    if (level3Catelog != null) {
+                        List<Category3Vo> catalog3vo = level3Catelog.stream().map(l3 -> {
+                            Category3Vo catelog3Vo = new Category3Vo(l2.getCatId().toString(), l3.getCatId().toString(),
+                                    l3.getName());
+                            return catelog3Vo;
+                        }).collect(Collectors.toList());
+                        catelog2Vo.setCatalog3List(catalog3vo);
+                    }
+                    return catelog2Vo;
+                }).collect(Collectors.toList());
+            }
+            return catelog2Vos;
+        }));
+        return parent_cid;
+    }
+    public Map<String, List<Catelog2Vo>> getCatalogJson2() throws JsonProcessingException, InterruptedException {
         // TODO Auto-generated method stub
         ObjectMapper mapper = new ObjectMapper();
         String catalogJSON = redisClient.opsForValue().get("catalogJSON");
@@ -160,6 +196,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }
         return dataFromDB;
     }
+
     private Map<String, List<Catelog2Vo>> getDataFromDB() throws JsonProcessingException, JsonMappingException {
         ObjectMapper mapper = new ObjectMapper();
         String catalogJSON = redisClient.opsForValue().get("catalogJSON");
@@ -192,10 +229,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                     }
                     return catelog2Vo;
                 }).collect(Collectors.toList());
-            }return catelog2Vos;}));
+            }
+            return catelog2Vos;
+        }));
 
-    String s = mapper.writeValueAsString(
-            parent_cid);redisClient.opsForValue().set("catalogJSON",s,1,TimeUnit.DAYS);return parent_cid;
+        String s = mapper.writeValueAsString(
+                parent_cid);
+        redisClient.opsForValue().set("catalogJSON", s, 1, TimeUnit.DAYS);
+        return parent_cid;
     }
 
     public Map<String, List<Catelog2Vo>> getCatalogJsonFromDB()

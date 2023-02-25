@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Data
 @TableName("sys_menu")
-public class SysMenuEntity implements Serializable {
+public class SysMenuEntity implements Serializable,Comparable<SysMenuEntity> {
 	private static final long serialVersionUID = 1L;
 	
 	/**
@@ -83,4 +83,8 @@ public class SysMenuEntity implements Serializable {
 	@TableField(exist=false)
 	private List<SysMenuEntity> list=new ArrayList<>();
 
+	@Override
+	public int compareTo(SysMenuEntity o) {
+		return this.getOrderNum()-o.getOrderNum();
+	}
 }

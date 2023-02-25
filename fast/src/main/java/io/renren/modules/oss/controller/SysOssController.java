@@ -19,7 +19,7 @@ import io.renren.common.validator.group.AliyunGroup;
 import io.renren.common.validator.group.QcloudGroup;
 import io.renren.common.validator.group.QiniuGroup;
 import io.renren.modules.oss.cloud.CloudStorageConfig;
-/* import io.renren.modules.oss.cloud.OSSFactory; */
+import io.renren.modules.oss.cloud.OSSFactory;
 import io.renren.modules.oss.entity.SysOssEntity;
 import io.renren.modules.oss.service.SysOssService;
 import io.renren.modules.sys.service.SysConfigService;
@@ -37,7 +37,6 @@ import java.util.Map;
  *
  * @author Mark sunlightcs@gmail.com
  */
-
 @RestController
 @RequestMapping("sys/oss")
 public class SysOssController {
@@ -91,7 +90,6 @@ public class SysOssController {
 	/**
 	 * 上传文件
 	 */
-	/* 
 	@PostMapping("/upload")
 	@RequiresPermissions("sys:oss:all")
 	public R upload(@RequestParam("file") MultipartFile file) throws Exception {
@@ -111,7 +109,7 @@ public class SysOssController {
 
 		return R.ok().put("url", url);
 	}
- */
+
 
 	/**
 	 * 删除

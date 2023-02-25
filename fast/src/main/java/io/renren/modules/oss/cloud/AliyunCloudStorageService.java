@@ -7,11 +7,8 @@
  */
 
 package io.renren.modules.oss.cloud;
- 
-/* import com.aliyun.oss.OSSClient; */
 
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.aliyun.oss.OSSClient;
 import io.renren.common.exception.RRException;
 
 import java.io.ByteArrayInputStream;
@@ -22,9 +19,7 @@ import java.io.InputStream;
  *
  * @author Mark sunlightcs@gmail.com
  */
-/* 
 public class AliyunCloudStorageService extends CloudStorageService {
-    @Autowired
     private OSSClient client;
 
     public AliyunCloudStorageService(CloudStorageConfig config){
@@ -65,4 +60,3 @@ public class AliyunCloudStorageService extends CloudStorageService {
         return upload(inputStream, getPath(config.getAliyunPrefix(), suffix));
     }
 }
- */
