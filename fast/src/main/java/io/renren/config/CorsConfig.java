@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-25 13:38:32
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-25 17:35:49
+ * @LastEditTime: 2023-02-26 00:49:21
  * @FilePath: /common/home/master/project/GuliMall/fast/src/main/java/io/renren/config/CorsConfig.java
  * @Description: 
  * 
@@ -24,12 +24,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
-    @Override
+/*     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOrigins("*")
             .allowCredentials(true)
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .maxAge(3600);
-    }
+    } */
 }

@@ -20,8 +20,14 @@
         </el-form-item>
       </el-form>
     </el-form>
-    <el-table :data="dataList" border v-loading="dataListLoading" @selection-change="selectionChangeHandle"
-      style="width: 100%;" @expand-change="getSkuDetails">
+    <el-table
+      :data="dataList"
+      border
+      v-loading="dataListLoading"
+      @selection-change="selectionChangeHandle"
+      style="width: 100%;"
+      @expand-change="getSkuDetails"
+    >
       <el-table-column type="expand">
         <template slot-scope="scope">
           商品标题：{{scope.row.skuTitle}}
@@ -52,7 +58,12 @@
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="previewHandle(scope.row.skuId)">预览</el-button>
           <el-button type="text" size="small" @click="commentHandle(scope.row.skuId)">评论</el-button>
-          <el-dropdown @command="handleCommand(scope.row,$event)" size="small" split-button type="text">
+          <el-dropdown
+            @command="handleCommand(scope.row,$event)"
+            size="small"
+            split-button
+            type="text"
+          >
             更多
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="uploadImages">上传图片</el-dropdown-item>
@@ -67,9 +78,15 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="sizeChangeHandle" @current-change="currentChangeHandle" :current-page="pageIndex"
-      :page-sizes="[10, 20, 50, 100]" :page-size="pageSize" :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+    <el-pagination
+      @size-change="sizeChangeHandle"
+      @current-change="currentChangeHandle"
+      :current-page="pageIndex"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="pageSize"
+      :total="totalPage"
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
   </div>
 </template>
 
@@ -165,12 +182,12 @@ export default {
     }
   },
   mounted() {
-    /*     this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {
-          this.dataForm.catelogId = val[val.length - 1];
-        });
-        this.brandIdSub = PubSub.subscribe("brandId", (msg, val) => {
-          this.dataForm.brandId = val;
-        }); */
+    this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {
+      this.dataForm.catelogId = val[val.length - 1];
+    });
+    this.brandIdSub = PubSub.subscribe("brandId", (msg, val) => {
+      this.dataForm.brandId = val;
+    });
   },
   beforeDestroy() {
     PubSub.unsubscribe(this.catPathSub);

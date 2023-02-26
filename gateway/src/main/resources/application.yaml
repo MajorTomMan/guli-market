@@ -33,9 +33,9 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment} #该处填renren-fast的路径名
         - id: gulimall_host_route
-          uri: lb://product # 该处填nacos上的服务名(即spring.application.name中的值)
+          uri: lb://product
           predicates:
-            - Host=**.gulimall.com
+            - Host=**.gulimall.com,gulimall.com
 
     # 使用spring loadbalancer，弃用ribbon
     loadbalancer:

@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-25 13:38:31
  * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-25 18:36:25
+ * @LastEditTime: 2023-02-25 23:35:06
  * @FilePath: /common/home/master/project/GuliMall/fast/src/main/java/io/renren/RenrenApplication.java
  * @Description: 
  * 
@@ -22,7 +22,6 @@ package io.renren;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 
 @SpringBootApplication
 public class RenrenApplication {

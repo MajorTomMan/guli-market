@@ -2,7 +2,7 @@
  # @Author: flashnames 765719516@qq.com
  # @Date: 2022-05-14 11:02:02
  # @LastEditors: flashnames 765719516@qq.com
- # @LastEditTime: 2023-02-18 17:40:56
+ # @LastEditTime: 2023-02-25 21:48:43
  # @FilePath: /common/home/master/project/GuliMall/dockerCommand/dockerContainer.sh
  # @Description: 
  # 
@@ -10,7 +10,7 @@
 ### 
 
 
-sudo docker run -p 3300:3306 --name mysql --restart=always \
+sudo docker run -p 3300:3306 --name mysql \
 -v /home/master/mysql/sql:/sql \
 -v /home/master/mysql/conf:/etc/mysql/conf.d \
 -v /home/master/mysql/data:/var/lib/mysql \

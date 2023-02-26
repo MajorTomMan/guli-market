@@ -257,7 +257,7 @@ export default {
         //请求成功
         console.log("要回显的数据", data);
         this.category.name = data.category.name;
-        this.category.catId = data.categorya.catId;
+        this.category.catId = data.category.catId;
         this.category.icon = data.category.icon;
         this.category.productUnit = data.category.productUnit;
         this.category.parentCid = data.category.parentCid;

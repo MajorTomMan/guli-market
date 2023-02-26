@@ -1,17 +1,12 @@
-<!--
- * @Author: flashnames 765719516@qq.com
- * @Date: 2022-09-05 23:15:17
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-09-28 22:10:46
- * @FilePath: /common/home/master/project/gulimall/fast-vue/src/views/modules/common/brand-select.vue
- * @Description: 
- * 
- * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
--->
 <template>
   <div>
     <el-select placeholder="请选择" v-model="brandId" filterable clearable>
-      <el-option v-for="item in brands" :key="item.brandId" :label="item.brandName" :value="item.brandId"></el-option>
+      <el-option
+        v-for="item in brands"
+        :key="item.brandId"
+        :label="item.brandName"
+        :value="item.brandId"
+      ></el-option>
     </el-select>
   </div>
 </template>
@@ -61,7 +56,7 @@ export default {
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() { },
+  created() {},
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     //监听三级分类消息的变化
@@ -70,15 +65,15 @@ export default {
       this.getCatBrands();
     });
   },
-  beforeCreate() { }, //生命周期 - 创建之前
-  beforeMount() { }, //生命周期 - 挂载之前
-  beforeUpdate() { }, //生命周期 - 更新之前
-  updated() { }, //生命周期 - 更新之后
+  beforeCreate() {}, //生命周期 - 创建之前
+  beforeMount() {}, //生命周期 - 挂载之前
+  beforeUpdate() {}, //生命周期 - 更新之前
+  updated() {}, //生命周期 - 更新之后
   beforeDestroy() {
     PubSub.unsubscribe(this.subscribe); //销毁订阅
   }, //生命周期 - 销毁之前
-  destroyed() { }, //生命周期 - 销毁完成
-  activated() { } //如果页面有keep-alive缓存功能，这个函数会触发
+  destroyed() {}, //生命周期 - 销毁完成
+  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
 <style scoped>

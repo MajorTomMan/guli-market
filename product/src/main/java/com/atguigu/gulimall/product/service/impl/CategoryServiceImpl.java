@@ -125,6 +125,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Cacheable(value = { "category" }, key = "#root.method.name")
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
+
         // TODO Auto-generated method stub
         List<CategoryEntity> categoryEntities = baseMapper
                 .selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
