@@ -10,14 +10,14 @@
 ### 
 
 
-sudo docker run -p 3300:3306 --name mysql \
+sudo docker run -p 3306:3306 --name mysql \
 -v /home/master/mysql/sql:/sql \
--v /home/master/mysql/conf:/etc/mysql/conf.d \
+-v /home/master/mysql/conf/my.cnf:/etc/my.cnf \
 -v /home/master/mysql/data:/var/lib/mysql \
 -v /home/master/mysql/logs:/var/log/mysql \
 -v /home/master/mysql/mysql-files:/var/lib/mysql-files \
 -e MYSQL_ROOT_PASSWORD=981221 \
--d mysql:8.0.27
+-d mysql
 
 docker run -p 6379:6379 --name redis --restart=always   \
 -v /home/master/redis/data:/data \
