@@ -1,0 +1,93 @@
+version: '3'
+services:
+  mysql:
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - /home/master/mysql/sql:/sql
+      - /home/master/mysql/conf/my.cnf:/etc/my.cnf
+      - /home/master/mysql/data:/var/lib/mysql
+      - /home/master/mysql/logs:/var/log/mysql
+      - /home/master/mysql/mysql-files:/var/lib/mysql-files
+    environment:
+      - MYSQL_ROOT_PASSWORD=981221
+    image: mysql
+  redis:
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - /home/master/redis/data:/data
+      - /home/master/redis/conf/redis.conf:/etc/redis/redis.conf
+    image: redis
+    command: "/etc/redis/redis.conf --appendonly yes"
+  nginx:
+    container_name: nginx
+    ports:
+      - "80:80"
+    restart: always
+    volumes:
+      - /home/master/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /home/master/nginx/html:/usr/share/nginx/html
+      - /home/master/nginx/logs:/var/log/nginx
+      - /home/master/nginx/conf.d:/etc/nginx/conf.d
+    image: nginx
+  elasticsearch:
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - /home/master/es/config:/usr/share/elasticsearch/config
+      - /home/master/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /home/master/es/data/:/usr/share/elasticsearch/data
+      - /home/master/es/plugins:/usr/share/elasticsearch/plugins
+    image: elasticsearch:8.2.0
+  kibana:
+    container_name: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - /home/master/kibana/kibana.yml:- /home/bwie/soft/elasticsearch/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    image: kibana:8.2.0
+  rabbitmq:
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    restart: always
+    volumes:
+      - /home/master/rabbitmq/data:/var/lib/rabbitmq
+      - /home/master/rabbitmq/conf:/etc/rabbitmq
+      - /home/master/rabbitmq/logs:/var/log/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=master
+      - RABBITMQ_DEFAULT_PASS=981221
+    image: rabbitmq:management
+  nacos:
+    container_name: nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    restart: always
+    environment:
+      - MODE=standalone
+      - PREFER_HOST_MODE=ip
+      - MYSQL_SERVICE_HOST=localhost
+    volumes:
+      - /home/master/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties
+      - /home/master/nacos/logs:/home/nacos/logs
+      - /home/master/nacos/plugins/mysql:/home/nacos/plugins/mysql
+      - /home/master/nacos/conf:/home/nacos/conf
+      - /home/master/nacos/bin:/home/nacos/bin
+    image: nacos
