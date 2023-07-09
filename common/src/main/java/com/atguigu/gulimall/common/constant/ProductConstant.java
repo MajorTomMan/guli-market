@@ -10,7 +10,6 @@
  */
 package com.atguigu.gulimall.common.constant;
 
-import lombok.Data;
 
 public class ProductConstant {
     public enum AttrEnum{
