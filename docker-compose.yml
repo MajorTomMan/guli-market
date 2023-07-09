@@ -42,7 +42,7 @@ services:
       - "9300:9300"
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
     volumes:
       - /home/master/es/config:/usr/share/elasticsearch/config
       - /home/master/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
@@ -68,7 +68,6 @@ services:
     #volumes:
       #- /home/master/rabbitmq/data:/var/lib/rabbitmq
       #- /home/master/rabbitmq/conf:/etc/rabbitmq
-      #- /home/master/rabbitmq/logs:/var/log/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=master
       - RABBITMQ_DEFAULT_PASS=981221
