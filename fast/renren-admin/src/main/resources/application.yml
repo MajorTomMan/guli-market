@@ -11,7 +11,6 @@ server:
     session:
       cookie:
         http-only: true
-
 knife4j:
   enable: true
   basic:

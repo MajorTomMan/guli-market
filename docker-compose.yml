@@ -77,7 +77,6 @@ services:
     ports:
       - "8848:8848"
       - "9848:9848"
-      - "9849:9849"
     restart: always
     depends_on:
       - mysql
