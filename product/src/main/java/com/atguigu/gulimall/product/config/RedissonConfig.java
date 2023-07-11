@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-21 11:37:45
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-26 00:38:00
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-11 22:58:57
  * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/config/RedissonConfig.java
  * @Description: 
  * 
@@ -23,7 +23,7 @@ public class RedissonConfig {
     @Bean(destroyMethod = "shutdown")
     public RedissonClient redisson(){
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://localhost:6379").setConnectTimeout(30000);
+        config.useSingleServer().setAddress("redis://192.168.253.131:6379").setConnectTimeout(30000).setPassword("root");
         return Redisson.create(config);
     }
 }

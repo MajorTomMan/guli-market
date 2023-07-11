@@ -12,7 +12,7 @@ services:
       - /home/master/mysql/logs:/var/log/mysql
       - /home/master/mysql/mysql-files:/var/lib/mysql-files
     environment:
-      - MYSQL_ROOT_PASSWORD=981221
+      - MYSQL_ROOT_PASSWORD=root
     image: mysql
   redis:
     container_name: redis
@@ -23,7 +23,7 @@ services:
       - /home/master/redis/data:/data
       - /home/master/redis/conf/redis.conf:/etc/redis/redis.conf
     image: redis
-    command: "/etc/redis/redis.conf --appendonly yes"
+    command: "/etc/redis/redis.conf --requirepass root --appendonly yes"
   nginx:
     container_name: nginx
     ports:
@@ -66,8 +66,8 @@ services:
       - "5672:5672"
     restart: always
     #volumes:
-      #- /home/master/rabbitmq/data:/var/lib/rabbitmq
-      #- /home/master/rabbitmq/conf:/etc/rabbitmq
+    #- /home/master/rabbitmq/data:/var/lib/rabbitmq
+    #- /home/master/rabbitmq/conf:/etc/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=master
       - RABBITMQ_DEFAULT_PASS=981221

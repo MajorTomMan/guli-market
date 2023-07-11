@@ -1,3 +1,5 @@
+
+
 /**
  * Copyright (c) 2018 人人开源 All rights reserved.
  *
@@ -38,7 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             .allowCredentials(true)
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .maxAge(3600);
-    }
+    } 
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

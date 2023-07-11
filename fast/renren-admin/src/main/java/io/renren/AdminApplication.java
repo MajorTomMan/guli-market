@@ -8,7 +8,6 @@
 
 package io.renren;
 
-import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -22,7 +21,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = { RedissonAutoConfiguration.class })
+@SpringBootApplication
 public class AdminApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
