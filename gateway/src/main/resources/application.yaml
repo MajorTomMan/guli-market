@@ -31,7 +31,7 @@ spring:
           predicates:
             - Path=/api/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/renren-admin/$\{segment} #该处填renren-fast的路径名
+            - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment} #该处填renren-fast的路径名
         - id: gulimall_host_route
           uri: lb://product
           predicates:

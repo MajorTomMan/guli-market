@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-25 20:25:32
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-26 00:46:49
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-12 01:18:58
  * @FilePath: /common/home/master/project/GuliMall/fast-vue/static/config/index.js
  * @Description: 
  * 
