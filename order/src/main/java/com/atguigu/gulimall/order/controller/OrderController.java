@@ -1,8 +1,18 @@
+/*
+ * @Author: MajorTomMan 765719516@qq.com
+ * @Date: 2023-06-23 17:37:38
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-13 22:35:16
+ * @FilePath: \Guli\order\src\main\java\com\atguigu\gulimall\order\controller\OrderController.java
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 package com.atguigu.gulimall.order.controller;
 
 import java.util.Arrays;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +48,8 @@ public class OrderController {
     // @RequiresPermissions("order:order:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = orderService.queryPage(params);
-
+        Logger logger=LoggerFactory.getLogger(getClass());
+        logger.info(""+page);
         return R.ok().put("page", page);
     }
 

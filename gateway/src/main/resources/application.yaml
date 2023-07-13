@@ -26,6 +26,12 @@ spring:
             - Path=/api/ware/**
           filters:
             - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填ware的路径名
+        - id: order_route
+          uri: lb://order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填ware的路径名
         - id: admin_route
           uri: lb://fast # 该处填nacos上的服务名(即spring.application.name中的值)
           predicates:
