@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-08-30 10:24:12
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-07-18 23:57:25
+ * @LastEditTime: 2023-07-19 00:05:30
  * @FilePath: /common/home/master/project/gulimall/thirdparty/src/main/java/com/atguigu/gulimall/thirdparty/controller/OssController.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSBuilder;
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
@@ -25,8 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OssController {
-    @Autowired
-    OSS client;
     @Value(value = "${spring.cloud.alicloud.access-key}")
     String accessId;
     @Value(value = "${spring.cloud.alicloud.oss.endpoint}")
@@ -35,6 +36,7 @@ public class OssController {
     String bucket;
     @RequestMapping("/oss/policy")
     public R policy() {
+        OSS client=new OSSClientBuilder().build(endpoint, accessId, accessId, accessId);
         // 填写Host地址，格式为https://bucketname.endpoint。
         String host = "https://" + bucket + "."+endpoint;
         // 设置上传到OSS文件的前缀，可置空此项。置空后，文件将上传至Bucket的根目录下。
