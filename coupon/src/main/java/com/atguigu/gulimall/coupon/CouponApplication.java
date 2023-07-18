@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-26 21:17:52
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-18 22:36:49
  * @FilePath: /common/home/master/project/gulimall/coupon/src/main/java/com/atguigu/gulimall/coupon/CouponApplication.java
  * @Description:  
  * 

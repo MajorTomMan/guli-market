@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-08-30 10:24:12
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-09-20 19:57:01
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-18 23:57:25
  * @FilePath: /common/home/master/project/gulimall/thirdparty/src/main/java/com/atguigu/gulimall/thirdparty/controller/OssController.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
