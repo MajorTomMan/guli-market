@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:20:29
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-11 22:57:07
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-19 22:59:42
  * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/config/ElasticSearchConfig.java
  * @Description: 
  * 
@@ -32,7 +32,7 @@ public class ElasticSearchConfig {
     }
     @Bean
     public RestClient restClient() {
-            HttpHost host = new HttpHost("localhost", 9200, "http");
+            HttpHost host = new HttpHost("192.168.253.131", 9200, "http");
             RestClientBuilder builder = RestClient.builder(host);
             RestClient restClient = builder.build();
             return restClient;

@@ -1,3 +1,11 @@
+/*
+ * @Author: MajorTomMan 765719516@qq.com
+ * @Date: 2023-07-04 00:31:52
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-19 22:08:56
+ * @FilePath: \Guli\fast-vue\config\index.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 'use strict'
 // Template version: 1.2.5
 // see http://vuejs-templates.github.io/webpack for documentation.
@@ -33,7 +41,7 @@ module.exports = {
     // Use Eslint Loader?
     // If true, your code will be linted during bundling and
     // linting errors and warnings will be shown in the console.
-    useEslint: true,
+    useEslint: false,
     // If true, eslint errors and warnings will also be shown in the error overlay
     // in the browser.
     showEslintErrorsInOverlay: false,
