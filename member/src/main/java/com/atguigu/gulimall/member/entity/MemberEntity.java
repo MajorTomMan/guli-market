@@ -95,7 +95,7 @@ public class MemberEntity implements Serializable {
 	/**
 	 * 微博社交账户uid（应该建立关联表）
 	 */
-	private String weiboUid;
+	//private String weiboUid;
 	/**
 	 * 访问令牌
 	 */
