@@ -16,6 +16,15 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
@@ -132,8 +141,8 @@
             <version>3.22.0</version>
             <exclusions>
                 <exclusion>
-                        <groupId>org.redisson</groupId>
-                        <artifactId>redisson-spring-data-31</artifactId>
+                    <groupId>org.redisson</groupId>
+                    <artifactId>redisson-spring-data-31</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

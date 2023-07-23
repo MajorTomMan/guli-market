@@ -1,11 +1,11 @@
 spring:
-  cloud:
-    # 使用spring loadbalancer，弃用ribbon
-    loadbalancer:
-      ribbon:
-        enabled: false
   datasource:
     username: root
     password: 981221
-    url: jdbc:mysql://192.168.253.131:3306/gulimall_wms&useSSL=false
+    url: jdbc:mysql://192.168.253.131:3306/gulimall_wms
     driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
