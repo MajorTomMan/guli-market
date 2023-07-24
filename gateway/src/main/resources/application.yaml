@@ -41,8 +41,11 @@ spring:
         - id: gulimall_host_route
           uri: lb://product
           predicates:
-            - Host=**.gulimall.com,gulimall.com
-
+            - Host=gulimall.com
+        - id: gulimall_search_route
+          uri: lb://search
+          predicates:
+            - Host=search.gulimall.com
     # 使用spring loadbalancer，弃用ribbon
     loadbalancer:
       ribbon:
