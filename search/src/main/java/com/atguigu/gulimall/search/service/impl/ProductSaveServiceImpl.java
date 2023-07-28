@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-14 18:45:15
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-28 23:50:06
  * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
  * @Description: 
  * 
@@ -43,16 +43,13 @@ public class ProductSaveServiceImpl implements ProductSaveService {
          * 并建立映射关系
          */
         List<BulkOperation> skus = skuEsModel.stream().map(sku -> {
-            return new BulkOperation.Builder()
-                    .create(
-                            p -> p.index(EsContant.product_index)
-                                    .id(sku.getSkuId().toString())
-                                    .document(sku))
-                    .build();
+            return new BulkOperation.Builder().create(
+                p -> 
+                    p.index(EsContant.product_index).id(sku.getSkuId().toString())
+                    .document(sku)).build();
         }).collect(Collectors.toList());
         /* 将索引请求通过bulkRequest发送出去 */
         BulkResponse response = client.bulk(b -> b.operations(skus));
-        log.info("响应结果:{}",response.toString());
         if (response.errors()) {
             log.error("批量处理失败");
             response.items().stream().forEach(item -> {
