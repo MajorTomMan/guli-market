@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:16:00
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-12 12:19:15
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-30 11:28:08
  * @FilePath: /GuliMall/search/src/test/java/com/atguigu/gulimall/search/SearchApplicationTests.java
  * @Description: 
  * 
@@ -46,9 +46,6 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.TotalHits;
 import co.elastic.clients.elasticsearch.core.search.TotalHitsRelation;
 import co.elastic.clients.json.JsonData;
-import co.elastic.clients.json.JsonpUtils;
-import co.elastic.clients.util.ObjectBuilder;
-import jakarta.json.Json;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

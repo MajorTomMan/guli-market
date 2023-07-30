@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-13 16:19:54
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-13 16:36:22
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-30 17:02:27
  * @FilePath: /common/home/master/project/GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/productDeleteServiceImpl.java
  * @Description: 
  * 
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.atguigu.gulimall.search.constant.EsContant;
+import com.atguigu.gulimall.common.constant.ElasticConstant;
 import com.atguigu.gulimall.search.service.ProductDeleteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class productDeleteServiceImpl implements ProductDeleteService{
         List<BulkOperation> deletes = skuIds.stream().map(
             skuId->{
                 return new BulkOperation.Builder().delete(
-                    d->d.index(EsContant.product_index).id(skuId.toString())
+                    d->d.index(ElasticConstant.PRODUCT_INDEX).id(skuId.toString())
                 )
                 .build();
             }

@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:31:55
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-13 16:31:48
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-07-30 17:35:51
  * @FilePath: /common/home/master/project/GuliMall/search/src/main/java/com/atguigu/gulimall/search/controller/ElasticSaveController.java
  * @Description: 
  * 
@@ -31,7 +31,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequestMapping("/search")
 @RestController
-public class ElasticOperationsController {
+public class ElasticSaveController {
     @Autowired 
     ProductSaveService productSaveService;
     @Autowired

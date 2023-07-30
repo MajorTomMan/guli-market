@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-07-28 23:50:06
+ * @LastEditTime: 2023-07-30 22:42:56
  * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
  * @Description: 
  * 
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.atguigu.gulimall.common.constant.ElasticConstant;
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
-import com.atguigu.gulimall.search.constant.EsContant;
 import com.atguigu.gulimall.search.service.ProductSaveService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class ProductSaveServiceImpl implements ProductSaveService {
         List<BulkOperation> skus = skuEsModel.stream().map(sku -> {
             return new BulkOperation.Builder().create(
                 p -> 
-                    p.index(EsContant.product_index).id(sku.getSkuId().toString())
+                    p.index(ElasticConstant.PRODUCT_INDEX).id(sku.getSkuId().toString())
                     .document(sku)).build();
         }).collect(Collectors.toList());
         /* 将索引请求通过bulkRequest发送出去 */
@@ -71,7 +71,7 @@ public class ProductSaveServiceImpl implements ProductSaveService {
         SearchResponse<SkuEsModel> response;
         try {
             response = client.search(
-                    r -> r.index(EsContant.product_index), SkuEsModel.class);
+                    r -> r.index(ElasticConstant.PRODUCT_INDEX), SkuEsModel.class);
             List<Hit<SkuEsModel>> hits = response.hits().hits();
             skus = hits.stream().map(sku -> {
                 return sku.source();
