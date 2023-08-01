@@ -1,0 +1,137 @@
+{
+    "took": 5,
+    "timed_out": false,
+    "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+    },
+    "hits": {
+        "total": {
+            "value": 1,
+            "relation": "eq"
+        },
+        "max_score": 0.66301036,
+        "hits": [
+            {
+                "_index": "product",
+                "_type": "_doc",
+                "_id": "7",
+                "_score": 0.66301036,
+                "_source": {
+                    "attrs": [
+                        {
+                            "attrId": 11,
+                            "attrName": "CPU型号",
+                            "attrValue": "第一代骁龙8"
+                        }
+                    ],
+                    "brandId": 4,
+                    "brandImg": "https://gulimall-nan1.oss-cn-beijing.aliyuncs.com/2022-11-30/90b15473-072f-42d4-8c35-11a6cd1161ac_huawei.png",
+                    "brandName": "华为",
+                    "catalogId": 225,
+                    "catalogName": "手机",
+                    "hasStock": true,
+                    "hotScore": 0,
+                    "saleCount": 0,
+                    "skuId": 7,
+                    "skuImg": "https://gulimall-nan1.oss-cn-beijing.aliyuncs.com/2022-12-05//ff79ccd7-f380-4805-86aa-17624e2f59e3_d511faab82abb34b.jpg",
+                    "skuPrice": 4999.0,
+                    "skuTitle": "HUAWEI Mate 50 冰霜银 8+128GB直屏旗舰 超光变XMAGE影像 北斗卫星消息 低电量应急模式",
+                    "spuId": 15
+                },
+                "highlight": {
+                    "skuTitle": [
+                        "<b style= 'color:red'>HUAWEI</b> Mate 50 冰霜银 8+128GB直屏旗舰 超光变XMAGE影像 北斗卫星消息 低电量应急模式"
+                    ]
+                }
+            }
+        ]
+    },
+    "aggregations": {
+        "catalog_agg": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+                {
+                    "key": 225,
+                    "doc_count": 1,
+                    "catalog_name_agg": {
+                        "doc_count_error_upper_bound": 0,
+                        "sum_other_doc_count": 0,
+                        "buckets": [
+                            {
+                                "key": "手机",
+                                "doc_count": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "attr_agg": {
+            "doc_count": 1,
+            "attr_id_agg": {
+                "doc_count_error_upper_bound": 0,
+                "sum_other_doc_count": 0,
+                "buckets": [
+                    {
+                        "key": 11,
+                        "doc_count": 1,
+                        "attr_name_agg": {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 0,
+                            "buckets": [
+                                {
+                                    "key": "CPU型号",
+                                    "doc_count": 1
+                                }
+                            ]
+                        },
+                        "attr_value_agg": {
+                            "doc_count_error_upper_bound": 0,
+                            "sum_other_doc_count": 0,
+                            "buckets": [
+                                {
+                                    "key": "第一代骁龙8",
+                                    "doc_count": 1
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "brand_agg": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 0,
+            "buckets": [
+                {
+                    "key": 4,
+                    "doc_count": 1,
+                    "brand_img_agg": {
+                        "doc_count_error_upper_bound": 0,
+                        "sum_other_doc_count": 0,
+                        "buckets": [
+                            {
+                                "key": "https://gulimall-nan1.oss-cn-beijing.aliyuncs.com/2022-11-30/90b15473-072f-42d4-8c35-11a6cd1161ac_huawei.png",
+                                "doc_count": 1
+                            }
+                        ]
+                    },
+                    "brand_name_agg": {
+                        "doc_count_error_upper_bound": 0,
+                        "sum_other_doc_count": 0,
+                        "buckets": [
+                            {
+                                "key": "华为",
+                                "doc_count": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

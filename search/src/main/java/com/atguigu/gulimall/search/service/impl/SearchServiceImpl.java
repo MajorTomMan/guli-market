@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-07-31 00:00:23
+ * @LastEditTime: 2023-08-02 00:34:05
  * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\service\impl\SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -25,10 +25,13 @@ import com.esotericsoftware.minlog.Log;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.NestedQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermsQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery.Builder;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.json.JsonData;
@@ -66,7 +69,9 @@ public class SearchServiceImpl implements SearchService {
     /* 准备检索请求 */
     private SearchResult buildSearchRequest(SearchParam param) throws ElasticsearchException, IOException {
         List<Query> querys = new ArrayList<>();
-        /* 模糊匹配 */
+        /* 模糊匹配
+         * 根据关键词匹配
+         */
         if (!StringUtils.hasText(param.getKeyword())) {
             Query query = BoolQuery
                     .of(b -> b.must(m -> m.match(match -> match.field("skuTitle").query(param.getKeyword()))))
@@ -87,12 +92,13 @@ public class SearchServiceImpl implements SearchService {
         /* 按照指定的属性进行查询 */
         /* 尚未完成 */
         if (param.getAttrs() != null && param.getAttrs().size() > 0) {
-            BoolQuery.Builder nestedQuery = QueryBuilders.bool();
+            NestedQuery nestedQuery=null;
             for (String attr : param.getAttrs()) {
                 String[] temp = attr.split("_");
                 String attrId = temp[0];
                 String[] attrValues = temp[1].split(":");
-                nestedQuery.must(m -> m.term(t -> t.field("attrs.attrId").value(attrId)));
+                TermQuery termQuery=TermQuery.of(t->t.field("attrs.attrId").value(attrId));
+                TermsQuery termsQuery=TermsQuery.of(ts->ts.field("attrs.attrValue"));
             }
 
             NestedQuery.Builder query = QueryBuilders.nested().path("attrs");
