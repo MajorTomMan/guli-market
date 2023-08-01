@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-02 00:34:05
+ * @LastEditTime: 2023-08-02 00:56:36
  * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\service\impl\SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,7 +10,11 @@ package com.atguigu.gulimall.search.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,7 @@ import com.esotericsoftware.minlog.Log;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.NestedQuery;
@@ -97,8 +102,11 @@ public class SearchServiceImpl implements SearchService {
                 String[] temp = attr.split("_");
                 String attrId = temp[0];
                 String[] attrValues = temp[1].split(":");
+                List<FieldValue> collect = Arrays.asList(attrValues).stream().map(data->{
+                    return FieldValue.of(data);
+                }).collect(Collectors.toList());
                 TermQuery termQuery=TermQuery.of(t->t.field("attrs.attrId").value(attrId));
-                TermsQuery termsQuery=TermsQuery.of(ts->ts.field("attrs.attrValue"));
+                TermsQuery termsQuery=TermsQuery.of(ts->ts.field("attrs.attrValue").terms(t->t.value(collect)));
             }
 
             NestedQuery.Builder query = QueryBuilders.nested().path("attrs");
