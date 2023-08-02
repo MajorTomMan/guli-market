@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-02 00:56:36
+ * @LastEditTime: 2023-08-02 23:21:58
  * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\service\impl\SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -39,6 +39,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermsQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery.Builder;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.ScoreMode;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.json.SimpleJsonpMapper;
 import lombok.extern.log4j.Log4j2;
@@ -73,52 +74,56 @@ public class SearchServiceImpl implements SearchService {
 
     /* 准备检索请求 */
     private SearchResult buildSearchRequest(SearchParam param) throws ElasticsearchException, IOException {
-        List<Query> querys = new ArrayList<>();
-        /* 模糊匹配
+        Builder bQuery = QueryBuilders.bool();
+        /*
+         * 模糊匹配
          * 根据关键词匹配
          */
         if (!StringUtils.hasText(param.getKeyword())) {
-            Query query = BoolQuery
-                    .of(b -> b.must(m -> m.match(match -> match.field("skuTitle").query(param.getKeyword()))))
-                    ._toQuery();
-            querys.add(query);
+            Query query = QueryBuilders.match().field("skuTitle").query(param.getKeyword()).build()._toQuery();
+            bQuery.filter(query);
         }
         /* 按照三级分类查询 */
         if (!ObjectUtils.isEmpty(param.getCatalog3Id())) {
-            Query query = BoolQuery
-                    .of(b -> b.filter(f -> f.term(t -> t.field("catalogId").value(param.getCatalog3Id()))))._toQuery();
-            querys.add(query);
+            Query query = QueryBuilders.term().field("catalogId").value(param.getCatalog3Id()).build()._toQuery();
+            bQuery.filter(query);
         }
         /* 按照品牌ID查询 */
         if (!ObjectUtils.isEmpty(param.getBrandId())) {
-            Query query = BoolQuery.of(b -> b.filter(f -> f.terms(t -> t.field("brandId"))))._toQuery();
-            querys.add(query);
+            Query query = QueryBuilders.terms().field("brandId").build()._toQuery();
+            bQuery.filter(query);
         }
         /* 按照指定的属性进行查询 */
         /* 尚未完成 */
+
         if (param.getAttrs() != null && param.getAttrs().size() > 0) {
-            NestedQuery nestedQuery=null;
+            // attrs=1_5寸:8寸&attrs=2_16G:8G
             for (String attr : param.getAttrs()) {
                 String[] temp = attr.split("_");
+                /* 检索的属性ID */
                 String attrId = temp[0];
+                /* 这个属性检索用的值 */
                 String[] attrValues = temp[1].split(":");
-                List<FieldValue> collect = Arrays.asList(attrValues).stream().map(data->{
+                List<FieldValue> collect = Arrays.asList(attrValues).stream().map(data -> {
                     return FieldValue.of(data);
                 }).collect(Collectors.toList());
-                TermQuery termQuery=TermQuery.of(t->t.field("attrs.attrId").value(attrId));
-                TermsQuery termsQuery=TermsQuery.of(ts->ts.field("attrs.attrValue").terms(t->t.value(collect)));
+                Query termQuery = TermQuery.of(t -> t.field("attrs.attrId").value(attrId))._toQuery();
+                Query termsQuery = TermsQuery.of(ts -> ts.field("attrs.attrValue").terms(t -> t.value(collect)))
+                        ._toQuery();
+                Query nestedBoolQuery = BoolQuery.of(b -> b.must(termQuery, termsQuery))._toQuery();
+                /* 每一个都要生成一个Nested查询 */
+                Query nestedQuery = NestedQuery.of(n -> n.path("attrs").query(nestedBoolQuery))._toQuery();
+                bQuery.filter(nestedQuery);
             }
-
-            NestedQuery.Builder query = QueryBuilders.nested().path("attrs");
         }
-        BoolQuery boolQuery = null;
+        Query query=null;
         /* 按照是否有库存进行查询 */
         if (param.getHasStock() == 1) {
-            boolQuery = BoolQuery.of(b -> b.filter(f -> f.term(t -> t.field("hasStock").value(true))));
+            query=QueryBuilders.term().field("hasStock").value(true).build()._toQuery();
         } else {
-            boolQuery = BoolQuery.of(b -> b.filter(f -> f.term(t -> t.field("hasStock").value(false))));
+            query=QueryBuilders.term().field("hasStock").value(false).build()._toQuery();
         }
-        querys.add(boolQuery._toQuery());
+        bQuery.filter(query);
         /* 按照价格区间来查询 */
         if (!StringUtils.hasText(param.getSkuPrice())) {
             /*
@@ -137,10 +142,12 @@ public class SearchServiceImpl implements SearchService {
                     rangeQuery = RangeQuery.of(r -> r.field("skuPrice").gte(JsonData.of(temp[1])));
                 }
             }
-            final RangeQuery range = rangeQuery;
-            Query query = BoolQuery.of(b -> b.filter(f -> f.range(range)))._toQuery();
-            querys.add(query);
+            if(rangeQuery!=null){
+                bQuery.filter(rangeQuery._toQuery());
+            }
         }
+        /* 排序,分页,高亮 */
+        /* 聚合分析 */
         return null;
     }
 
