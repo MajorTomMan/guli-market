@@ -2,35 +2,37 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-02 23:21:58
+ * @LastEditTime: 2023-08-03 23:46:47
  * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\service\impl\SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.search.service.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import com.alibaba.nacos.common.packagescan.resource.ClassPathResource;
+import com.atguigu.gulimall.common.constant.ElasticConstant;
 import com.atguigu.gulimall.search.service.SearchService;
 import com.atguigu.gulimall.search.vo.SearchParam;
 import com.atguigu.gulimall.search.vo.SearchResult;
-import com.esotericsoftware.minlog.Log;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.NestedQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
@@ -38,10 +40,11 @@ import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.TermsQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery.Builder;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.search.ScoreMode;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.json.JsonData;
-import co.elastic.clients.json.SimpleJsonpMapper;
+
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -79,7 +82,7 @@ public class SearchServiceImpl implements SearchService {
          * 模糊匹配
          * 根据关键词匹配
          */
-        if (!StringUtils.hasText(param.getKeyword())) {
+        if (StringUtils.hasText(param.getKeyword())) {
             Query query = QueryBuilders.match().field("skuTitle").query(param.getKeyword()).build()._toQuery();
             bQuery.filter(query);
         }
@@ -94,8 +97,6 @@ public class SearchServiceImpl implements SearchService {
             bQuery.filter(query);
         }
         /* 按照指定的属性进行查询 */
-        /* 尚未完成 */
-
         if (param.getAttrs() != null && param.getAttrs().size() > 0) {
             // attrs=1_5寸:8寸&attrs=2_16G:8G
             for (String attr : param.getAttrs()) {
@@ -116,16 +117,20 @@ public class SearchServiceImpl implements SearchService {
                 bQuery.filter(nestedQuery);
             }
         }
-        Query query=null;
+        Query query = null;
         /* 按照是否有库存进行查询 */
-        if (param.getHasStock() == 1) {
-            query=QueryBuilders.term().field("hasStock").value(true).build()._toQuery();
-        } else {
-            query=QueryBuilders.term().field("hasStock").value(false).build()._toQuery();
+        if (param.getHasStock() != null) {
+            if (param.getHasStock() == 1) {
+                query = QueryBuilders.term().field("hasStock").value(true).build()._toQuery();
+            } else {
+                query = QueryBuilders.term().field("hasStock").value(false).build()._toQuery();
+            }
         }
-        bQuery.filter(query);
+        if (query != null) {
+            bQuery.filter(query);
+        }
         /* 按照价格区间来查询 */
-        if (!StringUtils.hasText(param.getSkuPrice())) {
+        if (StringUtils.hasText(param.getSkuPrice())) {
             /*
              * 三种情况
              * 1_500/_500/500_
@@ -142,11 +147,43 @@ public class SearchServiceImpl implements SearchService {
                     rangeQuery = RangeQuery.of(r -> r.field("skuPrice").gte(JsonData.of(temp[1])));
                 }
             }
-            if(rangeQuery!=null){
+            if (rangeQuery != null) {
                 bQuery.filter(rangeQuery._toQuery());
             }
         }
-        /* 排序,分页,高亮 */
+        if (bQuery != null) {
+            SearchRequest paramsRequest = SearchRequest.of(sr -> sr.query(bQuery.build()._toQuery()));
+        }
+        /* 排序 */
+        SearchRequest sortRequest;
+        if (StringUtils.hasText(param.getSort())) {
+            String sort = param.getSort();
+            String[] s = sort.split(sort);
+            SortOrder order;
+            if (s[1].equalsIgnoreCase("asc")) {
+                order = SortOrder.Asc;
+            } else {
+                order = SortOrder.Desc;
+            }
+            String field = s[0];
+            SortOptions sortOptions = SortOptions.of(so -> so.field(f -> f.field(field).order(order)));
+            sortRequest = SearchRequest.of(sr -> sr.sort(sortOptions));
+        }
+        /*
+         * 分页
+         * pageNum:1 from:0 size:5 [0,1,2,3,4]
+         * pageNum:2 from:5 size:5
+         * from=(pageNum-1)*size
+         */
+        SearchRequest pagesRequest = SearchRequest
+                .of(sr -> sr.from((param.getPageNum() - 1) * ElasticConstant.PRODUCT_PAGESIZE)
+                        .size(ElasticConstant.PRODUCT_PAGESIZE));
+        /* 高亮 */
+        SearchRequest highRequest;
+        if (StringUtils.hasText(param.getKeyword())) {
+            HighlightField field = HighlightField.of(h -> h.preTags("<b style='color:red'>").postTags("</b>"));
+            highRequest = SearchRequest.of(sr -> sr.highlight(h -> h.fields("skuTitle", field)));
+        }
         /* 聚合分析 */
         return null;
     }
