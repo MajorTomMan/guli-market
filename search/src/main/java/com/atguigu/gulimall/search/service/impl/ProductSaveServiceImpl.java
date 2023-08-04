@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-07-30 22:42:56
+ * @LastEditTime: 2023-08-04 21:47:20
  * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
  * @Description: 
  * 
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
@@ -42,24 +43,32 @@ public class ProductSaveServiceImpl implements ProductSaveService {
          * 建立索引:product
          * 并建立映射关系
          */
-        List<BulkOperation> skus = skuEsModel.stream().map(sku -> {
-            return new BulkOperation.Builder().create(
-                p -> 
-                    p.index(ElasticConstant.PRODUCT_INDEX).id(sku.getSkuId().toString())
-                    .document(sku)).build();
-        }).collect(Collectors.toList());
-        /* 将索引请求通过bulkRequest发送出去 */
-        BulkResponse response = client.bulk(b -> b.operations(skus));
+        BulkRequest request = BulkRequest.of(b -> {
+            List<BulkOperation> list = skuEsModel.stream().map(sku -> {
+                BulkOperation bulkOperation = BulkOperation.of(bulk -> {
+                    bulk.create(c -> {
+                        c.index(ElasticConstant.PRODUCT_INDEX)
+                                .id(sku.getSkuId().toString())
+                                .document(sku);
+                        return c;
+                    });
+                    return bulk;
+                });
+                return bulkOperation;
+            }).collect(Collectors.toList());
+            b.operations(list);
+            return b;
+        });
+        BulkResponse response = client.bulk(request);
         if (response.errors()) {
             log.error("批量处理失败");
             response.items().stream().forEach(item -> {
                 log.error("{}操作失败", item.operationType());
-                log.error("状态码是:{}",item.status());
+                log.error("状态码是:{}", item.status());
                 log.error("位置是索引:{}处,Id:{}处", item.index(), item.id());
                 log.error("类名是:{}", item.getClass());
             });
-        }
-        else{
+        } else {
             log.info("商品在ES中上架成功");
         }
     }

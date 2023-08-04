@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-13 16:19:54
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-04 21:30:39
+ * @LastEditTime: 2023-08-04 21:39:47
  * @FilePath: /common/home/master/project/GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/productDeleteServiceImpl.java
  * @Description: 
  * 
@@ -12,7 +12,6 @@ package com.atguigu.gulimall.search.service.impl;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.atguigu.gulimall.common.constant.ElasticConstant;
@@ -23,12 +22,9 @@ import org.springframework.stereotype.Service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
-import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -55,8 +51,11 @@ public class productDeleteServiceImpl implements ProductDeleteService {
             return b;
         });
         BulkResponse response = client.bulk(request);
-        for (BulkResponseItem item : response.items()) {
-            log.warn(item.toString());
+        if (response.errors()) {
+            log.warn("ElasticSearch中删除SKUID失败");
+        }
+        else{
+            log.info("ElasticSearch中删除SKUID成功");
         }
     }
 
