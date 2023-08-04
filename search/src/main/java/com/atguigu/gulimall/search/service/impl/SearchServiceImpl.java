@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-04 21:14:11
+ * @LastEditTime: 2023-08-05 00:42:52
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,11 +17,12 @@ import java.util.stream.Collectors;
 
 import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.alibaba.nacos.common.packagescan.resource.ClassPathResource;
 import com.atguigu.gulimall.common.constant.ElasticConstant;
 import com.atguigu.gulimall.search.service.SearchService;
 import com.atguigu.gulimall.search.vo.SearchParam;
@@ -34,6 +35,9 @@ import co.elastic.clients.elasticsearch._types.FieldSort;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.aggregations.NestedAggregation;
+import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.NestedQuery;
@@ -52,15 +56,17 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class SearchServiceImpl implements SearchService {
     @Autowired
-    RestClient restClient;
+    private RestClient restClient;
     @Autowired
-    ElasticsearchClient elasticsearchClient;
+    private ElasticsearchClient elasticsearchClient;
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Override
     public SearchResult search(SearchParam param) {
         // TODO Auto-generated method stub
         try {
-            return buildSearchRequest(param);
+            buildSearchRequest(param);
         } catch (ElasticsearchException | IOException e) {
             // TODO Auto-generated catch block
             log.warn("ElasticSearch检索搜索参数的SKU失败");
@@ -77,7 +83,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     /* 准备检索请求 */
-    private SearchResult buildSearchRequest(SearchParam param) throws ElasticsearchException, IOException {
+    private SearchRequest buildSearchRequest(SearchParam param) throws ElasticsearchException, IOException {
         /* 准备构建嵌套请求体,使用DSL语法 */
         Query query = Query.of(q -> {
             /* 构建一个Bool嵌套请求体 */
@@ -107,10 +113,10 @@ public class SearchServiceImpl implements SearchService {
                     TermsQuery termsQuery = TermsQuery.of(t -> {
                         List<Long> brandId = param.getBrandId();
                         /* 根据品牌ID列表构造ElasticSearch所需的查询参数 */
-                        List<FieldValue> list=brandId.stream().map(id->{
+                        List<FieldValue> list = brandId.stream().map(id -> {
                             return FieldValue.of(id);
                         }).collect(Collectors.toList());
-                        t.field("brandId").terms(terms->terms.value(list));
+                        t.field("brandId").terms(terms -> terms.value(list));
                         return t;
                     });
                     b.filter(termsQuery._toQuery());
@@ -191,12 +197,12 @@ public class SearchServiceImpl implements SearchService {
             q.bool(boolQuery);
             return q;
         });
-        /*  构造请求体 */
+        /* 构造请求体 */
         SearchRequest request = SearchRequest.of(s -> {
             /* 排序 */
             if (StringUtils.hasText(param.getSort())) {
                 String sort = param.getSort();
-                String[] split = sort.split(sort);
+                String[] split = sort.split("_");
                 String field = split[0];
                 /* 构造排序请求体 */
                 SortOptions sortOptions = SortOptions.of(options -> {
@@ -224,8 +230,6 @@ public class SearchServiceImpl implements SearchService {
              * pageNum:2 from:5 size:5
              * from=(pageNum-1)*size
              */
-            s.from((param.getPageNum() - 1) * ElasticConstant.PRODUCT_PAGESIZE);
-            s.size(ElasticConstant.PRODUCT_PAGESIZE);
             if (StringUtils.hasText(param.getKeyword())) {
                 /* 高亮 */
                 HighlightField field = HighlightField.of(h -> {
@@ -235,20 +239,120 @@ public class SearchServiceImpl implements SearchService {
                 Highlight highlight = Highlight.of(h -> h.fields("skuTitle", field));
                 s.highlight(highlight);
             }
+            s.from((param.getPageNum() - 1) * ElasticConstant.PRODUCT_PAGESIZE);
+            s.size(ElasticConstant.PRODUCT_PAGESIZE);
             s.query(query);
+            /* 聚合搜索 */
+            /* 品牌聚合 */
+            Aggregation brand_agg = Aggregation.of(a -> {
+                TermsAggregation brandIdTerms = TermsAggregation.of(t -> {
+                    t.field("brandId").size(50);
+                    return t;
+                });
+                Aggregation brandNameAggregation = Aggregation.of(agg -> {
+                    /* 品牌名 */
+                    TermsAggregation brandNameTerms = TermsAggregation.of(t -> {
+                        t.field("brandName").size(1);
+                        return t;
+                    });
+                    return agg.terms(brandNameTerms);
+                });
+                Aggregation brandImgAggregation = Aggregation.of(agg -> {
+                    /* 品牌图片 */
+                    TermsAggregation brandImgTerms = TermsAggregation.of(t -> {
+                        t.field("brandImg").size(1);
+                        return t;
+                    });
+                    return agg.terms(brandImgTerms);
+                });
+                /* 品牌名和图片聚合 */
+                a.aggregations("brand_name_agg", brandNameAggregation);
+                a.aggregations("brand_img_agg", brandImgAggregation);
+                a.terms(brandIdTerms);
+                return a.terms(brandIdTerms);
+            });
+            /* 目录聚合 */
+            Aggregation catelog_agg = Aggregation.of(a -> {
+                TermsAggregation catalogIdTerms = TermsAggregation.of(t -> {
+                    /* 目录ID */
+                    t.field("catalogId").size(20);
+                    return t;
+                });
+                Aggregation catalogNameAggregation = Aggregation.of(agg -> {
+                    /* 目录名 */
+                    TermsAggregation catalogNameTerms = TermsAggregation.of(t -> {
+                        t.field("catalogName").size(1);
+                        return t;
+                    });
+                    return agg.terms(catalogNameTerms);
+                });
+                /* 目录名聚合 */
+                a.aggregations("catalog_name_agg", catalogNameAggregation);
+                return a.terms(catalogIdTerms);
+            });
+            /* 属性聚合 */
+            Aggregation attr_agg = Aggregation.of(a -> {
+                /* 属性字段查询 */
+                NestedAggregation nestedAggregation = NestedAggregation.of(n -> {
+                    n.path("attrs");
+                    return n;
+                });
+                Aggregation attrIdAggregation = Aggregation.of(agg -> {
+                    /* 属性ID */
+                    TermsAggregation attrIdTerms = TermsAggregation.of(t -> {
+                        t.field("attrs.attrId").size(10);
+                        return t;
+                    });
+                    Aggregation attrNameAggregation = Aggregation.of(aggregation -> {
+                        /* 属性名 */
+                        TermsAggregation attrNameTerms = TermsAggregation.of(t -> {
+                            t.field("attrs.attrName").size(1);
+                            return t;
+                        });
+                        return aggregation.terms(attrNameTerms);
+                    });
+                    Aggregation attrValueAggregation = Aggregation.of(aggregation -> {
+                        /* 属性值 */
+                        TermsAggregation attrValueTerms = TermsAggregation.of(t -> {
+                            t.field("attrs.attrValue").size(50);
+                            return t;
+                        });
+                        return aggregation.terms(attrValueTerms);
+                    });
+                    /* 属性名值聚合 */
+                    agg.aggregations("attr_name_agg", attrNameAggregation);
+                    agg.aggregations("attr_value_agg", attrValueAggregation);
+                    return agg.terms(attrIdTerms);
+                });
+                /* 属性ID聚合 */
+                a.aggregations("attr_id_agg", attrIdAggregation);
+                return a.nested(nestedAggregation);
+            });
+            /* 查询属性集合 */
+            s.aggregations("brand_agg", brand_agg);
+            s.aggregations("catalog_agg", catelog_agg);
+            s.aggregations("attr_agg", attr_agg);
             return s;
         });
-        if(request.query()!=null){
-            Gson gson=new Gson();
-            String json=gson.toJson(query);
-            File file=new File(new ClassPathResource("/").getFile(),"query.json");
-            try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
-                outputStream.write(json.getBytes());
-            }
+        if (request != null) {
+            Gson gson = new Gson();
+            String json = gson.toJson(request);
+            saveQuery(json);
         }
-        elasticsearchClient.search(request, SearchResult.class);
-        /* 聚合分析 */
-        return null;
+        return request;
     }
 
+    private void saveQuery(String json) {
+        try {
+            File queryFile = new File(new ClassPathResource("/").getURL().toString().substring(6), "query.json");
+            try (FileOutputStream outputStream = new FileOutputStream(queryFile.getAbsolutePath() + "/", false)) {
+                outputStream.write(json.getBytes());
+                outputStream.flush();
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            log.info("保存查询文件失败");
+            log.info("错误原因:" + e.getCause());
+        }
+    }
 }
