@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-05 00:42:52
+ * @LastEditTime: 2023-08-07 00:36:47
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.client.RestClient;
@@ -24,6 +25,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.atguigu.gulimall.common.constant.ElasticConstant;
+import com.atguigu.gulimall.common.to.es.SkuEsModel;
 import com.atguigu.gulimall.search.service.SearchService;
 import com.atguigu.gulimall.search.vo.SearchParam;
 import com.atguigu.gulimall.search.vo.SearchResult;
@@ -35,6 +37,7 @@ import co.elastic.clients.elasticsearch._types.FieldSort;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.aggregations.NestedAggregation;
 import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
@@ -49,6 +52,7 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Highlight;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
 import lombok.extern.log4j.Log4j2;
 
@@ -66,7 +70,10 @@ public class SearchServiceImpl implements SearchService {
     public SearchResult search(SearchParam param) {
         // TODO Auto-generated method stub
         try {
-            buildSearchRequest(param);
+            SearchRequest request = buildSearchRequest(param);
+            SearchResponse<SkuEsModel> response = elasticsearchClient.search(request, SkuEsModel.class);
+            ;
+            return buildSearchResult(response,param);
         } catch (ElasticsearchException | IOException e) {
             // TODO Auto-generated catch block
             log.warn("ElasticSearch检索搜索参数的SKU失败");
@@ -78,7 +85,43 @@ public class SearchServiceImpl implements SearchService {
     }
 
     /* 准备检索请求 */
-    private SearchResult buildSearchResult(SearchResponse response) {
+    private SearchResult buildSearchResult(SearchResponse<SkuEsModel> response, SearchParam param) {
+        SearchResult result = new SearchResult();
+        long value = response.hits().total().value();
+        
+        List<Hit<SkuEsModel>> hits = response.hits().hits();
+        /* 返回所有查询到的商品 */
+        List<SkuEsModel> skus = hits.stream().map(source -> {
+            return source.source();
+        }).collect(Collectors.toList());
+        Aggregate brand_agg = response.aggregations().get("brand_agg");
+        Aggregate catalog_agg = response.aggregations().get("catalog_agg");
+        Aggregate attr_agg = response.aggregations().get("attr_agg");
+        /* 属性信息 */
+        //result.setAttrs();
+        /* 品牌信息 */
+        //result.setBrands();
+        /* 目录信息 */
+        //result.setCatalogs();
+        /* 分页信息 */
+        //result.setPageNum(param.getPageNum());
+        /* 产品信息 */
+        //result.setProducts(skus);
+        /* 总记录信息 */
+        //result.setTotal(value);
+        /* 总页码信息 */
+        /*
+         * 计算方式
+         * 总记录对于分页大小进行求余
+         * 根据计算结果来进行对应的操作
+         */
+        long pages = value / ElasticConstant.PRODUCT_PAGESIZE;
+        long remainder = value % ElasticConstant.PRODUCT_PAGESIZE;
+        if (remainder == 0) {
+            result.setTotalPages((int) pages);
+        } else {
+            result.setTotalPages((int) (pages + 1));
+        }
         return null;
     }
 

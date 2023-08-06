@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-04 21:47:20
+ * @LastEditTime: 2023-08-07 01:18:34
  * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
  * @Description: 
  * 
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch._types.ErrorCause;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -46,10 +47,10 @@ public class ProductSaveServiceImpl implements ProductSaveService {
         BulkRequest request = BulkRequest.of(b -> {
             List<BulkOperation> list = skuEsModel.stream().map(sku -> {
                 BulkOperation bulkOperation = BulkOperation.of(bulk -> {
-                    bulk.create(c -> {
+                    bulk.update(c -> {
                         c.index(ElasticConstant.PRODUCT_INDEX)
                                 .id(sku.getSkuId().toString())
-                                .document(sku);
+                                .action(a->a.doc(sku));
                         return c;
                     });
                     return bulk;
@@ -60,17 +61,18 @@ public class ProductSaveServiceImpl implements ProductSaveService {
             return b;
         });
         BulkResponse response = client.bulk(request);
-        if (response.errors()) {
-            log.error("批量处理失败");
-            response.items().stream().forEach(item -> {
-                log.error("{}操作失败", item.operationType());
-                log.error("状态码是:{}", item.status());
-                log.error("位置是索引:{}处,Id:{}处", item.index(), item.id());
-                log.error("类名是:{}", item.getClass());
-            });
-        } else {
-            log.info("商品在ES中上架成功");
-        }
+        response.items().forEach(item -> {
+            if (item.status() != 200) {
+                log.error("{}批量处理失败", item.id());
+                ErrorCause error = item.error();
+                log.warn("因为什么引起:" + error.causedBy());
+                log.warn("原因是:" + error.reason());
+            } else {
+                log.info("商品在ES中上架成功");
+                log.info("状态:" + item.status());
+                log.info("ID:" + item.id());
+            }
+        });
     }
 
     @Override
