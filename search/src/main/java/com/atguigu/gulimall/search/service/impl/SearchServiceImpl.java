@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-07 00:36:47
+ * @LastEditTime: 2023-08-08 00:19:14
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -39,6 +39,7 @@ import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.aggregations.BucketMetricValueAggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.NestedAggregation;
 import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
@@ -60,11 +61,7 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class SearchServiceImpl implements SearchService {
     @Autowired
-    private RestClient restClient;
-    @Autowired
     private ElasticsearchClient elasticsearchClient;
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Override
     public SearchResult search(SearchParam param) {
@@ -72,7 +69,6 @@ public class SearchServiceImpl implements SearchService {
         try {
             SearchRequest request = buildSearchRequest(param);
             SearchResponse<SkuEsModel> response = elasticsearchClient.search(request, SkuEsModel.class);
-            ;
             return buildSearchResult(response,param);
         } catch (ElasticsearchException | IOException e) {
             // TODO Auto-generated catch block
@@ -101,12 +97,12 @@ public class SearchServiceImpl implements SearchService {
         //result.setAttrs();
         /* 品牌信息 */
         //result.setBrands();
-        /* 目录信息 */
+        /* 分类信息 */
         //result.setCatalogs();
         /* 分页信息 */
         //result.setPageNum(param.getPageNum());
         /* 产品信息 */
-        //result.setProducts(skus);
+        result.setProducts(skus);
         /* 总记录信息 */
         //result.setTotal(value);
         /* 总页码信息 */
