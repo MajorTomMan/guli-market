@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-08 00:19:14
+ * @LastEditTime: 2023-08-22 00:21:18
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,6 +11,7 @@ package com.atguigu.gulimall.search.service.impl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collector;
@@ -29,6 +30,7 @@ import com.atguigu.gulimall.common.to.es.SkuEsModel;
 import com.atguigu.gulimall.search.service.SearchService;
 import com.atguigu.gulimall.search.vo.SearchParam;
 import com.atguigu.gulimall.search.vo.SearchResult;
+import com.atguigu.gulimall.search.vo.SearchResult.CatalogVo;
 import com.google.gson.Gson;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -41,6 +43,7 @@ import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.aggregations.BucketMetricValueAggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.NestedAggregation;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
@@ -69,7 +72,7 @@ public class SearchServiceImpl implements SearchService {
         try {
             SearchRequest request = buildSearchRequest(param);
             SearchResponse<SkuEsModel> response = elasticsearchClient.search(request, SkuEsModel.class);
-            return buildSearchResult(response,param);
+            return buildSearchResult(response, param);
         } catch (ElasticsearchException | IOException e) {
             // TODO Auto-generated catch block
             log.warn("ElasticSearch检索搜索参数的SKU失败");
@@ -84,27 +87,41 @@ public class SearchServiceImpl implements SearchService {
     private SearchResult buildSearchResult(SearchResponse<SkuEsModel> response, SearchParam param) {
         SearchResult result = new SearchResult();
         long value = response.hits().total().value();
-        
+
         List<Hit<SkuEsModel>> hits = response.hits().hits();
         /* 返回所有查询到的商品 */
         List<SkuEsModel> skus = hits.stream().map(source -> {
             return source.source();
         }).collect(Collectors.toList());
+        /* 获取品牌聚合 */
         Aggregate brand_agg = response.aggregations().get("brand_agg");
+        /* 品牌信息 */
+        result.setBrands();
         Aggregate catalog_agg = response.aggregations().get("catalog_agg");
+        /* 封装CatalogList数据 */
+        List<SearchResult.CatalogVo> catalogVos=new ArrayList<>();
+        catalog_agg.lterms().buckets().array().forEach((bucket)->{
+            CatalogVo catalogVo = new SearchResult.CatalogVo();
+            /* 设置分类ID */
+            catalogVo.setCatalogId(bucket.key());
+            /* 设置分类名 */
+            StringTermsAggregate sterms = bucket.aggregations().get("catalog_name_agg").sterms();
+            String catalogName = sterms.buckets().array().get(0).key();
+            catalogVo.setCatalogName(catalogName);
+            catalogVos.add(catalogVo);
+        });
+        /* 分类信息 */
+        result.setCatalogs(catalogVos);
+        /* 获取属性聚合 */
         Aggregate attr_agg = response.aggregations().get("attr_agg");
         /* 属性信息 */
-        //result.setAttrs();
-        /* 品牌信息 */
-        //result.setBrands();
-        /* 分类信息 */
-        //result.setCatalogs();
+        result.setAttrs();
         /* 分页信息 */
-        //result.setPageNum(param.getPageNum());
+        result.setPageNum(param.getPageNum());
         /* 产品信息 */
         result.setProducts(skus);
         /* 总记录信息 */
-        //result.setTotal(value);
+        result.setTotal(value);
         /* 总页码信息 */
         /*
          * 计算方式
@@ -339,13 +356,15 @@ public class SearchServiceImpl implements SearchService {
                 Aggregation attrIdAggregation = Aggregation.of(agg -> {
                     /* 属性ID */
                     TermsAggregation attrIdTerms = TermsAggregation.of(t -> {
+                        /* ID默认是关键字 */
                         t.field("attrs.attrId").size(10);
                         return t;
                     });
                     Aggregation attrNameAggregation = Aggregation.of(aggregation -> {
                         /* 属性名 */
                         TermsAggregation attrNameTerms = TermsAggregation.of(t -> {
-                            t.field("attrs.attrName").size(1);
+                            /* 文本需要显式指明keyword关键字 */
+                            t.field("attrs.attrName.keyword").size(1);
                             return t;
                         });
                         return aggregation.terms(attrNameTerms);
@@ -353,14 +372,14 @@ public class SearchServiceImpl implements SearchService {
                     Aggregation attrValueAggregation = Aggregation.of(aggregation -> {
                         /* 属性值 */
                         TermsAggregation attrValueTerms = TermsAggregation.of(t -> {
-                            t.field("attrs.attrValue").size(50);
+                            t.field("attrs.attrValue.keyword").size(50);
                             return t;
                         });
                         return aggregation.terms(attrValueTerms);
                     });
                     /* 属性名值聚合 */
                     agg.aggregations("attr_name_agg", attrNameAggregation);
-                    agg.aggregations("attr_value_agg", attrValueAggregation);
+                    agg.aggregations( "attr_value_agg", attrValueAggregation);
                     return agg.terms(attrIdTerms);
                 });
                 /* 属性ID聚合 */

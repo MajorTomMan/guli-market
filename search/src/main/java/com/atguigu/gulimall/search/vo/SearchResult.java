@@ -23,7 +23,7 @@ public class SearchResult {
         private String brandImg;
     }
     @Data
-    private static class CatalogVo{
+    public static class CatalogVo{
         private Long catalogId;
         private String catalogName;
     }

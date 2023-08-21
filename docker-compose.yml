@@ -37,6 +37,7 @@ services:
     image: nginx
   elasticsearch:
     container_name: elasticsearch
+    restart: always
     ports:
       - "9200:9200"
       - "9300:9300"
