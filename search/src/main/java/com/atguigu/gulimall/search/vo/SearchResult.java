@@ -31,6 +31,6 @@ public class SearchResult {
     public static class AttrVo{
         private Long attrId;
         private String attrName;
-        private List<String> brandImg;
+        private List<String> attrValue;
     }
 }

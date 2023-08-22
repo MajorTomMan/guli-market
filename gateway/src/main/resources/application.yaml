@@ -46,7 +46,3 @@ spring:
           uri: lb://search
           predicates:
             - Host=search.gulimall.com
-    # 使用spring loadbalancer，弃用ribbon
-    loadbalancer:
-      ribbon:
-        enabled: false

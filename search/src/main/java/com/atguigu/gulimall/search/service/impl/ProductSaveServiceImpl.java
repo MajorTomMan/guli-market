@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-07 01:18:34
+ * @LastEditTime: 2023-08-22 22:52:24
  * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
  * @Description: 
  * 
@@ -45,28 +45,28 @@ public class ProductSaveServiceImpl implements ProductSaveService {
          * 并建立映射关系
          */
         BulkRequest request = BulkRequest.of(b -> {
-            List<BulkOperation> list = skuEsModel.stream().map(sku -> {
-                BulkOperation bulkOperation = BulkOperation.of(bulk -> {
-                    bulk.update(c -> {
+            List<BulkOperation> bulkList = skuEsModel.stream().map(sku -> {
+                BulkOperation bulk = BulkOperation.of(o -> {
+                    o.create(c -> {
                         c.index(ElasticConstant.PRODUCT_INDEX)
                                 .id(sku.getSkuId().toString())
-                                .action(a->a.doc(sku));
+                                .document(sku);
                         return c;
                     });
-                    return bulk;
+                    return o;
                 });
-                return bulkOperation;
+                return bulk;
             }).collect(Collectors.toList());
-            b.operations(list);
+            b.operations(bulkList);
             return b;
         });
         BulkResponse response = client.bulk(request);
         response.items().forEach(item -> {
-            if (item.status() != 200) {
-                log.error("{}批量处理失败", item.id());
+            if (item.status() != 200 && item.status() != 201) {
+                log.error("返回的状态码为:" + item.status());
+                log.error("Id:{}的批量处理失败", item.id());
                 ErrorCause error = item.error();
-                log.warn("因为什么引起:" + error.causedBy());
-                log.warn("原因是:" + error.reason());
+                log.warn("原因:" + error.reason());
             } else {
                 log.info("商品在ES中上架成功");
                 log.info("状态:" + item.status());

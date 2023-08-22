@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-22 00:21:18
+ * @LastEditTime: 2023-08-22 23:12:09
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,13 +14,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -30,6 +27,8 @@ import com.atguigu.gulimall.common.to.es.SkuEsModel;
 import com.atguigu.gulimall.search.service.SearchService;
 import com.atguigu.gulimall.search.vo.SearchParam;
 import com.atguigu.gulimall.search.vo.SearchResult;
+import com.atguigu.gulimall.search.vo.SearchResult.AttrVo;
+import com.atguigu.gulimall.search.vo.SearchResult.BrandVo;
 import com.atguigu.gulimall.search.vo.SearchResult.CatalogVo;
 import com.google.gson.Gson;
 
@@ -41,9 +40,9 @@ import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
-import co.elastic.clients.elasticsearch._types.aggregations.BucketMetricValueAggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.NestedAggregation;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
 import co.elastic.clients.elasticsearch._types.aggregations.TermsAggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
@@ -87,20 +86,36 @@ public class SearchServiceImpl implements SearchService {
     private SearchResult buildSearchResult(SearchResponse<SkuEsModel> response, SearchParam param) {
         SearchResult result = new SearchResult();
         long value = response.hits().total().value();
-
         List<Hit<SkuEsModel>> hits = response.hits().hits();
         /* 返回所有查询到的商品 */
         List<SkuEsModel> skus = hits.stream().map(source -> {
             return source.source();
         }).collect(Collectors.toList());
+        /* ===================Brand=========================== */
         /* 获取品牌聚合 */
         Aggregate brand_agg = response.aggregations().get("brand_agg");
+        List<BrandVo> brandVos = new ArrayList<>();
+        brand_agg.lterms().buckets().array().forEach((bucket) -> {
+            BrandVo brandVo = new SearchResult.BrandVo();
+            /* 得到品牌ID */
+            brandVo.setBrandId(bucket.key());
+            Aggregate brand_name_agg = bucket.aggregations().get("brand_name_agg");
+            StringTermsBucket brandNameBucket = brand_name_agg.sterms().buckets().array().get(0);
+            /* 得到品牌名字 */
+            brandVo.setBrandName(brandNameBucket.key());
+            Aggregate brand_img_agg = bucket.aggregations().get("brand_img_agg");
+            StringTermsBucket brandImgBucket = brand_img_agg.sterms().buckets().array().get(0);
+            /* 得到品牌图片 */
+            brandVo.setBrandImg(brandImgBucket.key());
+            brandVos.add(brandVo);
+        });
         /* 品牌信息 */
-        result.setBrands();
+        result.setBrands(brandVos);
+        /* ===================Catalog=========================== */
         Aggregate catalog_agg = response.aggregations().get("catalog_agg");
         /* 封装CatalogList数据 */
-        List<SearchResult.CatalogVo> catalogVos=new ArrayList<>();
-        catalog_agg.lterms().buckets().array().forEach((bucket)->{
+        List<SearchResult.CatalogVo> catalogVos = new ArrayList<>();
+        catalog_agg.lterms().buckets().array().forEach((bucket) -> {
             CatalogVo catalogVo = new SearchResult.CatalogVo();
             /* 设置分类ID */
             catalogVo.setCatalogId(bucket.key());
@@ -112,10 +127,28 @@ public class SearchServiceImpl implements SearchService {
         });
         /* 分类信息 */
         result.setCatalogs(catalogVos);
+        /* ===================Attrs=========================== */
         /* 获取属性聚合 */
         Aggregate attr_agg = response.aggregations().get("attr_agg");
+        List<AttrVo> attrVos = new ArrayList<>();
+        Aggregate attr_id_agg = attr_agg.nested().aggregations().get("attr_id_agg");
+        attr_id_agg.lterms().buckets().array().forEach(bucket -> {
+            AttrVo attrVo = new SearchResult.AttrVo();
+            /* 设置属性ID */
+            attrVo.setAttrId(bucket.key());
+            /* 一个属性ID对应一个属性名和属性值 */
+            Aggregate attr_name_agg = bucket.aggregations().get("attr_name_agg");
+            StringTermsBucket attrNameBucket = attr_name_agg.sterms().buckets().array().get(0);
+            attrVo.setAttrName(attrNameBucket.key());
+            Aggregate attr_value_agg = bucket.aggregations().get("attr_value_agg");
+            List<String> attrValueList = attr_value_agg.sterms().buckets().array().stream().map(attrBucket -> {
+                return attrBucket.key();
+            }).collect(Collectors.toList());
+            attrVo.setAttrValue(attrValueList);
+            attrVos.add(attrVo);
+        });
         /* 属性信息 */
-        result.setAttrs();
+        result.setAttrs(attrVos);
         /* 分页信息 */
         result.setPageNum(param.getPageNum());
         /* 产品信息 */
@@ -308,7 +341,7 @@ public class SearchServiceImpl implements SearchService {
                 Aggregation brandNameAggregation = Aggregation.of(agg -> {
                     /* 品牌名 */
                     TermsAggregation brandNameTerms = TermsAggregation.of(t -> {
-                        t.field("brandName").size(1);
+                        t.field("brandName.keyword").size(1);
                         return t;
                     });
                     return agg.terms(brandNameTerms);
@@ -316,7 +349,7 @@ public class SearchServiceImpl implements SearchService {
                 Aggregation brandImgAggregation = Aggregation.of(agg -> {
                     /* 品牌图片 */
                     TermsAggregation brandImgTerms = TermsAggregation.of(t -> {
-                        t.field("brandImg").size(1);
+                        t.field("brandImg.keyword").size(1);
                         return t;
                     });
                     return agg.terms(brandImgTerms);
@@ -337,7 +370,7 @@ public class SearchServiceImpl implements SearchService {
                 Aggregation catalogNameAggregation = Aggregation.of(agg -> {
                     /* 目录名 */
                     TermsAggregation catalogNameTerms = TermsAggregation.of(t -> {
-                        t.field("catalogName").size(1);
+                        t.field("catalogName.keyword").size(1);
                         return t;
                     });
                     return agg.terms(catalogNameTerms);
@@ -379,7 +412,7 @@ public class SearchServiceImpl implements SearchService {
                     });
                     /* 属性名值聚合 */
                     agg.aggregations("attr_name_agg", attrNameAggregation);
-                    agg.aggregations( "attr_value_agg", attrValueAggregation);
+                    agg.aggregations("attr_value_agg", attrValueAggregation);
                     return agg.terms(attrIdTerms);
                 });
                 /* 属性ID聚合 */
@@ -390,6 +423,7 @@ public class SearchServiceImpl implements SearchService {
             s.aggregations("brand_agg", brand_agg);
             s.aggregations("catalog_agg", catelog_agg);
             s.aggregations("attr_agg", attr_agg);
+            s.index(ElasticConstant.PRODUCT_INDEX);
             return s;
         });
         if (request != null) {
