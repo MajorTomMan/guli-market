@@ -34,7 +34,7 @@ services:
       - /home/master/nginx/html:/usr/share/nginx/html
       - /home/master/nginx/logs:/var/log/nginx
       - /home/master/nginx/conf.d:/etc/nginx/conf.d
-    image: nginx
+    image: nginx:stable
   elasticsearch:
     container_name: elasticsearch
     restart: always

@@ -38,11 +38,11 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment} #该处填renren-fast的路径名
-        - id: gulimall_host_route
-          uri: lb://product
-          predicates:
-            - Host=gulimall.com
-        - id: gulimall_search_route
+        - id: search_route
           uri: lb://search
           predicates:
             - Host=search.gulimall.com
+        - id: host_route
+          uri: lb://product
+          predicates:
+            - Host=gulimall.com
