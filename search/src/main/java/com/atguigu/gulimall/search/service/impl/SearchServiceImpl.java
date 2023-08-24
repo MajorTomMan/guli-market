@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-22 23:12:09
+ * @LastEditTime: 2023-08-25 00:20:18
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -168,7 +168,7 @@ public class SearchServiceImpl implements SearchService {
         } else {
             result.setTotalPages((int) (pages + 1));
         }
-        return null;
+        return result;
     }
 
     /* 准备检索请求 */
