@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-13 14:19:18
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-08-26 00:20:01
  * @FilePath: /common/src/main/java/com/atguigu/gulimall/common/utils/R.java
  * @Description: 
  * 
@@ -37,12 +37,27 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class R<T> extends HashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
 	private T data;
-
 	/**
 	 * @param targetClass 用于反序列化数据时指定的类
 	 * @return 反序列化后的数据
 	 */
-	public T getData(TypeReference<T> valueTypeRef) {
+	public <T> T getData(String key,TypeReference<T> valueTypeRef) {
+		ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
+		Object data = get(key);
+		if (data == null) {
+			return null;
+		}
+		try {
+			return objectMapper.readValue(objectMapper.writeValueAsString(data), valueTypeRef);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("Failed to deserialize data", e);
+		}
+	}
+	/**
+	 * @param targetClass 用于反序列化数据时指定的类
+	 * @return 反序列化后的数据
+	 */
+	public <T> T getData(TypeReference<T> valueTypeRef) {
 		ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().build();
 		Object data = get("data");
 		if (data == null) {

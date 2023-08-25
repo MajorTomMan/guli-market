@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-25 00:20:18
+ * @LastEditTime: 2023-08-26 00:23:32
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -24,12 +24,16 @@ import org.springframework.util.StringUtils;
 
 import com.atguigu.gulimall.common.constant.ElasticConstant;
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
+import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.search.feign.ProductFeignService;
 import com.atguigu.gulimall.search.service.SearchService;
+import com.atguigu.gulimall.search.vo.AttrResponseVo;
 import com.atguigu.gulimall.search.vo.SearchParam;
 import com.atguigu.gulimall.search.vo.SearchResult;
 import com.atguigu.gulimall.search.vo.SearchResult.AttrVo;
 import com.atguigu.gulimall.search.vo.SearchResult.BrandVo;
 import com.atguigu.gulimall.search.vo.SearchResult.CatalogVo;
+import com.atguigu.gulimall.search.vo.SearchResult.NavVo;
 import com.google.gson.Gson;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -57,6 +61,7 @@ import co.elastic.clients.elasticsearch.core.search.Highlight;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -64,7 +69,8 @@ import lombok.extern.log4j.Log4j2;
 public class SearchServiceImpl implements SearchService {
     @Autowired
     private ElasticsearchClient elasticsearchClient;
-
+    @Autowired
+    private ProductFeignService productFeignService;
     @Override
     public SearchResult search(SearchParam param) {
         // TODO Auto-generated method stub
@@ -168,6 +174,24 @@ public class SearchServiceImpl implements SearchService {
         } else {
             result.setTotalPages((int) (pages + 1));
         }
+
+        /* 面包屑导航 */
+        List<SearchResult.NavVo> navVos=new ArrayList<>();
+        param.getAttrs().stream().map((attr)->{
+            SearchResult.NavVo navVo=new SearchResult.NavVo();
+            String[] split = attr.split("_");
+            navVo.setNavValue(split[1]);
+            R r = productFeignService.attrsInfo(Long.parseLong(split[0]));
+            if(r.getCode()!=0){
+                log.info("检索服务远程调用Product查询属性失败");
+                navVo.setNavName(split[0]);
+            }
+            else{
+                AttrResponseVo data = (AttrResponseVo) r.getData("attr",new TypeReference<AttrResponseVo>(){});
+                navVo.setNavName(data.getAttrName());
+            }
+            return navVo;
+        });
         return result;
     }
 
