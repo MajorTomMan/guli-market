@@ -1,24 +1,17 @@
 package com.atguigu.gulimall.product.controller;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import javax.validation.Valid;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.BindResult;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import lombok.val;
 
 import com.atguigu.gulimall.product.entity.BrandEntity;
 import com.atguigu.gulimall.product.service.BrandService;
@@ -27,6 +20,7 @@ import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.common.valid.AddGroup;
 import com.atguigu.gulimall.common.valid.UpdateGroup;
 import com.atguigu.gulimall.common.valid.UpdateStatusGroup;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * 品牌
@@ -61,6 +55,13 @@ public class BrandController {
         BrandEntity brand = brandService.getById(brandId);
 
         return R.ok().put("brand", brand);
+    }
+
+    /* 用于检索服务查询品牌ID */
+    @GetMapping("/infos")
+    public R getMethodName(@PathVariable("brandIds") List<Long> brandId) {
+        List<BrandEntity> brands = brandService.getBrandsByIds(brandId);
+        return R.ok().put("brands", brands);
     }
 
     /**

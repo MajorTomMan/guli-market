@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-26 00:23:32
+ * @LastEditTime: 2023-09-01 23:07:23
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,6 +11,8 @@ package com.atguigu.gulimall.search.service.impl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,6 +73,7 @@ public class SearchServiceImpl implements SearchService {
     private ElasticsearchClient elasticsearchClient;
     @Autowired
     private ProductFeignService productFeignService;
+
     @Override
     public SearchResult search(SearchParam param) {
         // TODO Auto-generated method stub
@@ -106,13 +109,20 @@ public class SearchServiceImpl implements SearchService {
             /* 得到品牌ID */
             brandVo.setBrandId(bucket.key());
             Aggregate brand_name_agg = bucket.aggregations().get("brand_name_agg");
-            StringTermsBucket brandNameBucket = brand_name_agg.sterms().buckets().array().get(0);
-            /* 得到品牌名字 */
-            brandVo.setBrandName(brandNameBucket.key());
+            List<StringTermsBucket> brandNameBucketList = brand_name_agg.sterms().buckets().array();
+            if (brandNameBucketList.size() > 0) {
+                StringTermsBucket brandNameBucket = brandNameBucketList.get(0);
+                /* 得到品牌名字 */
+                brandVo.setBrandName(brandNameBucket.key());
+            }
+
             Aggregate brand_img_agg = bucket.aggregations().get("brand_img_agg");
-            StringTermsBucket brandImgBucket = brand_img_agg.sterms().buckets().array().get(0);
-            /* 得到品牌图片 */
-            brandVo.setBrandImg(brandImgBucket.key());
+            List<StringTermsBucket> brandImgBucketList = brand_img_agg.sterms().buckets().array();
+            if (brandImgBucketList.size() > 0) {
+                StringTermsBucket brandImgBucket = brandImgBucketList.get(0);
+                /* 得到品牌图片 */
+                brandVo.setBrandImg(brandImgBucket.key());
+            }
             brandVos.add(brandVo);
         });
         /* 品牌信息 */
@@ -127,8 +137,11 @@ public class SearchServiceImpl implements SearchService {
             catalogVo.setCatalogId(bucket.key());
             /* 设置分类名 */
             StringTermsAggregate sterms = bucket.aggregations().get("catalog_name_agg").sterms();
-            String catalogName = sterms.buckets().array().get(0).key();
-            catalogVo.setCatalogName(catalogName);
+            List<StringTermsBucket> catalogNameBucketList = sterms.buckets().array();
+            if (catalogNameBucketList.size() > 0) {
+                StringTermsBucket catalogNameBucket = catalogNameBucketList.get(0);
+                catalogVo.setCatalogName(catalogNameBucket.key());
+            }
             catalogVos.add(catalogVo);
         });
         /* 分类信息 */
@@ -144,13 +157,19 @@ public class SearchServiceImpl implements SearchService {
             attrVo.setAttrId(bucket.key());
             /* 一个属性ID对应一个属性名和属性值 */
             Aggregate attr_name_agg = bucket.aggregations().get("attr_name_agg");
-            StringTermsBucket attrNameBucket = attr_name_agg.sterms().buckets().array().get(0);
-            attrVo.setAttrName(attrNameBucket.key());
+            List<StringTermsBucket> attrNameBucketList = attr_name_agg.sterms().buckets().array();
+            if (attrNameBucketList.size() > 0) {
+                StringTermsBucket attrNameBucket = attrNameBucketList.get(0);
+                attrVo.setAttrName(attrNameBucket.key());
+            }
             Aggregate attr_value_agg = bucket.aggregations().get("attr_value_agg");
-            List<String> attrValueList = attr_value_agg.sterms().buckets().array().stream().map(attrBucket -> {
-                return attrBucket.key();
-            }).collect(Collectors.toList());
-            attrVo.setAttrValue(attrValueList);
+            List<StringTermsBucket> attrValueBucketList = attr_value_agg.sterms().buckets().array();
+            if (attrValueBucketList.size() > 0) {
+                List<String> attrValueList = attrValueBucketList.stream().map((valueBucket) -> {
+                    return valueBucket.key();
+                }).collect(Collectors.toList());
+                attrVo.setAttrValue(attrValueList);
+            }
             attrVos.add(attrVo);
         });
         /* 属性信息 */
@@ -176,23 +195,55 @@ public class SearchServiceImpl implements SearchService {
         }
 
         /* 面包屑导航 */
-        List<SearchResult.NavVo> navVos=new ArrayList<>();
-        param.getAttrs().stream().map((attr)->{
-            SearchResult.NavVo navVo=new SearchResult.NavVo();
-            String[] split = attr.split("_");
-            navVo.setNavValue(split[1]);
-            R r = productFeignService.attrsInfo(Long.parseLong(split[0]));
-            if(r.getCode()!=0){
-                log.info("检索服务远程调用Product查询属性失败");
-                navVo.setNavName(split[0]);
-            }
-            else{
-                AttrResponseVo data = (AttrResponseVo) r.getData("attr",new TypeReference<AttrResponseVo>(){});
+        if (param.getAttrs() != null && param.getAttrs().size() > 0) {
+            List<NavVo> Navs = param.getAttrs().stream().map((attr) -> {
+                SearchResult.NavVo navVo = new SearchResult.NavVo();
+                String[] split = attr.split("_");
+                navVo.setNavValue(split[1]);
+                R r = productFeignService.attrsInfo(Long.parseLong(split[0]));
+                if (r.getCode() != 0) {
+                    log.info("检索服务远程调用Product查询属性失败");
+                    navVo.setNavName(split[0]);
+                } else {
+                    String replace = replaceQueryString(param, attr,"attrs");
+                    navVo.setLink("http://search.gulimall.com/list.html?" + replace);
+                }
+                AttrResponseVo data = (AttrResponseVo) r.getData("attr", new TypeReference<AttrResponseVo>() {});
                 navVo.setNavName(data.getAttrName());
+                return navVo;
+            }).collect(Collectors.toList());
+            result.setNavs(Navs);
+        }
+        if (param.getBrandId() != null && param.getBrandId().size() > 0) {
+            List<NavVo> navs = result.getNavs();
+            NavVo navVo = new NavVo();
+            navVo.setNavName("品牌");
+            /* ToDO 远程查询品牌数据 */
+            R r = productFeignService.brandsInfo(param.getBrandId());
+            if (r.getCode() == 0) {
+                List<BrandVo> brand = (List<BrandVo>) r.getData("brand", new TypeReference<List<BrandVo>>() {
+                });
+                StringBuffer buffer = new StringBuffer();
+                for (BrandVo brandVo : brand) {
+                    buffer.append(brandVo.getBrandName()+";");
+                }
+                navVo.setNavValue(buffer.toString());
             }
-            return navVo;
-        });
+            navVo.setLink();
+            navs.add();
+        }
         return result;
+    }
+
+    private String replaceQueryString(SearchParam param, String value,String key) {
+        try {
+            URLEncoder.encode("attr", "UTF-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String replace = param.get_queryString().replace("&"+key+";=" + value, "");
+        return replace;
     }
 
     /* 准备检索请求 */

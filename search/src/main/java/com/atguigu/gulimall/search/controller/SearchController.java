@@ -2,11 +2,13 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:17:42
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-07-27 23:24:18
+ * @LastEditTime: 2023-09-01 22:05:08
  * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\controller\SearchController.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.search.controller;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,10 +23,14 @@ import com.atguigu.gulimall.search.vo.SearchResult;
 public class SearchController {
     @Autowired
     private SearchService searchService;
+
     @GetMapping("/list.html")
-    public String listPage(SearchParam param,Model model){
-        SearchResult result=searchService.search(param);
-        model.addAttribute("result", result);
+    public String listPage(SearchParam param, Model model, HttpServletRequest request) {
+        param.set_queryString(request.getQueryString());
+        SearchResult result = searchService.search(param);
+        if (result != null) {
+            model.addAttribute("result", result);
+        }
         return "list";
     }
 }
