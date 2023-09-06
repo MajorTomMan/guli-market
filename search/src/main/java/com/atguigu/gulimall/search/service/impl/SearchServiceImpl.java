@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-01 23:07:23
+ * @LastEditTime: 2023-09-06 22:27:14
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -195,6 +195,7 @@ public class SearchServiceImpl implements SearchService {
         }
 
         /* 面包屑导航 */
+        /* 属性 */
         if (param.getAttrs() != null && param.getAttrs().size() > 0) {
             List<NavVo> Navs = param.getAttrs().stream().map((attr) -> {
                 SearchResult.NavVo navVo = new SearchResult.NavVo();
@@ -205,15 +206,17 @@ public class SearchServiceImpl implements SearchService {
                     log.info("检索服务远程调用Product查询属性失败");
                     navVo.setNavName(split[0]);
                 } else {
-                    String replace = replaceQueryString(param, attr,"attrs");
+                    String replace = replaceQueryString(param, attr, "attrs");
                     navVo.setLink("http://search.gulimall.com/list.html?" + replace);
                 }
-                AttrResponseVo data = (AttrResponseVo) r.getData("attr", new TypeReference<AttrResponseVo>() {});
+                AttrResponseVo data = (AttrResponseVo) r.getData("attr", new TypeReference<AttrResponseVo>() {
+                });
                 navVo.setNavName(data.getAttrName());
                 return navVo;
             }).collect(Collectors.toList());
             result.setNavs(Navs);
         }
+        /* 商品 */
         if (param.getBrandId() != null && param.getBrandId().size() > 0) {
             List<NavVo> navs = result.getNavs();
             NavVo navVo = new NavVo();
@@ -224,25 +227,28 @@ public class SearchServiceImpl implements SearchService {
                 List<BrandVo> brand = (List<BrandVo>) r.getData("brand", new TypeReference<List<BrandVo>>() {
                 });
                 StringBuffer buffer = new StringBuffer();
+                String replace = "";
                 for (BrandVo brandVo : brand) {
-                    buffer.append(brandVo.getBrandName()+";");
+                    buffer.append(brandVo.getBrandName() + ";");
+                    replace = replaceQueryString(param, brandVo.getBrandId() + "", "brandId");
                 }
                 navVo.setNavValue(buffer.toString());
+                navVo.setLink("http://search.gulimall.com/list.html?" + replace);
             }
-            navVo.setLink();
-            navs.add();
+            navs.add(navVo);
         }
+        // TODO 分类面包屑导航
         return result;
     }
 
-    private String replaceQueryString(SearchParam param, String value,String key) {
+    private String replaceQueryString(SearchParam param, String value, String key) {
         try {
             URLEncoder.encode("attr", "UTF-8").replace("+", "%20");
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        String replace = param.get_queryString().replace("&"+key+";=" + value, "");
+        String replace = param.get_queryString().replace("&" + key + ";=" + value, "");
         return replace;
     }
 
