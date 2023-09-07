@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-27 22:35:14
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-25 23:48:39
+ * @LastEditTime: 2023-09-07 23:51:31
  * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\vo\SearchResult.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -25,6 +25,7 @@ public class SearchResult {
     private List<CatalogVo> catalogs; //  
     private List<AttrVo> attrs; // 属性
     private List<NavVo> navs;
+    private List<Long> attrIds;
     @Data
     public static class NavVo{
         private String navName;

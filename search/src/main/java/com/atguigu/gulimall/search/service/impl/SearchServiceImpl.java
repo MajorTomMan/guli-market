@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-06 22:27:14
+ * @LastEditTime: 2023-09-08 00:00:20
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -202,6 +202,7 @@ public class SearchServiceImpl implements SearchService {
                 String[] split = attr.split("_");
                 navVo.setNavValue(split[1]);
                 R r = productFeignService.attrsInfo(Long.parseLong(split[0]));
+                result.getAttrIds().add(Long.parseLong(split[0]));
                 if (r.getCode() != 0) {
                     log.info("检索服务远程调用Product查询属性失败");
                     navVo.setNavName(split[0]);
@@ -238,6 +239,10 @@ public class SearchServiceImpl implements SearchService {
             navs.add(navVo);
         }
         // TODO 分类面包屑导航
+        if(param.getCatalog3Id()!=null){
+            
+        }
+
         return result;
     }
 
