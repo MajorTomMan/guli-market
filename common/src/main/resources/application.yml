@@ -4,12 +4,6 @@ spring:
   #  password: 981221
   #  url: jdbc:mysql://192.168.253.131:3306/gulimall_sms
   #  driver-class-name: com.mysql.cj.jdbc.Driver
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 192.168.253.131:8848
-      config:
-        server-addr: 192.168.253.131:8848
   application:
     name: common
 #mybatis-plus:
