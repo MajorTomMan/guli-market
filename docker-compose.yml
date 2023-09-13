@@ -93,4 +93,5 @@ services:
       - /home/master/nacos/logs:/home/nacos/logs
       - /home/master/nacos/conf:/home/nacos/conf
       - /home/master/nacos/bin:/home/nacos/bin
+    # 限定v2.2.3版本
     image: nacos/nacos-server
