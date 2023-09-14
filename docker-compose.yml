@@ -13,6 +13,12 @@ services:
       - /home/master/mysql/mysql-files:/var/lib/mysql-files
     environment:
       - MYSQL_ROOT_PASSWORD=root
+    #command: 
+      #--max_connections=1000
+      #--character-set-server=utf8mb4
+      #--collation-server=utf8mb4_general_ci
+      #--default-authentication-plugin=mysql_native_password
+      #--lower_case_table_names=1
     image: mysql
   redis:
     container_name: redis
@@ -84,6 +90,8 @@ services:
     environment:
       - MODE=standalone
       - PREFER_HOST_MODE=ip
+      - spring.sql.init.platform=mysql
+      - MYSQL_DATABASE_NUM=1
       - MYSQL_SERVICE_HOST=192.168.253.131
       - MYSQL_SERVICE_DB_NAME=nacos_config
       - MYSQL_SERVICE_PORT=3306
@@ -93,5 +101,5 @@ services:
       - /home/master/nacos/logs:/home/nacos/logs
       - /home/master/nacos/conf:/home/nacos/conf
       - /home/master/nacos/bin:/home/nacos/bin
-    # 限定v2.2.3版本
-    image: nacos/nacos-server
+    # 限定v2.2.0版本
+    image: nacos/nacos-server:v2.2.0
