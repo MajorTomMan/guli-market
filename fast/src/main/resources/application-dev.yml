@@ -5,7 +5,7 @@ spring:
             driver-class-name: com.mysql.cj.jdbc.Driver
             url: jdbc:mysql://192.168.253.131:3306/renren_security?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
             username: root
-            password: 981221
+            password: root
             initial-size: 10
             max-active: 100
             min-idle: 10

@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-01-30 13:20:29
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-07-28 23:46:42
+ * @LastEditTime: 2023-09-14 20:54:49
  * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/config/ElasticSearchConfig.java
  * @Description: 
  * 
@@ -39,7 +39,7 @@ public class ElasticSearchConfig {
     @Bean
     public RestClient restClient() {
         final BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "981221"));
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("elastic", "elastic"));
         HttpHost host = new HttpHost("192.168.253.131", 9200, "http");
         RestClientBuilder builder = RestClient.builder(host)
                 .setHttpClientConfigCallback(new HttpClientConfigCallback() {

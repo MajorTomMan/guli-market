@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-08 00:00:20
+ * @LastEditTime: 2023-09-14 20:54:09
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -193,7 +193,12 @@ public class SearchServiceImpl implements SearchService {
         } else {
             result.setTotalPages((int) (pages + 1));
         }
-
+        List<Integer> pageNavs = new ArrayList<>();
+        /* 总面包屑数 */
+        for (int i = 1; i <= pages; i++) {
+            pageNavs.add(i);
+        }
+        result.setPageNavs(pageNavs);
         /* 面包屑导航 */
         /* 属性 */
         if (param.getAttrs() != null && param.getAttrs().size() > 0) {
@@ -207,7 +212,7 @@ public class SearchServiceImpl implements SearchService {
                     log.info("检索服务远程调用Product查询属性失败");
                     navVo.setNavName(split[0]);
                 } else {
-                    String replace = replaceQueryString(param, attr, "attrs");
+                    String replace = replaceQueryString(param, attr, "attrId ");
                     navVo.setLink("http://search.gulimall.com/list.html?" + replace);
                 }
                 AttrResponseVo data = (AttrResponseVo) r.getData("attr", new TypeReference<AttrResponseVo>() {
@@ -219,13 +224,13 @@ public class SearchServiceImpl implements SearchService {
         }
         /* 商品 */
         if (param.getBrandId() != null && param.getBrandId().size() > 0) {
-            List<NavVo> navs = result.getNavs();
+            List<NavVo> navs = new ArrayList<>();
             NavVo navVo = new NavVo();
             navVo.setNavName("品牌");
             /* ToDO 远程查询品牌数据 */
             R r = productFeignService.brandsInfo(param.getBrandId());
             if (r.getCode() == 0) {
-                List<BrandVo> brand = (List<BrandVo>) r.getData("brand", new TypeReference<List<BrandVo>>() {
+                List<BrandVo> brand = (List<BrandVo>) r.getData("brands", new TypeReference<List<BrandVo>>() {
                 });
                 StringBuffer buffer = new StringBuffer();
                 String replace = "";
@@ -237,23 +242,33 @@ public class SearchServiceImpl implements SearchService {
                 navVo.setLink("http://search.gulimall.com/list.html?" + replace);
             }
             navs.add(navVo);
+            result.setNavs(navs);
         }
         // TODO 分类面包屑导航
-        if(param.getCatalog3Id()!=null){
-            
+        if (param.getCatalog3Id() != null && param.getCatalog3Id() >= 0) {
+            List<NavVo> navs = new ArrayList<>();
+            NavVo navVo = new NavVo();
+            navVo.setNavName("分类");
+            R r = productFeignService.categorysInfo(param.getCatalog3Id());
+            if (r.getCode() == 0) {
+                CatalogVo catalog  = (CatalogVo) r.getData("catagory",new TypeReference<CatalogVo>() {});
+                catalog.setCatalogName(null);
+            }
         }
 
         return result;
     }
 
-    private String replaceQueryString(SearchParam param, String value, String key) {
+    private String replaceQueryString(SearchParam param, String item, String key) {
+        String encode = "";
         try {
-            URLEncoder.encode("attr", "UTF-8").replace("+", "%20");
+            encode = URLEncoder.encode(item, "UTF-8").replace("+", "%20")
+                    .replace("%28", "(").replace("%29", ")");
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        String replace = param.get_queryString().replace("&" + key + ";=" + value, "");
+        String replace = param.get_queryString().replace("&" + key + "=" + encode, "");
         return replace;
     }
 
@@ -529,8 +544,8 @@ public class SearchServiceImpl implements SearchService {
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            log.info("保存查询文件失败");
-            log.info("错误原因:" + e.getCause());
+            log.info("保存DSL查询文件失败");
+            log.info("错误原因:" + e.getMessage());
         }
     }
 }

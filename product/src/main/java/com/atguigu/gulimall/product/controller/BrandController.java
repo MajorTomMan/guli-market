@@ -59,7 +59,7 @@ public class BrandController {
 
     /* 用于检索服务查询品牌ID */
     @GetMapping("/infos")
-    public R getMethodName(@PathVariable("brandIds") List<Long> brandId) {
+    public R getMethodName(@RequestParam("brandIds") List<Long> brandId) {
         List<BrandEntity> brands = brandService.getBrandsByIds(brandId);
         return R.ok().put("brands", brands);
     }

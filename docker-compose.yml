@@ -71,7 +71,7 @@ services:
     #- /home/master/rabbitmq/conf:/etc/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=master
-      - RABBITMQ_DEFAULT_PASS=981221
+      - RABBITMQ_DEFAULT_PASS=root
     image: rabbitmq:management
   nacos:
     container_name: nacos
@@ -88,7 +88,7 @@ services:
       - MYSQL_SERVICE_DB_NAME=nacos_config
       - MYSQL_SERVICE_PORT=3306
       - MYSQL_SERVICE_USER=root
-      - MYSQL_SERVICE_PASSWORD=981221
+      - MYSQL_SERVICE_PASSWORD=root
     volumes:
       - /home/master/nacos/logs:/home/nacos/logs
       - /home/master/nacos/conf:/home/nacos/conf

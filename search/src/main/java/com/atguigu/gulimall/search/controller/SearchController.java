@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:17:42
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-01 22:05:08
+ * @LastEditTime: 2023-09-14 20:05:50
  * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\controller\SearchController.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -28,9 +28,7 @@ public class SearchController {
     public String listPage(SearchParam param, Model model, HttpServletRequest request) {
         param.set_queryString(request.getQueryString());
         SearchResult result = searchService.search(param);
-        if (result != null) {
-            model.addAttribute("result", result);
-        }
+        model.addAttribute("result", result);
         return "list";
     }
 }

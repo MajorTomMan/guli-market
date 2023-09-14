@@ -1,13 +1,13 @@
 spring:
   #datasource:
   #  username: master
-  #  password: 981221
+  #  password: root
   #  url: jdbc:mysql://192.168.253.131:3306/gulimall_sms
   #  driver-class-name: com.mysql.cj.jdbc.Driver
   application:
     name: common
-#mybatis-plus:
-#  mapper-locations: classpath*:/mapper/**/*.xml
-#  global-config:
-#    db-config:
-#      id-type: auto
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    db-config:
+      id-type: auto
