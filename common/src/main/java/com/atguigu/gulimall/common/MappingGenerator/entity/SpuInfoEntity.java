@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-12 16:05:30
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-12 16:05:38
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-09-14 23:59:21
  * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MappingGenerator/entity/SpuInfoEntity.java
  * @Description: 
  * 
