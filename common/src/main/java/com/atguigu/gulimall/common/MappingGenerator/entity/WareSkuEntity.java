@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-11 22:07:16
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-09-15 23:37:54
  * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MappingGenerator/entity/WareSkuEntity.java
  * @Description: 
  * 
@@ -11,6 +11,8 @@
 package com.atguigu.gulimall.common.MappingGenerator.entity;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -32,7 +34,7 @@ public class WareSkuEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long id;
 	/**
 	 * sku_id

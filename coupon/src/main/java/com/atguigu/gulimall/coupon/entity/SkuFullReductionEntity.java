@@ -13,6 +13,7 @@ package com.atguigu.gulimall.coupon.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -33,7 +34,7 @@ public class SkuFullReductionEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long id;
 	/**
 	 * spu_id

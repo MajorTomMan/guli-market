@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-26 21:32:56
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-09-15 23:55:47
  * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/entity/SpuInfoDescEntity.java
  * @Description: 
  * 
@@ -10,6 +10,7 @@
  */
 package com.atguigu.gulimall.product.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -33,7 +34,7 @@ public class SpuInfoDescEntity implements Serializable {
 	/**
 	 * 商品id
 	 */
-	@TableId(type = IdType.INPUT)
+	@TableId(value = "spu_id",type = IdType.AUTO)
 	private Long spuId;
 	/**
 	 * 商品介绍

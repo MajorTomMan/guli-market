@@ -1,5 +1,6 @@
 package ${package}.${moduleName}.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -27,7 +28,7 @@ public class ${className}Entity implements Serializable {
 	 * $column.comments
 	 */
 	#if($column.columnName == $pk.columnName)
-@TableId
+@TableId(value = "id",type = IdType.AUTO)
 	#end
 private $column.attrType $column.attrname;
 #end

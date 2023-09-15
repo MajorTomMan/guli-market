@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.order.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -22,7 +23,7 @@ public class MqMessageEntity implements Serializable {
 	/**
 	 * 
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private String messageId;
 	/**
 	 * 

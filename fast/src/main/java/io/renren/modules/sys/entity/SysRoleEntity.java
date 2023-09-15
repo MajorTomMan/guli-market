@@ -9,6 +9,7 @@
 package io.renren.modules.sys.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -31,7 +32,7 @@ public class SysRoleEntity implements Serializable {
 	/**
 	 * 角色ID
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long roleId;
 
 	/**

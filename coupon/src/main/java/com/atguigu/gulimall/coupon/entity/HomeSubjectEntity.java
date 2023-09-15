@@ -2,6 +2,7 @@ package com.atguigu.gulimall.coupon.entity;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -22,7 +23,7 @@ public class HomeSubjectEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 专题名字

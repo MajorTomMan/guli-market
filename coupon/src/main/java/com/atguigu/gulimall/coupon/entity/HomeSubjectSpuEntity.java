@@ -1,13 +1,4 @@
-/*
- * @Author: flashnames 765719516@qq.com
- * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-30 13:49:08
- * @FilePath: /common/home/master/project/gulimall/coupon/src/main/java/com/atguigu/gulimall/coupon/entity/HomeSubjectSpuEntity.java
- * @Description: 
- * 
- * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
- */
+
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
@@ -21,6 +12,7 @@
 package com.atguigu.gulimall.coupon.entity;
 
 import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -42,7 +34,7 @@ public class HomeSubjectSpuEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 专题名字

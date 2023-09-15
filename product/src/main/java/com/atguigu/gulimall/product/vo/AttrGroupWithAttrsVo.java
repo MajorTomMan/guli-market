@@ -11,6 +11,7 @@ package com.atguigu.gulimall.product.vo;
 import java.util.List;
 
 import com.atguigu.gulimall.product.entity.AttrEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import lombok.Data;
@@ -20,7 +21,7 @@ public class AttrGroupWithAttrsVo {
 	/**
 	 * 分组id
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long attrGroupId;
 	/**
 	 * 组名

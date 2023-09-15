@@ -2,13 +2,15 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-12 16:05:30
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-14 23:59:21
+ * @LastEditTime: 2023-09-15 23:32:04
  * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MappingGenerator/entity/SpuInfoEntity.java
  * @Description: 
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
  */
 package com.atguigu.gulimall.common.MappingGenerator.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -33,7 +35,7 @@ public class SpuInfoEntity implements Serializable {
 	/**
 	 * 商品id
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 商品名称

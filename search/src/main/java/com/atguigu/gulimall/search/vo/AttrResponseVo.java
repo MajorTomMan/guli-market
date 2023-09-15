@@ -8,6 +8,7 @@
  */
 package com.atguigu.gulimall.search.vo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 
 import lombok.Data;
@@ -18,7 +19,7 @@ public class AttrResponseVo {
 	/**
 	 * 属性id
 	 */
-	@TableId
+	@TableId(value = "id",type = IdType.AUTO)
 	private Long attrId;
 	/**
 	 * 属性名
