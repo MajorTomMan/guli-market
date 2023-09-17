@@ -31,7 +31,7 @@ public class SysMenuEntity implements Serializable,Comparable<SysMenuEntity> {
 	/**
 	 * 菜单ID
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "menu_id",type = IdType.AUTO)
 	private Long menuId;
 
 	/**
