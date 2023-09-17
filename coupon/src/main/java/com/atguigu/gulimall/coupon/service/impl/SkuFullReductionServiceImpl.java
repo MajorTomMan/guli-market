@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 12:23:11
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-09-17 23:47:42
  * @FilePath: /common/home/master/project/gulimall/coupon/src/main/java/com/atguigu/gulimall/coupon/service/impl/SkuFullReductionServiceImpl.java
  * @Description: 
  * 
@@ -65,22 +65,25 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
         }
         SkuFullReductionEntity reductionEntity = new SkuFullReductionEntity();
         BeanUtils.copyProperties(reductionTo, reductionEntity);
-        if(reductionEntity.getFullPrice().compareTo(new BigDecimal("0"))==1){
+        if (reductionEntity.getFullPrice().compareTo(new BigDecimal("0")) == 1) {
             this.save(reductionEntity);
         }
+        /* 此处需要已经事先设置好会员等级,不然会直接传入一个Null */
         List<MemberPrice> memberPrice = reductionTo.getMemberPrice();
-        List<MemberPriceEntity> collect = memberPrice.stream().map(item -> {
-            MemberPriceEntity priceEntity = new MemberPriceEntity();
-            priceEntity.setSkuId(reductionTo.getSkuId());
-            priceEntity.setMemberLevelId(item.getId());
-            priceEntity.setMemberLevelName(item.getName());
-            priceEntity.setMemberPrice(item.getPrice());
-            priceEntity.setAddOther(1);
-            return priceEntity;
-        }).filter(item->{
-            return item.getMemberPrice().compareTo(new BigDecimal("0"))==1;
-        }).collect(Collectors.toList());
-        memberPriceService.saveBatch(collect);
+        if (memberPrice != null) {
+            List<MemberPriceEntity> collect = memberPrice.stream().map(item -> {
+                MemberPriceEntity priceEntity = new MemberPriceEntity();
+                priceEntity.setSkuId(reductionTo.getSkuId());
+                priceEntity.setMemberLevelId(item.getId());
+                priceEntity.setMemberLevelName(item.getName());
+                priceEntity.setMemberPrice(item.getPrice());
+                priceEntity.setAddOther(1);
+                return priceEntity;
+            }).filter(item -> {
+                return item.getMemberPrice().compareTo(new BigDecimal("0")) == 1;
+            }).collect(Collectors.toList());
+            memberPriceService.saveBatch(collect);
+        }
     }
 
 }

@@ -49,7 +49,7 @@
       <el-table-column prop="skuName" header-align="center" align="center" label="名称"></el-table-column>
       <el-table-column prop="skuDefaultImg" header-align="center" align="center" label="默认图片">
         <template slot-scope="scope">
-          <img :src="scope.row.skuDefaultImg" style="width:80px;height:80px;" />
+          <img :src="scope.row.skuDefaultImg" style="width:100%;height:auto;" />
         </template>
       </el-table-column>
       <el-table-column prop="price" header-align="center" align="center" label="价格"></el-table-column>

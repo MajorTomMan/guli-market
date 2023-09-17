@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-13 15:59:15
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-09-17 22:48:21
  * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
  * @Description: 
  * 
@@ -11,6 +11,7 @@
 package com.atguigu.gulimall.product.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
