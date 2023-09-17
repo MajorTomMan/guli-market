@@ -24,7 +24,7 @@ import java.util.Date;
 @Data
 @TableName("sys_captcha")
 public class SysCaptchaEntity {
-    @TableId(value = "id",type = IdType.INPUT)
+    @TableId(value = "uuid",type = IdType.INPUT)
     private String uuid;
     /**
      * 验证码

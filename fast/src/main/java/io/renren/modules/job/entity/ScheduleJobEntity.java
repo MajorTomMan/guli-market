@@ -36,7 +36,7 @@ public class ScheduleJobEntity implements Serializable {
 	/**
 	 * 任务id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "job_id",type = IdType.AUTO)
 	private Long jobId;
 
 	/**

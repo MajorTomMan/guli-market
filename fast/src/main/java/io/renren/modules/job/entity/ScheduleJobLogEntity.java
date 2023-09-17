@@ -30,7 +30,7 @@ public class ScheduleJobLogEntity implements Serializable {
 	/**
 	 * 日志id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "log_id",type = IdType.AUTO)
 	private Long logId;
 	
 	/**
