@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-14 20:54:09
+ * @LastEditTime: 2023-09-18 21:54:12
  * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -202,7 +202,7 @@ public class SearchServiceImpl implements SearchService {
         /* 面包屑导航 */
         /* 属性 */
         if (param.getAttrs() != null && param.getAttrs().size() > 0) {
-            List<NavVo> Navs = param.getAttrs().stream().map((attr) -> {
+            List<NavVo> navs = param.getAttrs().stream().map((attr) -> {
                 SearchResult.NavVo navVo = new SearchResult.NavVo();
                 String[] split = attr.split("_");
                 navVo.setNavValue(split[1]);
@@ -212,7 +212,7 @@ public class SearchServiceImpl implements SearchService {
                     log.info("检索服务远程调用Product查询属性失败");
                     navVo.setNavName(split[0]);
                 } else {
-                    String replace = replaceQueryString(param, attr, "attrId ");
+                    String replace = replaceQueryString(param, attr, "attrId");
                     navVo.setLink("http://search.gulimall.com/list.html?" + replace);
                 }
                 AttrResponseVo data = (AttrResponseVo) r.getData("attr", new TypeReference<AttrResponseVo>() {
@@ -220,7 +220,7 @@ public class SearchServiceImpl implements SearchService {
                 navVo.setNavName(data.getAttrName());
                 return navVo;
             }).collect(Collectors.toList());
-            result.setNavs(Navs);
+            result.setNavs(navs);
         }
         /* 商品 */
         if (param.getBrandId() != null && param.getBrandId().size() > 0) {
@@ -244,18 +244,24 @@ public class SearchServiceImpl implements SearchService {
             navs.add(navVo);
             result.setNavs(navs);
         }
-        // TODO 分类面包屑导航
+        // TODO 分类面包屑导航,不需要导航取消
         if (param.getCatalog3Id() != null && param.getCatalog3Id() >= 0) {
             List<NavVo> navs = new ArrayList<>();
             NavVo navVo = new NavVo();
             navVo.setNavName("分类");
             R r = productFeignService.categorysInfo(param.getCatalog3Id());
             if (r.getCode() == 0) {
-                CatalogVo catalog  = (CatalogVo) r.getData("catagory",new TypeReference<CatalogVo>() {});
-                catalog.setCatalogName(null);
+                CatalogVo catalog = (CatalogVo) r.getData("category", new TypeReference<CatalogVo>() {
+                });
+                navVo.setNavName(catalog.getCatalogName());
+                String replace = replaceQueryString(param, param.getCatalog3Id() + "", "catId");
+                navVo.setLink("http://search.gulimall.com/list.html?" + replace);
+            } else {
+                navVo.setNavName("");
             }
+            navs.add(navVo);
+            result.setNavs(navs);
         }
-
         return result;
     }
 
