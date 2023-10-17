@@ -1,8 +1,8 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-08 19:03:16
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-12 16:06:04
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-10-18 00:05:35
  * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MappingGenerator/generator.java
  * @Description: 
  * 
@@ -17,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atguigu.gulimall.common.MappingGenerator.entity.SpuInfoEntity;
-import com.atguigu.gulimall.common.MappingGenerator.entity.WareSkuEntity;
 
 public class generator {
     private static Pattern humpPattern = Pattern.compile("[A-Z]");// 匹配大写字母的正则
