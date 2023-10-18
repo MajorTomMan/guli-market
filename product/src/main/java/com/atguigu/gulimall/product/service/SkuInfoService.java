@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-26 22:18:39
+ * @LastEditTime: 2023-10-19 00:17:13
  * @FilePath: /GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/SkuInfoService.java
  * @Description: 
  * 
@@ -17,6 +17,7 @@ import com.atguigu.gulimall.product.vo.SkuItemVo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * sku信息
@@ -35,6 +36,6 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
 
     List<SkuInfoEntity> getSkusBySpuId(Long spuId);
 
-    SkuItemVo item(Long skuId);
+    SkuItemVo item(Long skuId) throws InterruptedException, ExecutionException;
 }
 

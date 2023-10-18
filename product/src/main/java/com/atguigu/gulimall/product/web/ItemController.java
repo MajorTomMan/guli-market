@@ -8,6 +8,8 @@
  */
 package com.atguigu.gulimall.product.web;
 
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +28,7 @@ public class ItemController {
      * 展现SKU详情
      */
     @GetMapping("/{skuId}.html")
-    public String skuItem(@PathVariable("skuId") Long skuId, Model model) {
+    public String skuItem(@PathVariable("skuId") Long skuId, Model model) throws InterruptedException, ExecutionException {
         System.out.println("准备查询" + skuId + "详情");
         SkuItemVo itemVo = skuInfoService.item(skuId);
         model.addAttribute("item", itemVo);

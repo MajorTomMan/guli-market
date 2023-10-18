@@ -2,7 +2,7 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-10-16 22:55:46
+ * @LastEditTime: 2023-10-19 00:17:40
  * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SkuInfoServiceImpl.java
  * @Description: 
  * 
@@ -16,6 +16,11 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -46,6 +51,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     private AttrGroupService attrGroupService;
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
+    @Autowired
+    private ThreadPoolExecutor executor;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -111,25 +118,37 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     }
 
     @Override
-    public SkuItemVo item(Long skuId) {
+    public SkuItemVo item(Long skuId) throws InterruptedException, ExecutionException {
         // TODO Auto-generated method stub
         /* 1.Sku基本信息获取 */
         SkuItemVo skuItemVo = new SkuItemVo();
-        SkuInfoEntity info = getById(skuId);
-        skuItemVo.setInfo(info);
-        /* 2.Sku的图片信息 */
-        List<SkuImagesEntity> images = imagesService.getImagesBySkuId(skuId);
-        skuItemVo.setImages(images);
-        /* 3.获取SPU的销售信息组合 */
-        Long spuId = info.getSpuId();
-        List<SkuItemSaleAttrVo> saleAttrVos = skuSaleAttrValueService.getSaleAttrsBySpuId(spuId);
-        skuItemVo.setSaleAttr(saleAttrVos);
-        /* 4.获取SPU的介绍 */
-        SpuInfoDescEntity spuInfoDescEntity = spuInfoDescService.getById(spuId);
-        skuItemVo.setDesc(spuInfoDescEntity);
-        /* 5.获取SPU的规格参数信息 */
-        Long catalogId = info.getCatalogId();
-        List<SpuItemAttrGroupVo> spuItemAttrGroupVos = attrGroupService.getAttrGroupWithAttrsBySpuId(spuId, catalogId);
+        CompletableFuture<SkuInfoEntity> infoFuture = CompletableFuture.supplyAsync(() -> {
+            SkuInfoEntity info = getById(skuId);
+            skuItemVo.setInfo(info);
+            return info;
+        }, executor);
+        CompletableFuture<Void> imagesFuture = CompletableFuture.runAsync(() -> {
+            /* 2.Sku的图片信息 */
+            List<SkuImagesEntity> images = imagesService.getImagesBySkuId(skuId);
+            skuItemVo.setImages(images);
+        }, executor);
+        CompletableFuture<Void> saleAttrFuture = infoFuture.thenAcceptAsync((res) -> {
+            /* 3.获取SPU的销售信息组合 */
+            List<SkuItemSaleAttrVo> saleAttrVos = skuSaleAttrValueService.getSaleAttrsBySpuId(res.getSpuId());
+            skuItemVo.setSaleAttr(saleAttrVos);
+        }, executor);
+        CompletableFuture<Void> descFuture = infoFuture.thenAcceptAsync((res) -> {
+            /* 4.获取SPU的介绍 */
+            SpuInfoDescEntity spuInfoDescEntity = spuInfoDescService.getById(res.getSpuId());
+            skuItemVo.setDesc(spuInfoDescEntity);
+        }, executor);
+        CompletableFuture<Void> baseAttrFuture = infoFuture.thenAcceptAsync((res) -> {
+            /* 5.获取SPU的规格参数信息 */
+            List<SpuItemAttrGroupVo> spuItemAttrGroupVos = attrGroupService.getAttrGroupWithAttrsBySpuId(res.getSpuId(),
+                    res.getCatalogId());
+            skuItemVo.setGroupAttrs(spuItemAttrGroupVos);
+        }, executor);
+        CompletableFuture.allOf(infoFuture, saleAttrFuture, descFuture, baseAttrFuture, imagesFuture).get();
         return skuItemVo;
     }
 }
