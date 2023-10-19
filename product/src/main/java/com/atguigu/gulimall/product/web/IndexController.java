@@ -11,7 +11,6 @@
 package com.atguigu.gulimall.product.web;
 
 import java.util.List;
-import java.util.Locale.Category;
 import java.util.Map;
 
 import com.atguigu.gulimall.product.entity.CategoryEntity;
