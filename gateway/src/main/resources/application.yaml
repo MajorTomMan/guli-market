@@ -31,7 +31,7 @@ spring:
           predicates:
             - Path=/api/order/**
           filters:
-            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填ware的路径名
+            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填order的路径名
         - id: admin_route
           uri: lb://fast # 该处填nacos上的服务名(即spring.application.name中的值)
           predicates:
@@ -42,6 +42,10 @@ spring:
           uri: lb://search
           predicates:
             - Host=search.gulimall.com
+        - id: auth_route
+          uri: lb://auth
+          predicates:
+            - Host=auth.gulimall.com
         - id: host_route
           uri: lb://product
           predicates:
