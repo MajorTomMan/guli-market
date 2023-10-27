@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-06-23 17:37:38
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-10-23 23:44:19
+ * @LastEditTime: 2023-10-27 23:20:47
  * @FilePath: \Guli\thirdparty\src\test\java\com\atguigu\gulimall\thirdparty\ThirdPartyApplicationTests.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,26 +11,12 @@ package com.atguigu.gulimall.thirdparty;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import com.aliyun.auth.credentials.Credential;
-import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.OSSException;
-import com.aliyun.sdk.service.dysmsapi20170525.AsyncClient;
-import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsRequest;
-import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponse;
-import com.google.gson.Gson;
-
-import darabonba.core.client.ClientOverrideConfiguration;
-
+import com.atguigu.gulimall.thirdparty.component.SMSComponent;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +33,17 @@ class ThirdPartyApplicationTests {
     String endpoint;
     @Value(value = "${spring.cloud.alicloud.oss.bucket}")
     String bucket;
+    @Autowired
+    SMSComponent smsComponent;
+
     @Test
     void testOssServer() {
         String bucketName = "gulimal-byme";
         // 填写Object完整路径，完整路径中不能包含Bucket名称，例如exampledir/exampleobject.txt。
-        String objectName = "test.txt";
+        String objectName = "./testdata/test.txt";
         // 填写本地文件的完整路径，例如D:\\localpath\\examplefile.txt。
         // 如果未指定本地路径，则默认从示例程序所属项目对应本地路径中上传文件流。
-        String filePath = "./test.txt";
+        String filePath = "";
         OSS client = new OSSClientBuilder().build(endpoint, accessId, accesskey);
         try {
             InputStream inputStream = new FileInputStream(filePath);
@@ -82,37 +71,9 @@ class ThirdPartyApplicationTests {
             }
         }
     }
+
     @Test
     void testSendSMS() throws InterruptedException, ExecutionException {
-        Gson gson = new Gson();
-        Map<String, String> codes = new HashMap<>();
-        codes.put("code", "1234");
-        String code = gson.toJson(codes);
-        StaticCredentialProvider provider = StaticCredentialProvider.create(
-            Credential.builder().accessKeyId(accessId)
-            .accessKeySecret(accesskey).build()
-        );
-        // Configure the Client
-        AsyncClient client = AsyncClient.builder()
-            .region("cn-hangzhou") // Region ID
-            .credentialsProvider(provider)
-            .overrideConfiguration(
-                ClientOverrideConfiguration.create()
-                    .setEndpointOverride("dysmsapi.aliyuncs.com")
-                    .setConnectTimeout(Duration.ofSeconds(30))
-                )
-            .build();
-
-        // Parameter settings for API request
-        SendSmsRequest sendSmsRequest = SendSmsRequest.builder()
-            .signName("阿里云短信测试")
-            .templateCode("SMS_154950909")
-            .phoneNumbers("13033250968")
-            .templateParam(code)
-            .build();
-        CompletableFuture<SendSmsResponse> response = client.sendSms(sendSmsRequest);
-        // Synchronously get the return value of the API request
-        SendSmsResponse resp = response.get();
-        System.out.println(new Gson().toJson(resp));
+        smsComponent.sendSms("xxx", "1234");
     }
 }
