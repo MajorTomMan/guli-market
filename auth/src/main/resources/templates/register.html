@@ -7057,7 +7057,7 @@ font-family:&quot;微软雅黑&quot;,&quot;sans-serif&quot;;mso-bidi-font-family
                 timeOutChangeStyle();
                 //发送验证码
                 var phone = $("#phoneNum").val();
-                $.get("/sms/sendCode?phone=" + phone, function (data) {
+                $.get("/sms/sendcode?phone=" + phone, function (data) {
                     if (data.code != 0) {
                         alert(data.msg);
                     }
