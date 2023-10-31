@@ -2,26 +2,33 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-10-20 22:11:08
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-10-31 00:46:55
+ * @LastEditTime: 2023-10-31 23:08:02
  * @FilePath: \Guli\auth\src\main\java\com\atguigu\gulimall\auth\controller\IndexController.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.auth.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.auth.feign.ThirdPartyFeignService;
+import com.atguigu.gulimall.auth.vo.UserRegisterVo;
 import com.atguigu.gulimall.common.constant.AuthServerConstant;
 import com.atguigu.gulimall.common.exception.BizCodeEmum;
 import com.atguigu.gulimall.common.utils.R;
@@ -52,5 +59,16 @@ public class LoginController {
         redisTemplate.opsForValue().set(AuthServerConstant.SMS_CODE_CACHE_PREFIX + phone, code, 10, TimeUnit.MINUTES);
         thirdPartyFeignService.sendCode(phone, code);
         return R.ok();
+    }
+
+    @PostMapping("/register")
+    public String register(@Valid UserRegisterVo vo, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = result.getFieldErrors().stream()
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            model.addAttribute("errors", errors);
+            return "forward:/register.html";
+        }
+        return "redirect:/login.html";
     }
 }
