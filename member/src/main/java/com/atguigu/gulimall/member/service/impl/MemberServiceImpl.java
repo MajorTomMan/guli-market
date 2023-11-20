@@ -9,6 +9,7 @@
 package com.atguigu.gulimall.member.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,7 +31,8 @@ import com.atguigu.gulimall.member.vo.RegisterVo;
 public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> implements MemberService {
     @Autowired
     MemberLevelDao memberLevelDao;
-
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<MemberEntity> page = this.page(
@@ -50,7 +52,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         /* 检查用户名和手机号是否唯一 */
         entity.setUsername(vo.getUserName());
         checkPhoneIsUnique(vo.getPhone());
-        this.baseMapper.insert(entity);
+        String encode = passwordEncoder.encode(vo.getPassword());
+        entity.setPassword(encode);
     }
 
     @Override
