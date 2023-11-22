@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.atguigu.gulimall.product.dao.SpuInfoDao">
-    <resultMap id="spuInfoEntityMap" type="com.atguigu.gulimall.common.MappingGenerator.entity.SpuInfoEntity">
+    <resultMap id="spuInfoEntityMap" type="com.atguigu.gulimall.product.entity.SpuInfoEntity">
         <result column="id" jdbcType="BIGINT" property="id" />
         <result column="spu_name" jdbcType="VARCHAR" property="spuName" />
         <result column="spu_description" jdbcType="VARCHAR" property="spuDescription" />

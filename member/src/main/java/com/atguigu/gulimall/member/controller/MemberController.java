@@ -18,6 +18,7 @@ import com.atguigu.gulimall.member.exception.UserNameExistException;
 import com.atguigu.gulimall.member.feign.couponFeignService;
 import com.atguigu.gulimall.member.service.MemberService;
 import com.atguigu.gulimall.member.vo.RegisterVo;
+import com.atguigu.gulimall.common.exception.BizCodeEmum;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
@@ -50,9 +51,9 @@ public class MemberController {
             memberService.register(vo);
         } catch (PhoneExistException e) {
             // TODO: handle exception
-            R.error(e.getMessage());
+            R.error(BizCodeEmum.PHONE_EXIST_EXCEPTION.getCode(),BizCodeEmum.PHONE_EXIST_EXCEPTION.getMsg());
         } catch (UserNameExistException e) {
-            R.error(e.getMessage());
+            R.error(BizCodeEmum.USER_EXIST_EXCEPTION.getCode(),BizCodeEmum.USER_EXIST_EXCEPTION.getMsg());
         }
         return R.ok();
     }

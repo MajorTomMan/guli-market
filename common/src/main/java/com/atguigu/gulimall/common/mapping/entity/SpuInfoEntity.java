@@ -8,7 +8,7 @@
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
  */
-package com.atguigu.gulimall.common.MappingGenerator.entity;
+package com.atguigu.gulimall.common.mapping.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 

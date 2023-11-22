@@ -2,13 +2,13 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-15 23:37:54
- * @FilePath: /GuliMall/common/src/main/java/com/atguigu/gulimall/common/MappingGenerator/entity/WareSkuEntity.java
+ * @LastEditTime: 2023-11-22 23:12:13
+ * @FilePath: \Guli\common\src\main\java\com\atguigu\gulimall\common\mapping\entity\WareSkuEntity.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
  */
-package com.atguigu.gulimall.common.MappingGenerator.entity;
+package com.atguigu.gulimall.common.mapping.entity;
 
 import java.io.Serializable;
 

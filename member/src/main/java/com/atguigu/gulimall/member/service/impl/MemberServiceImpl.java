@@ -2,7 +2,7 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-06-23 17:37:38
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-11-05 18:43:56
+ * @LastEditTime: 2023-11-22 23:37:12
  * @FilePath: \Guli\member\src\main\java\com\atguigu\gulimall\member\service\impl\MemberServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -31,8 +31,9 @@ import com.atguigu.gulimall.member.vo.RegisterVo;
 public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> implements MemberService {
     @Autowired
     MemberLevelDao memberLevelDao;
-    @Autowired
-    BCryptPasswordEncoder passwordEncoder;
+    
+    BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<MemberEntity> page = this.page(
@@ -54,6 +55,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         checkPhoneIsUnique(vo.getPhone());
         String encode = passwordEncoder.encode(vo.getPassword());
         entity.setPassword(encode);
+        this.baseMapper.insert(entity);
     }
 
     @Override
