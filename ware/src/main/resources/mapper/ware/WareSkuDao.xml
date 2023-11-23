@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.atguigu.gulimall.ware.dao.WareSkuDao">
 
-    <resultMap id="wareSkuMap" type="com.atguigu.gulimall.common.MappingGenerator.entity.WareSkuEntity">
+    <resultMap id="wareSkuMap" type="com.atguigu.gulimall.ware.entity.WareSkuEntity">
         <result column="id" jdbcType="BIGINT" property="id" />
         <result column="sku_id" jdbcType="BIGINT" property="skuId" />
         <result column="ware_id" jdbcType="BIGINT" property="wareId" />

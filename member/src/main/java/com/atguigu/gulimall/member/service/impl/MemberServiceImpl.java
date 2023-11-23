@@ -1,10 +1,9 @@
 /*
- * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-06-23 17:37:38
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-11-22 23:37:12
+ * @LastEditTime: 2023-11-24 00:14:41
  * @FilePath: \Guli\member\src\main\java\com\atguigu\gulimall\member\service\impl\MemberServiceImpl.java
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
 package com.atguigu.gulimall.member.service.impl;
 
@@ -25,14 +24,15 @@ import com.atguigu.gulimall.member.entity.MemberLevelEntity;
 import com.atguigu.gulimall.member.exception.PhoneExistException;
 import com.atguigu.gulimall.member.exception.UserNameExistException;
 import com.atguigu.gulimall.member.service.MemberService;
+import com.atguigu.gulimall.member.vo.MemberLoginVo;
 import com.atguigu.gulimall.member.vo.RegisterVo;
 
 @Service("memberService")
 public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> implements MemberService {
     @Autowired
     MemberLevelDao memberLevelDao;
-    
-    BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -49,10 +49,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         MemberEntity entity = new MemberEntity();
         MemberLevelEntity levelEntity = memberLevelDao.getDefaultLevel();
         entity.setLevelId(levelEntity.getId());
-        entity.setMobile(vo.getPhone());
         /* 检查用户名和手机号是否唯一 */
+        checkUserNameIsUnique(vo.getUserName());
         entity.setUsername(vo.getUserName());
         checkPhoneIsUnique(vo.getPhone());
+        entity.setMobile(vo.getPhone());
         String encode = passwordEncoder.encode(vo.getPassword());
         entity.setPassword(encode);
         this.baseMapper.insert(entity);
@@ -75,6 +76,27 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         Long count = memberDao.selectCount(new QueryWrapper<MemberEntity>().eq("username", username));
         if (count > 0) {
             throw new PhoneExistException();
+        }
+    }
+
+    @Override
+    public MemberEntity login(MemberLoginVo vo) {
+        // TODO Auto-generated method stub
+        MemberDao dao = this.baseMapper;
+        MemberEntity entity = dao.selectOne(new QueryWrapper<MemberEntity>().eq("username", vo.getLoginAccount()).or()
+                .eq("mobile", vo.getLoginAccount()));
+        if (entity == null) {
+            return null;
+        } else {
+            /* 获取到数据库的密码 */
+            String password = entity.getPassword();
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            /* 密码匹配 */
+            boolean matches = encoder.matches(password, vo.getPassword());
+            if (matches) {
+                return entity;
+            }
+            return null;
         }
     }
 

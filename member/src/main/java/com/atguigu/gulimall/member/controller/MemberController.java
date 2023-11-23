@@ -1,3 +1,10 @@
+/*
+ * @Date: 2023-06-23 17:37:38
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2023-11-23 22:59:33
+ * @FilePath: \Guli\member\src\main\java\com\atguigu\gulimall\member\controller\MemberController.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.atguigu.gulimall.member.controller;
 
 import java.util.Arrays;
@@ -17,6 +24,7 @@ import com.atguigu.gulimall.member.exception.PhoneExistException;
 import com.atguigu.gulimall.member.exception.UserNameExistException;
 import com.atguigu.gulimall.member.feign.couponFeignService;
 import com.atguigu.gulimall.member.service.MemberService;
+import com.atguigu.gulimall.member.vo.MemberLoginVo;
 import com.atguigu.gulimall.member.vo.RegisterVo;
 import com.atguigu.gulimall.common.exception.BizCodeEmum;
 import com.atguigu.gulimall.common.utils.PageUtils;
@@ -45,15 +53,25 @@ public class MemberController {
         return R.ok().put("member", entity).put("coupons", coupons.get("coupons"));
     }
 
+    @PostMapping("/login")
+    public R login(@RequestBody MemberLoginVo vo) {
+        MemberEntity entity = memberService.login(vo);
+        if (entity == null) {
+            return R.error(BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(),
+                    BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
+        }
+        return R.ok();
+    }
+
     @PostMapping("/regist")
     public R regist(@RequestBody RegisterVo vo) {
         try {
             memberService.register(vo);
         } catch (PhoneExistException e) {
             // TODO: handle exception
-            R.error(BizCodeEmum.PHONE_EXIST_EXCEPTION.getCode(),BizCodeEmum.PHONE_EXIST_EXCEPTION.getMsg());
+            R.error(BizCodeEmum.PHONE_EXIST_EXCEPTION.getCode(), BizCodeEmum.PHONE_EXIST_EXCEPTION.getMsg());
         } catch (UserNameExistException e) {
-            R.error(BizCodeEmum.USER_EXIST_EXCEPTION.getCode(),BizCodeEmum.USER_EXIST_EXCEPTION.getMsg());
+            R.error(BizCodeEmum.USER_EXIST_EXCEPTION.getCode(), BizCodeEmum.USER_EXIST_EXCEPTION.getMsg());
         }
         return R.ok();
     }

@@ -18,12 +18,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.atguigu.gulimall.auth.feign.MemberFeignService;
 import com.atguigu.gulimall.auth.feign.ThirdPartyFeignService;
+import com.atguigu.gulimall.auth.vo.UserLoginVo;
 import com.atguigu.gulimall.auth.vo.UserRegisterVo;
 import com.atguigu.gulimall.common.constant.AuthServerConstant;
 import com.atguigu.gulimall.common.exception.BizCodeEmum;
@@ -100,5 +102,17 @@ public class LoginController {
             redirectAttributes.addFlashAttribute("errors", errors);
             return "redirect:http://auth.gulimall.com/register.html";
         }
+    }
+    @PostMapping("/login")
+    public String login(UserLoginVo vo,RedirectAttributes attributes){
+        /* 远程登录 */
+        R r = memberFeignService.login(vo);
+        if(r.getCode()==0){
+            return "redirect:http://gulimall.com";
+        }
+        HashMap<String,Object> errors = new HashMap<>();
+        errors.put("msg",r.getData("msg",new TypeReference<String>(){}));
+        attributes.addFlashAttribute("errors",errors);
+        return "redirect:http://auth.gulimall.com/login.html";
     }
 }
