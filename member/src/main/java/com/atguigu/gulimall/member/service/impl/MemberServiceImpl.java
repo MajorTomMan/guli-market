@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-06-23 17:37:38
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-11-24 00:14:41
+ * @LastEditTime: 2023-11-24 21:11:30
  * @FilePath: \Guli\member\src\main\java\com\atguigu\gulimall\member\service\impl\MemberServiceImpl.java
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
@@ -92,7 +92,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             String password = entity.getPassword();
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             /* 密码匹配 */
-            boolean matches = encoder.matches(password, vo.getPassword());
+            boolean matches = encoder.matches(vo.getPassword(),password);
             if (matches) {
                 return entity;
             }
