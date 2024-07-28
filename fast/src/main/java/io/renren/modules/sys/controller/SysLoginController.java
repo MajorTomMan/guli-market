@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -22,12 +23,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
+
+import jakarta.imageio.ImageIO;
 
 /**
  * 登录相关

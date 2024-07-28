@@ -1,3 +1,10 @@
+/*
+ * @Date: 2023-07-12 20:26:57
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-07-28 23:18:03
+ * @FilePath: \fast\src\main\java\io\renren\modules\sys\service\impl\SysUserTokenServiceImpl.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *

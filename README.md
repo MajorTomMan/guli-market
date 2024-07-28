@@ -1,3 +1,10 @@
+<!--
+ * @Date: 2023-06-23 17:37:37
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-07-28 21:49:55
+ * @FilePath: \Guli\README.md
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+-->
 
 # guli-market
 
@@ -15,7 +22,10 @@
 - coupon:10000
 - search:10500
 - auth:11000
+- cart:11500
 - fast-vue:8001
 - fast:6000
 - generator:9999
 - third-party:3000
+
+

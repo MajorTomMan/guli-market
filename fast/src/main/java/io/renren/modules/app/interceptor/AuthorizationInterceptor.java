@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -18,10 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 权限(Token)验证
@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Mark sunlightcs@gmail.com
  */
 @Component
-public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
+public class AuthorizationInterceptor extends HandlerInterceptor {
     @Autowired
     private JwtUtils jwtUtils;
 

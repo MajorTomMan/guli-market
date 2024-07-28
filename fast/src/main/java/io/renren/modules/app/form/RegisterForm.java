@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -10,9 +11,9 @@ package io.renren.modules.app.form;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 
 /**
  * 注册表单

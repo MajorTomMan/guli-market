@@ -21,9 +21,9 @@
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <spring-boot.version>2.6.13</spring-boot.version>
-    <spring-cloud.version>2021.0.5</spring-cloud.version>
-    <alibaba-dependencies.version>2021.0.5.0</alibaba-dependencies.version>
+    <spring-boot.version>3.3.2</spring-boot.version>
+    <spring-cloud.version>2023.0.3</spring-cloud.version>
+    <alibaba-dependencies.version>2023.0.1.2</alibaba-dependencies.version>
   </properties>
   <modules>
     <module>common</module>
@@ -38,6 +38,7 @@
     <module>thirdparty</module>
     <module>search</module>
     <module>auth</module>
+    <module>cart</module>
   </modules>
 
   <dependencyManagement>

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.atguigu.gulimall.common.constant.WareConstant;
 import com.atguigu.gulimall.common.utils.PageUtils;

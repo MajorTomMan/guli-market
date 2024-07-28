@@ -8,8 +8,8 @@
  */
 package com.atguigu.gulimall.auth.vo;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
