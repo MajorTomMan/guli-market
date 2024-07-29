@@ -103,4 +103,4 @@ services:
       - /home/master/nacos/conf:/home/nacos/conf
       - /home/master/nacos/bin:/home/nacos/bin
     # 限定v2.2.0版本
-    image: nacos/nacos-server:v2.2.0
+    image: nacos/nacos-server:latest

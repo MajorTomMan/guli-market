@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-07-19 22:57:18
- * @FilePath: /common/home/master/project/GuliMall/ware/src/main/java/com/atguigu/gulimall/ware/WareApplication.java
+ * @LastEditTime: 2024-07-29 23:33:50
+ * @FilePath: \Guli\ware\src\main\java\com\atguigu\gulimall\ware\WareApplication.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -18,7 +18,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients(basePackages = "com.atguigu.gulimall.ware.feign")
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = { RedissonAutoConfiguration.class })
+@SpringBootApplication
 public class WareApplication {
 
     public static void main(String[] args) {
