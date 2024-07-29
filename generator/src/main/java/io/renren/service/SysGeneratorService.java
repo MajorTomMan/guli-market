@@ -20,6 +20,7 @@ import io.renren.utils.PageUtils;
 import io.renren.utils.Query;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;

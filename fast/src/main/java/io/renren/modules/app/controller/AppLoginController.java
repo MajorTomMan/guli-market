@@ -8,14 +8,14 @@
 
 package io.renren.modules.app.controller;
 
-
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.app.form.LoginForm;
 import io.renren.modules.app.service.UserService;
 import io.renren.modules.app.utils.JwtUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +32,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/app")
-@Api("APP登录接口")
+@Tag(name = "APP登录接口")
 public class AppLoginController {
     @Autowired
     private UserService userService;
@@ -43,15 +43,15 @@ public class AppLoginController {
      * 登录
      */
     @PostMapping("login")
-    @ApiOperation("登录")
-    public R login(@RequestBody LoginForm form){
-        //表单校验
+    @Operation(summary = "登录")
+    public R login(@RequestBody LoginForm form) {
+        // 表单校验
         ValidatorUtils.validateEntity(form);
 
-        //用户登录
+        // 用户登录
         long userId = userService.login(form);
 
-        //生成token
+        // 生成token
         String token = jwtUtils.generateToken(userId);
 
         Map<String, Object> map = new HashMap<>();

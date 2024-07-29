@@ -1,92 +1,43 @@
 package io.renren.config;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoDatabase;
-import io.renren.factory.MongoDBCollectionFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.stereotype.Component;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.mongodb.client.MongoClients;
 
 /**
- * @author: gxz gongxuanzhang@foxmail.com
- **/
-@Component
+ * MongoDB Configuration Class
+ */
+//@Configuration
 @ConfigurationProperties(prefix = "mongodb")
-
 public class MongoConfig {
-    private String host;
-    private int port;
-    private String username;
-    private String password;
-    private String dataBase;
-    private boolean auth;
-    private String source;
 
+    private String uri; // 连接字符串
 
+    // MongoTemplate 是 Spring Data MongoDB 提供的用于操作 MongoDB 的工具类
     @Bean
-    @Conditional(MongoCondition.class)
-    private MongoClient getMongoClient() {
-        List<ServerAddress> adds = new ArrayList<>();
-        ServerAddress serverAddress = new ServerAddress(this.host, this.port);
-        adds.add(serverAddress);
-        if (this.auth) {
-            MongoCredential mongoCredential = MongoCredential.
-                    createScramSha1Credential(this.username, this.source, this.password.toCharArray());
-            MongoClientOptions mongoClientOptions = MongoClientOptions.builder().build();
-            return new MongoClient(adds, mongoCredential, mongoClientOptions);
+    public MongoTemplate mongoTemplate() {
+        if (uri != null) {
+            return new MongoTemplate(MongoClients.create(uri), getDatabaseName());
         }
-        return new MongoClient(adds);
+        return new MongoTemplate(MongoClients.create(),"fast");
     }
 
-    @Bean
-    @Conditional(MongoCondition.class)
-    public MongoDatabase getDataBase() {
-        return getMongoClient().getDatabase(dataBase);
+    // 从连接 URI 中提取数据库名称
+    private String getDatabaseName() {
+        if (uri != null && uri.contains("/")) {
+            return uri.substring(uri.lastIndexOf("/") + 1);
+        }
+        return null;
     }
 
-
-
-    public MongoConfig setHost(String host) {
-        this.host = host;
-        return this;
+    // Getter 和 Setter
+    public String getUri() {
+        return uri;
     }
 
-    public MongoConfig setPort(int port) {
-        this.port = port;
-        return this;
-    }
-
-    public MongoConfig setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public MongoConfig setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public MongoConfig setDataBase(String dataBase) {
-        this.dataBase = dataBase;
-        return this;
-    }
-
-    public MongoConfig setAuth(boolean auth) {
-        this.auth = auth;
-        return this;
-    }
-
-    public MongoConfig setSource(String source) {
-        this.source = source;
-        return this;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 }

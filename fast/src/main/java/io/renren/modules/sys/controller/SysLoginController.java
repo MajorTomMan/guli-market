@@ -29,7 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
 
-import jakarta.imageio.ImageIO;
+import javax.imageio.ImageIO;
 
 /**
  * 登录相关

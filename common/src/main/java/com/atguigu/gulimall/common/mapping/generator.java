@@ -17,7 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atguigu.gulimall.common.mapping.entity.MemberLevelEntity;
-import com.atguigu.gulimall.common.mapping.entity.SpuInfoEntity;
 
 public class generator {
     private static Pattern humpPattern = Pattern.compile("[A-Z]");// 匹配大写字母的正则

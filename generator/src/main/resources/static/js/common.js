@@ -8,7 +8,7 @@ window.T = {};
 
 // 获取请求参数
 // 使用示例
-// location.href = http://localhost:8080/index.html?id=123
+// location.href = http://192.168.253.131:8080/index.html?id=123
 // T.p('id') --> 123;
 var url = function(name) {
 	var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");

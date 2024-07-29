@@ -8,8 +8,9 @@
 
 package com.atguigu.gulimall.common.xss;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.atguigu.gulimall.common.exception.RRException;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * SQL过滤

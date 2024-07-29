@@ -1,0 +1,107 @@
+version: '3'
+services:
+  mysql:
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - ~/Desktop/docker/mysql/sql:/sql
+      - ~/Desktop/docker/mysql/conf/my.cnf:/etc/my.cnf
+      - ~/Desktop/docker/mysql/data:/var/lib/mysql
+      - ~/Desktop/docker/mysql/logs:/var/log/mysql
+      - ~/Desktop/docker/mysql/mysql-files:/var/lib/mysql-files
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    #command: 
+      #--max_connections=1000
+      #--character-set-server=utf8mb4
+      #--collation-server=utf8mb4_general_ci
+      #--default-authentication-plugin=mysql_native_password
+      #--lower_case_table_names=1
+    image: mysql
+  redis:
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    volumes:
+      - ~/Desktop/docker/redis/data:/data
+      - ~/Desktop/docker/redis/conf/redis.conf:/etc/redis/redis.conf
+    image: redis
+    command: "/etc/redis/redis.conf --requirepass root --appendonly yes"
+  nginx:
+    container_name: nginx
+    ports:
+      - "80:80"
+    restart: always
+    volumes:
+      - ~/Desktop/docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ~/Desktop/docker/nginx/html:/usr/share/nginx/html
+      - ~/Desktop/docker/nginx/logs:/var/log/nginx
+      - ~/Desktop/docker/nginx/conf.d:/etc/nginx/conf.d
+    image: nginx:stable
+  elasticsearch:
+    container_name: elasticsearch
+    restart: always
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    volumes:
+      - ~/Desktop/docker/es/config:/usr/share/elasticsearch/config
+      - ~/Desktop/docker/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ~/Desktop/docker/es/data/:/usr/share/elasticsearch/data
+      - ~/Desktop/docker/es/plugins:/usr/share/elasticsearch/plugins
+    image: elasticsearch:8.2.0
+  kibana:
+    container_name: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ~/Desktop/docker/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    image: kibana:8.2.0
+  rabbitmq:
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    restart: always
+    #volumes:
+    #- ~/Desktop/docker/rabbitmq/data:/var/lib/rabbitmq
+    #- ~/Desktop/docker/rabbitmq/conf:/etc/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=master
+      - RABBITMQ_DEFAULT_PASS=root
+    image: rabbitmq:management
+  nacos:
+    container_name: nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      - MODE=standalone
+      - PREFER_HOST_MODE=ip
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_DATABASE_NUM=1
+      - MYSQL_SERVICE_HOST=mysql
+      - MYSQL_SERVICE_DB_NAME=nacos_config
+      - MYSQL_SERVICE_PORT=3306
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=root
+      - MYSQL_SERVICE_DB_PARAM=characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+    volumes:
+      - ~/Desktop/docker/nacos/logs:/home/nacos/logs
+      - ~/Desktop/docker/nacos/conf:/home/nacos/conf
+      - ~/Desktop/docker/nacos/bin:/home/nacos/bin
+    # 限定v2.2.0版本
+    #image: nacos/nacos-server:v2.2.0
+    image: nacos/nacos-server:latest

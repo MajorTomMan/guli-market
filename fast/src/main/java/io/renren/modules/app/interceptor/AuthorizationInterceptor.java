@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +30,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Mark sunlightcs@gmail.com
  */
 @Component
-public class AuthorizationInterceptor extends HandlerInterceptor {
+public class AuthorizationInterceptor  implements HandlerInterceptor {
     @Autowired
     private JwtUtils jwtUtils;
 

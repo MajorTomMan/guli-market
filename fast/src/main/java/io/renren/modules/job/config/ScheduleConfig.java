@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import jakarta.sql.DataSource;
 import java.util.Properties;
+
+import javax.sql.DataSource;
 
 /**
  * 定时任务配置

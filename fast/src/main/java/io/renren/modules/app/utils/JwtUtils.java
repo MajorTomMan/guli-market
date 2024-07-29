@@ -9,12 +9,16 @@
 package io.renren.modules.app.utils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
 
 import java.util.Date;
 
@@ -36,26 +40,29 @@ public class JwtUtils {
      * 生成jwt token
      */
     public String generateToken(long userId) {
-        Date nowDate = new Date();
-        //过期时间
-        Date expireDate = new Date(nowDate.getTime() + expire * 1000);
 
-        return Jwts.builder()
-                .setHeaderParam("typ", "JWT")
-                .setSubject(userId+"")
-                .setIssuedAt(nowDate)
-                .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.HS512, secret)
+        Date nowDate = new Date();
+        // 过期时间
+        Date expireDate = new Date(nowDate.getTime() + expire * 1000);
+        return Jwts.builder().header().add("typ", "JWT")
+                .and().subject(userId + "")
+                .issuedAt(nowDate).expiration(expireDate)
+                .signWith(
+                        Keys.hmacShaKeyFor(
+                                Decoders.BASE64.decode(secret)),
+                        Jwts.SIG.HS512)
                 .compact();
+
     }
 
     public Claims getClaimByToken(String token) {
+
         try {
-            return Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        }catch (Exception e){
+            JwtParser jwtParser = Jwts.parser()
+                    .verifyWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)))
+                    .build();
+            return jwtParser.parseUnsecuredClaims(token).getPayload();
+        } catch (Exception e) {
             logger.debug("validate is token error ", e);
             return null;
         }
@@ -63,7 +70,8 @@ public class JwtUtils {
 
     /**
      * token是否过期
-     * @return  true：过期
+     * 
+     * @return true：过期
      */
     public boolean isTokenExpired(Date expiration) {
         return expiration.before(new Date());

@@ -2,8 +2,8 @@
  * @Author: MajorTomMan 765719516@qq.com
  * @Date: 2023-07-24 23:32:03
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-09-18 21:54:12
- * @FilePath: /guli-market-master/search/src/main/java/com/atguigu/gulimall/search/service/impl/SearchServiceImpl.java
+ * @LastEditTime: 2024-07-29 22:15:15
+ * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\service\impl\SearchServiceImpl.java
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.search.service.impl;
@@ -113,7 +113,7 @@ public class SearchServiceImpl implements SearchService {
             if (brandNameBucketList.size() > 0) {
                 StringTermsBucket brandNameBucket = brandNameBucketList.get(0);
                 /* 得到品牌名字 */
-                brandVo.setBrandName(brandNameBucket.key());
+                brandVo.setBrandName(brandNameBucket.key().stringValue());
             }
 
             Aggregate brand_img_agg = bucket.aggregations().get("brand_img_agg");
@@ -121,7 +121,7 @@ public class SearchServiceImpl implements SearchService {
             if (brandImgBucketList.size() > 0) {
                 StringTermsBucket brandImgBucket = brandImgBucketList.get(0);
                 /* 得到品牌图片 */
-                brandVo.setBrandImg(brandImgBucket.key());
+                brandVo.setBrandImg(brandImgBucket.key().stringValue());
             }
             brandVos.add(brandVo);
         });
@@ -140,7 +140,7 @@ public class SearchServiceImpl implements SearchService {
             List<StringTermsBucket> catalogNameBucketList = sterms.buckets().array();
             if (catalogNameBucketList.size() > 0) {
                 StringTermsBucket catalogNameBucket = catalogNameBucketList.get(0);
-                catalogVo.setCatalogName(catalogNameBucket.key());
+                catalogVo.setCatalogName(catalogNameBucket.key().stringValue());
             }
             catalogVos.add(catalogVo);
         });
@@ -160,13 +160,13 @@ public class SearchServiceImpl implements SearchService {
             List<StringTermsBucket> attrNameBucketList = attr_name_agg.sterms().buckets().array();
             if (attrNameBucketList.size() > 0) {
                 StringTermsBucket attrNameBucket = attrNameBucketList.get(0);
-                attrVo.setAttrName(attrNameBucket.key());
+                attrVo.setAttrName(attrNameBucket.key().stringValue());
             }
             Aggregate attr_value_agg = bucket.aggregations().get("attr_value_agg");
             List<StringTermsBucket> attrValueBucketList = attr_value_agg.sterms().buckets().array();
             if (attrValueBucketList.size() > 0) {
                 List<String> attrValueList = attrValueBucketList.stream().map((valueBucket) -> {
-                    return valueBucket.key();
+                    return valueBucket.key().stringValue();
                 }).collect(Collectors.toList());
                 attrVo.setAttrValue(attrValueList);
             }

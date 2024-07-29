@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.renren</groupId>
 	<artifactId>renren-generator</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<description>renren-generator</description>
-
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.13</version>
+		<groupId>com.atguigu</groupId>
+		<artifactId>gulimall</artifactId>
+		<version>1.0</version>
 	</parent>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>17</java.version>
-		<mybatisplus.version>3.3.1</mybatisplus.version>
+		<mybatisplus.version>3.5.7</mybatisplus.version>
 		<druid.version>1.1.13</druid.version>
-		<commons.lang.version>2.6</commons.lang.version>
 		<commons.io.version>2.11.0</commons.io.version>
 		<commons.configuration.version>1.10</commons.configuration.version>
 		<fastjson.version>2.0.23</fastjson.version>
@@ -29,7 +27,6 @@
 		<mysql.version>8.0.30</mysql.version>
 		<mssql.version>4.0</mssql.version>
 		<oracle.version>11.2.0.3</oracle.version>
-		<mongo.version>3.11.0</mongo.version>
 	</properties>
 
 	<dependencies>
@@ -44,7 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.baomidou</groupId>
-			<artifactId>mybatis-plus-boot-starter</artifactId>
+			<artifactId>mybatis-plus-spring-boot3-starter</artifactId>
 			<version>${mybatisplus.version}</version>
 			<exclusions>
 				<exclusion>
@@ -57,11 +54,6 @@
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
 			<version>${druid.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${commons.lang.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -98,12 +90,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- mysql驱动 -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.version}</version>
-		</dependency>
 		<!-- oracle驱动 -->
 		<dependency>
 			<groupId>com.oracle</groupId>
@@ -122,10 +108,16 @@
 			<artifactId>postgresql</artifactId>
 		</dependency>
 		<!-- mongo驱动 -->
+		<!--
+		https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
 		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-			<version>${mongo.version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.atguigu.gulimall</groupId>
+			<artifactId>common</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 
@@ -139,27 +131,27 @@
 	</build>
 
 	<repositories>
-        <repository>
-            <id>public</id>
-            <name>aliyun nexus</name>
-            <url>https://maven.aliyun.com/repository/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>public</id>
-            <name>aliyun nexus</name>
-            <url>https://maven.aliyun.com/repository/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+		<repository>
+			<id>public</id>
+			<name>aliyun nexus</name>
+			<url>https://maven.aliyun.com/repository/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>public</id>
+			<name>aliyun nexus</name>
+			<url>https://maven.aliyun.com/repository/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>

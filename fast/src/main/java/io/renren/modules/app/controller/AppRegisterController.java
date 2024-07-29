@@ -8,14 +8,13 @@
 
 package io.renren.modules.app.controller;
 
-
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.modules.app.entity.UserEntity;
 import io.renren.modules.app.form.RegisterForm;
 import io.renren.modules.app.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,15 +31,15 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/app")
-@Api("APP注册接口")
+@Tag(name = "APP注册接口")
 public class AppRegisterController {
     @Autowired
     private UserService userService;
 
     @PostMapping("register")
-    @ApiOperation("注册")
-    public R register(@RequestBody RegisterForm form){
-        //表单校验
+    @Operation(summary = "注册")
+    public R register(@RequestBody RegisterForm form) {
+        // 表单校验
         ValidatorUtils.validateEntity(form);
 
         UserEntity user = new UserEntity();
