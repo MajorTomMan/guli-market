@@ -19,7 +19,7 @@ import io.renren.modules.sys.entity.SysCaptchaEntity;
 import io.renren.modules.sys.service.SysCaptchaService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
 
 import java.awt.image.BufferedImage;
 import java.util.Date;
@@ -29,7 +29,7 @@ import java.util.Date;
  *
  * @author Mark sunlightcs@gmail.com
  */
-@Service("sysCaptchaService")
+@Primary
 public class SysCaptchaServiceImpl extends ServiceImpl<SysCaptchaDao, SysCaptchaEntity> implements SysCaptchaService {
     @Autowired
     private Producer producer;

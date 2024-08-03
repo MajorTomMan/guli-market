@@ -23,7 +23,7 @@ import io.renren.modules.sys.service.SysRoleService;
 import io.renren.modules.sys.service.SysUserRoleService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -36,7 +36,7 @@ import java.util.Map;
  *
  * @author Mark sunlightcs@gmail.com
  */
-@Service("sysRoleService")
+@Primary
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleDao, SysRoleEntity> implements SysRoleService {
 	@Autowired
 	private SysRoleMenuService sysRoleMenuService;

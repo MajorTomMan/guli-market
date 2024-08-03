@@ -17,11 +17,11 @@ import io.renren.modules.job.dao.ScheduleJobLogDao;
 import io.renren.modules.job.entity.ScheduleJobLogEntity;
 import io.renren.modules.job.service.ScheduleJobLogService;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
 
 import java.util.Map;
 
-@Service("scheduleJobLogService")
+@Primary
 public class ScheduleJobLogServiceImpl extends ServiceImpl<ScheduleJobLogDao, ScheduleJobLogEntity> implements ScheduleJobLogService {
 
 	@Override

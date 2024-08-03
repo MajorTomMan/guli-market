@@ -17,12 +17,12 @@ import io.renren.modules.sys.dao.SysLogDao;
 import io.renren.modules.sys.entity.SysLogEntity;
 import io.renren.modules.sys.service.SysLogService;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
 
 import java.util.Map;
 
 
-@Service("sysLogService")
+@Primary
 public class SysLogServiceImpl extends ServiceImpl<SysLogDao, SysLogEntity> implements SysLogService {
 
     @Override

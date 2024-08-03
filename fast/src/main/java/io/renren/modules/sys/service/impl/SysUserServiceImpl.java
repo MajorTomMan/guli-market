@@ -24,7 +24,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @author Mark sunlightcs@gmail.com
  */
-@Service("sysUserService")
+@Primary
 public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> implements SysUserService {
 	@Autowired
 	private SysUserRoleService sysUserRoleService;

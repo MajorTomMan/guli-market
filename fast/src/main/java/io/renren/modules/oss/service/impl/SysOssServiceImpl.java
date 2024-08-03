@@ -15,12 +15,12 @@ import io.renren.common.utils.Query;
 import io.renren.modules.oss.dao.SysOssDao;
 import io.renren.modules.oss.entity.SysOssEntity;
 import io.renren.modules.oss.service.SysOssService;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Primary;
 
 import java.util.Map;
 
 
-@Service("sysOssService")
+@Primary
 public class SysOssServiceImpl extends ServiceImpl<SysOssDao, SysOssEntity> implements SysOssService {
 
 	@Override
