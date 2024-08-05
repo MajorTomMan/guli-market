@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class,RedissonAutoConfiguration.class })
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class,RedissonAutoConfigurationV2.class })
 public class ThirdPartyApplication {
 
     public static void main(String[] args) {

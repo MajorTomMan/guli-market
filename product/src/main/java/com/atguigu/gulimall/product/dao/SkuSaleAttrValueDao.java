@@ -27,5 +27,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface SkuSaleAttrValueDao extends BaseMapper<SkuSaleAttrValueEntity> {
 
     List<SkuItemSaleAttrVo> getSaleAttrsBySpuId(Long spuId);
-
+    List<String> getSkuSaleAttrValuesAsStringList(Long spuId);
 }

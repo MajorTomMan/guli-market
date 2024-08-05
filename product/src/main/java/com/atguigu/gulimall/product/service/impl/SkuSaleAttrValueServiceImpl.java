@@ -44,4 +44,10 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
         return skuItemSaleAttrVos;
     }
 
+    @Override
+    public List<String> getSkuSaleAttrValuesAsStringList(Long skuId) {
+        // TODO Auto-generated method stub
+        return getSkuSaleAttrValuesAsStringList(skuId);
+    }
+
 }
