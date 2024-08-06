@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CartServiceImpl implements CartService {
     @Autowired
-    RedisTemplate<String, Object> redisTemplate;
+    RedisTemplate redisTemplate;
     @Autowired
     ProductFeignService feignService;
     @Autowired
