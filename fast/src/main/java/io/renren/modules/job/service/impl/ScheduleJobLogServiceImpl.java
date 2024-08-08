@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -17,11 +18,11 @@ import io.renren.modules.job.dao.ScheduleJobLogDao;
 import io.renren.modules.job.entity.ScheduleJobLogEntity;
 import io.renren.modules.job.service.ScheduleJobLogService;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Primary
+@Service("scheduleJobLogService")
 public class ScheduleJobLogServiceImpl extends ServiceImpl<ScheduleJobLogDao, ScheduleJobLogEntity> implements ScheduleJobLogService {
 
 	@Override

@@ -21,12 +21,12 @@ import io.renren.modules.sys.dao.SysUserTokenDao;
 import io.renren.modules.sys.entity.SysUserTokenEntity;
 import io.renren.modules.sys.oauth2.TokenGenerator;
 import io.renren.modules.sys.service.SysUserTokenService;
-import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 
-@Primary
+@Service
 public class SysUserTokenServiceImpl extends ServiceImpl<SysUserTokenDao, SysUserTokenEntity> implements SysUserTokenService {
 	//12小时后过期
 	private final static int EXPIRE = 3600 * 12;

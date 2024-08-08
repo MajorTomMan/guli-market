@@ -1,3 +1,4 @@
+
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
  *
@@ -18,11 +19,11 @@ import io.renren.modules.sys.entity.SysUserTokenEntity;
 import io.renren.modules.sys.service.ShiroService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Primary
+@Service
 public class ShiroServiceImpl implements ShiroService {
     @Autowired
     private SysMenuDao sysMenuDao;

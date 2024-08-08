@@ -1,4 +1,4 @@
--- Active: 1683961904399@@192.168.253.131@3306@gulimall_ums
+-- Active: 1688392670869@@192.168.253.131@3306@gulimall_ums
 
 DROP DATABASE IF EXISTS `gulimall_ums`;
 
@@ -94,7 +94,7 @@ CREATE TABLE `ums_member` (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '会员';
 
 CREATE TABLE `ums_member_github` (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY ,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     login VARCHAR(255) NOT NULL COMMENT 'GitHub 用户名',
     node_id VARCHAR(255) NOT NULL COMMENT 'GitHub 节点ID',
     avatar_url VARCHAR(255) COMMENT '用户头像的 URL',

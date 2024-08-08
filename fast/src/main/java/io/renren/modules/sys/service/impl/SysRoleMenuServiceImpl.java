@@ -12,7 +12,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.modules.sys.dao.SysRoleMenuDao;
 import io.renren.modules.sys.entity.SysRoleMenuEntity;
 import io.renren.modules.sys.service.SysRoleMenuService;
-import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
  *
  * @author Mark sunlightcs@gmail.com
  */
-@Primary
+@Service
 public class SysRoleMenuServiceImpl extends ServiceImpl<SysRoleMenuDao, SysRoleMenuEntity> implements SysRoleMenuService {
 
 	@Override
