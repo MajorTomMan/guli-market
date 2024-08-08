@@ -5,14 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.atguigu.gulimall.auth.constant.GithubOauthConstant;
 import com.atguigu.gulimall.auth.constant.OAuthConstant;
@@ -22,7 +20,6 @@ import com.atguigu.gulimall.common.userinfo.GithubUserInfo;
 import com.atguigu.gulimall.common.utils.HttpUtils;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.common.vo.MemberResponseVo;
-import com.atguigu.gulimall.common.vo.SocialUserVo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.gson.Gson;
 
@@ -101,7 +98,7 @@ public class OauthController {
                     MemberResponseVo entity = (MemberResponseVo) r.getData("entity",
                             new TypeReference<MemberResponseVo>() {
                             });
-                            session.setAttribute("loginUser", entity);
+                    session.setAttribute("loginUser", entity);
                     return "redirect:http://gulimall.com";
                 } else {
                     log.error("查询会员信息失败");

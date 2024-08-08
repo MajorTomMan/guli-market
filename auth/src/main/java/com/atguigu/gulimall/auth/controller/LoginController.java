@@ -37,7 +37,7 @@ public class LoginController {
     @Autowired
     private ThirdPartyFeignService thirdPartyFeignService;
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private MemberFeignService memberFeignService;
     /*
@@ -46,7 +46,7 @@ public class LoginController {
 
     @GetMapping("/sms/sendcode")
     public R sendCode(@RequestParam("phone") String phone) {
-        String redisCode = redisTemplate.opsForValue().get(AuthServerConstant.SMS_CODE_CACHE_PREFIX + phone);
+        String redisCode = stringRedisTemplate.opsForValue().get(AuthServerConstant.SMS_CODE_CACHE_PREFIX + phone);
         /* TODO 1.接口防刷 */
         if (StringUtils.hasText(redisCode)) {
             long l = Long.parseLong(redisCode.split("_")[1]);
@@ -59,7 +59,7 @@ public class LoginController {
         String code=""+123456;
         String subString = code + "_" + System.currentTimeMillis();
         /* 2.验证码的再次校验 */
-        redisTemplate.opsForValue().set(AuthServerConstant.SMS_CODE_CACHE_PREFIX + phone, subString, 1, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(AuthServerConstant.SMS_CODE_CACHE_PREFIX + phone, subString, 1, TimeUnit.MINUTES);
         thirdPartyFeignService.sendCode(phone, code);
         return R.ok();
     }
@@ -75,11 +75,11 @@ public class LoginController {
             return "redirect:http://auth.gulimall.com/register.html";
         }
         String code = vo.getCode();
-        String s = redisTemplate.opsForValue().get(AuthServerConstant.SMS_CODE_CACHE_PREFIX + vo.getPhone());
+        String s = stringRedisTemplate.opsForValue().get(AuthServerConstant.SMS_CODE_CACHE_PREFIX + vo.getPhone());
         if (StringUtils.hasText(s)) {
             if (code.equals(s.split("_")[0])) {
                 /* 删除验证码,令牌机制 */
-                redisTemplate.delete(AuthServerConstant.SMS_CODE_CACHE_PREFIX + vo.getPhone());
+                stringRedisTemplate.delete(AuthServerConstant.SMS_CODE_CACHE_PREFIX + vo.getPhone());
                 /* 注册用户 */
                 R r = memberFeignService.regist(vo);
                 if(r.getCode()==0){
