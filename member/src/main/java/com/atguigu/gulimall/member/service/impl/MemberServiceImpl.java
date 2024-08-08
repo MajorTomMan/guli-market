@@ -7,16 +7,27 @@
  */
 package com.atguigu.gulimall.member.service.impl;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.FormatStyle;
+import java.util.Date;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.alibaba.nacos.api.cmdb.pojo.Entity;
+import com.atguigu.gulimall.common.userinfo.GithubUserInfo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
-
+import com.atguigu.gulimall.common.vo.SocialUserVo;
 import com.atguigu.gulimall.member.dao.MemberDao;
 import com.atguigu.gulimall.member.dao.MemberLevelDao;
 import com.atguigu.gulimall.member.entity.MemberEntity;
@@ -92,12 +103,47 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             String password = entity.getPassword();
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             /* 密码匹配 */
-            boolean matches = encoder.matches(vo.getPassword(),password);
+            boolean matches = encoder.matches(vo.getPassword(), password);
             if (matches) {
                 return entity;
             }
             return null;
         }
+    }
+
+    public MemberEntity login(GithubUserInfo info) {
+        // TODO Auto-generated method stub
+        MemberEntity entity = this.baseMapper
+                .selectOne(new QueryWrapper<MemberEntity>().eq("social_uid", info.getId()));
+        if (entity != null) {
+            MemberEntity newEntity = new MemberEntity();
+            newEntity.setId(entity.getId()); // 保留原有ID
+            newEntity.setUsername(info.getLogin()); // 更新用户名
+            newEntity.setNickname(info.getLogin());
+            newEntity.setEmail(info.getEmail()); // 更新邮箱
+            newEntity.setHeader(info.getAvatarUrl()); // 更新头像
+            newEntity.setFromGithub(true);
+            this.baseMapper.updateById(newEntity);
+            return newEntity;
+        } else {
+            MemberEntity regist = new MemberEntity();
+            regist.setUsername(info.getLogin()); // 设置用户名
+            regist.setNickname(info.getLogin());
+            regist.setEmail(info.getEmail()); // 设置邮箱
+            regist.setMobile(null); // 手机号码为空
+            regist.setSocial_uid(info.getId()); // 设置社交UID
+            regist.setFromGithub(true); // 设置来源为GitHub
+            regist.setHeader(info.getAvatarUrl()); // 设置头像
+            regist.setCreateTime(new Date()); // 设置注册时间为当前时间
+            this.baseMapper.insert(regist);
+            return regist;
+        }
+    }
+
+    private Date iso2date(String date) {
+        DateTimeFormatter isoDateTime = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime localDateTime = ZonedDateTime.parse(date, isoDateTime).toLocalDateTime();
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
 }

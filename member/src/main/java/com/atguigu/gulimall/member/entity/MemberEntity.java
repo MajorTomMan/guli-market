@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.member.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -23,7 +24,7 @@ public class MemberEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 会员等级id
@@ -93,17 +94,16 @@ public class MemberEntity implements Serializable {
 	 * 注册时间
 	 */
 	private Date createTime;
-	/**
-	 * 微博社交账户uid（应该建立关联表）
-	 */
-	//private String weiboUid;
-	/**
-	 * 访问令牌
-	 */
-	private String accessToken;
-	/**
-	 * 访问令牌的过期时间
-	 */
-	private String expiresIn;
+
+	private Integer social_uid;
+
+	@TableField(value = "from_qq")
+	private boolean fromQQ;
+
+	private boolean fromWeixin;
+
+	private boolean fromGithub;
+
+	private boolean fromWeibo;
 
 }

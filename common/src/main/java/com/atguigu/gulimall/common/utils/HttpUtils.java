@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -11,21 +12,27 @@ import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.BasicHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
 import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
 import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactoryBuilder;
 import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.config.Registry;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
+import org.apache.hc.core5.ssl.SSLContexts;
 
 public class HttpUtils {
 
@@ -128,23 +135,21 @@ public class HttpUtils {
     private static CloseableHttpClient wrapClient(String host) throws Exception {
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         if (host.startsWith("https://")) {
-            SSLContext sslContext = SSLContextBuilder.create()
-                    .loadTrustMaterial(new TrustAllStrategy())
+            RequestConfig defaultRequestConfig = RequestConfig.custom()
+                    .setConnectionRequestTimeout(60, TimeUnit.SECONDS)
+                    .setResponseTimeout(60, TimeUnit.SECONDS)
                     .build();
-            SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext);
-            Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                    .register("https", sslConnectionSocketFactory)
-                    .register("http", new PlainConnectionSocketFactory())
-                    .build();
-            BasicHttpClientConnectionManager connectionManager = new BasicHttpClientConnectionManager(registry);
-            httpClientBuilder.setConnectionManager(connectionManager);
+            BasicCookieStore defaultCookieStore = new BasicCookieStore();
+            SSLContext sslcontext = SSLContexts.custom()
+                    .loadTrustMaterial(null, new TrustAllStrategy()).build();
+            SSLConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactoryBuilder.create()
+                    .setSslContext(sslcontext).build();
+            PoolingHttpClientConnectionManager cm = PoolingHttpClientConnectionManagerBuilder.create()
+                    .setSSLSocketFactory(sslSocketFactory).build();
+            httpClientBuilder.setDefaultCookieStore(defaultCookieStore).setDefaultRequestConfig(defaultRequestConfig)
+                    .setConnectionManager(cm)
+                    .evictExpiredConnections();
         }
-
-        HttpHost proxy = new HttpHost(proxyHost, proxyPort);
-        DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
-        httpClientBuilder.setRoutePlanner(routePlanner)
-                .evictExpiredConnections();
-
         return httpClientBuilder.build();
     }
 }

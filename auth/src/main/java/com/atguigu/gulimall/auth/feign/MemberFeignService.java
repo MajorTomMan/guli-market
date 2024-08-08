@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.atguigu.gulimall.auth.vo.UserLoginVo;
 import com.atguigu.gulimall.auth.vo.UserRegisterVo;
 import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.common.vo.SocialUserVo;
 
 @FeignClient("member")
 public interface MemberFeignService {
     @PostMapping("/member/member/regist")
     public R regist(@RequestBody UserRegisterVo vo);
 
-    @PostMapping("member/member/login")
+    @PostMapping("/member/member/login")
     public R login(@RequestBody UserLoginVo vo);
+
+    @PostMapping("/member/member/oauth/login")
+    public R oauthLogin(@RequestBody SocialUserVo vo);
 }

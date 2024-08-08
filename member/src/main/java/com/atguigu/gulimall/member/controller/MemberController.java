@@ -27,8 +27,10 @@ import com.atguigu.gulimall.member.service.MemberService;
 import com.atguigu.gulimall.member.vo.MemberLoginVo;
 import com.atguigu.gulimall.member.vo.RegisterVo;
 import com.atguigu.gulimall.common.exception.BizCodeEmum;
+import com.atguigu.gulimall.common.userinfo.GithubUserInfo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.common.vo.SocialUserVo;
 
 /**
  * 会员
@@ -61,6 +63,18 @@ public class MemberController {
                     BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
         }
         return R.ok();
+    }
+
+    @PostMapping("/oauth/login")
+    public R oauthLogin(@RequestBody GithubUserInfo vo) {
+        // 根据UID有无数据判断是否登陆过,因为UID在社交平台数据库里唯一
+        MemberEntity entity = memberService.login(vo);
+        if (entity != null) {
+            return R.ok().put("entity", entity);
+        } else {
+            return R.error(BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(),
+                    BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
+        }
     }
 
     @PostMapping("/regist")

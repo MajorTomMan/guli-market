@@ -9,7 +9,9 @@
 package com.atguigu.gulimall.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.atguigu.gulimall.common.userinfo.GithubUserInfo;
 import com.atguigu.gulimall.common.utils.PageUtils;
+import com.atguigu.gulimall.common.vo.SocialUserVo;
 import com.atguigu.gulimall.member.entity.MemberEntity;
 import com.atguigu.gulimall.member.exception.PhoneExistException;
 import com.atguigu.gulimall.member.exception.UserNameExistException;
@@ -36,4 +38,6 @@ public interface MemberService extends IService<MemberEntity> {
     void checkUserNameIsUnique(String username) throws UserNameExistException;
 
     MemberEntity login(MemberLoginVo vo);
+
+    MemberEntity login(GithubUserInfo vo);
 }

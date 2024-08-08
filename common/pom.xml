@@ -13,7 +13,7 @@
         <artifactId>gulimall</artifactId>
         <version>1.0</version>
     </parent>
-
+    <packaging>jar</packaging>
     <properties>
         <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
         <lombok.version>1.18.24</lombok.version>
@@ -32,6 +32,7 @@
         <aliyun.oss.version>3.17.0</aliyun.oss.version>
         <jakarta.validation.api.version>3.1.0</jakarta.validation.api.version>
         <alibabacloud.dysmsapi20170525.version>2.0.24</alibabacloud.dysmsapi20170525.version>
+        <spring-session-core.version>3.3.1</spring-session-core.version>
     </properties>
 
     <dependencies>
@@ -180,6 +181,20 @@
             <artifactId>alibabacloud-dysmsapi20170525</artifactId>
             <version>${alibabacloud.dysmsapi20170525.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.session/spring-session-core -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
+            <version>${spring-session-core.version}</version>
+        </dependency>
+        <!--
+        https://mvnrepository.com/artifact/org.springframework.session/spring-session-data-redis -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+            <version>${spring-session-core.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
