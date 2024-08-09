@@ -1,4 +1,4 @@
--- Active: 1688392670869@@192.168.253.131@3306@gulimall_pms
+-- Active: 1683961904399@@192.168.253.131@3306@douban
 
 DROP DATABASE IF EXISTS `gulimall_pms`;
 CREATE DATABASE gulimall_pms default CHARACTER set utf8mb4;

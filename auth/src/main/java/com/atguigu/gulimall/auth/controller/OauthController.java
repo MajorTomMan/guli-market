@@ -16,6 +16,7 @@ import com.atguigu.gulimall.auth.constant.GithubOauthConstant;
 import com.atguigu.gulimall.auth.constant.OAuthConstant;
 import com.atguigu.gulimall.auth.entity.github.GithubResponseEntity;
 import com.atguigu.gulimall.auth.feign.MemberFeignService;
+import com.atguigu.gulimall.common.constant.AuthServerConstant;
 import com.atguigu.gulimall.common.userinfo.GithubUserInfo;
 import com.atguigu.gulimall.common.utils.HttpUtils;
 import com.atguigu.gulimall.common.utils.R;
@@ -98,7 +99,7 @@ public class OauthController {
                     MemberResponseVo entity = (MemberResponseVo) r.getData("entity",
                             new TypeReference<MemberResponseVo>() {
                             });
-                    session.setAttribute("loginUser", entity);
+                    session.setAttribute(AuthServerConstant.LOGIN_USER, entity);
                     return "redirect:http://gulimall.com";
                 } else {
                     log.error("查询会员信息失败");

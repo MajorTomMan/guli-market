@@ -72,46 +72,58 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Override
     public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId, String type) {
         // TODO Auto-generated method stub
-        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>().eq("attr_type",
-                "base".equalsIgnoreCase(type) ? ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>()
+                .eq("attr_type", "base".equalsIgnoreCase(type) ? ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()
                         : ProductConstant.AttrEnum.ATTR_TYPE_SALE.getCode());
+
+        // 根据catelogId查询信息
         if (catelogId != 0) {
             queryWrapper.eq("catelog_id", catelogId);
         }
+
         String key = (String) params.get("key");
-        if (!StringUtils.isEmpty(key)) {
+        if (!StringUtils.hasText(key)) {
+            // attr_id attr_name
             queryWrapper.and((wrapper) -> {
                 wrapper.eq("attr_id", key).or().like("attr_name", key);
             });
         }
+
         IPage<AttrEntity> page = this.page(
                 new Query<AttrEntity>().getPage(params),
                 queryWrapper);
-        List<AttrEntity> records = page.getRecords();
+
         PageUtils pageUtils = new PageUtils(page);
-        List<AttrRespVo> respVos = records.stream().map(
-                (attrEntity) -> {
-                    AttrRespVo attrRespVo = new AttrRespVo();
-                    BeanUtils.copyProperties(attrEntity, attrRespVo);
-                    if ("base".equalsIgnoreCase(type)) {
-                        AttrAttrgroupRelationEntity attrId = relationDao
-                                .selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id",
-                                        attrEntity.getAttrId()));
-                        if (attrId != null && attrId.getAttrGroupId() != null) {
-                            AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrId.getAttrGroupId());
-                            attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
-                        }
-                    }
-                    CategoryEntity categoryEntity = categoryDao.selectById(attrEntity.getCatelogId());
-                    if (categoryEntity != null) {
-                        attrRespVo.setCatelogName(categoryEntity.getName());
-                    }
-                    return attrRespVo;
-                }).collect(Collectors.toList());
+        List<AttrEntity> records = page.getRecords();
+
+        List<AttrRespVo> respVos = records.stream().map((attrEntity) -> {
+            AttrRespVo attrRespVo = new AttrRespVo();
+            BeanUtils.copyProperties(attrEntity, attrRespVo);
+
+            // 设置分类和分组的名字
+            if ("base".equalsIgnoreCase(type)) {
+                AttrAttrgroupRelationEntity relationEntity = relationDao.selectOne(
+                        new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrEntity.getAttrId()));
+                if (relationEntity != null && relationEntity.getAttrGroupId() != null) {
+                    AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(relationEntity.getAttrGroupId());
+                    attrRespVo.setGroupName(attrGroupEntity.getAttrGroupName());
+                }
+
+            }
+
+            CategoryEntity categoryEntity = categoryDao.selectById(attrEntity.getCatelogId());
+            if (categoryEntity != null) {
+                attrRespVo.setCatelogName(categoryEntity.getName());
+
+            }
+            return attrRespVo;
+        }).collect(Collectors.toList());
+
         pageUtils.setList(respVos);
         return pageUtils;
     }
-    @Cacheable(value="attr",key="'attrinfo:'+#root.args[0]")
+
+    @Cacheable(value = "attr", key = "'attrinfo:'+#root.args[0]")
     @Override
     public AttrRespVo getAttrInfo(Long attrId) {
         // TODO Auto-generated method stub
@@ -169,7 +181,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         List<Long> attrIds = entities.stream().map((attr) -> {
             return attr.getAttrId();
         }).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(attrIds)){
+        if (CollectionUtils.isEmpty(attrIds)) {
             return null;
         }
         Collection<AttrEntity> attrEntities = this.listByIds(attrIds);

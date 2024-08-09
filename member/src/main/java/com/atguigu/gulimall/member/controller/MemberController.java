@@ -62,7 +62,7 @@ public class MemberController {
             return R.error(BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(),
                     BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
         }
-        return R.ok();
+        return R.ok().put("entity", entity);
     }
 
     @PostMapping("/oauth/login")

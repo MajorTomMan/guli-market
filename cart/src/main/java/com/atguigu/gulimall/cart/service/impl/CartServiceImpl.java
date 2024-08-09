@@ -40,7 +40,6 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartItemVo addToCart(Long skuId, Integer num) {
         // TODO Auto-generated method stub
-
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         String sku = (String) cartOps.get(skuId.toString());
         if (StringUtils.hasText(sku)) {
@@ -87,16 +86,27 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartVo getCart() {
         // TODO Auto-generated method stub
-        CartVo cart = new CartVo();
-        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
-        List<Object> values = cartOps.values();
-        if (values != null && !values.isEmpty()) {
-            List<CartItemVo> collect = values.stream().map((obj) -> {
-                return gson.fromJson((String) obj, CartItemVo.class);
-            }).collect(Collectors.toList());
-            cart.setItems(collect);
+        CartVo cartVo = new CartVo();
+        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
+        if (userInfoTo.getUserId() != null) {
+            String cartKey = CART_PREFIX + userInfoTo.getUserId();
+            List<CartItemVo> tempCartItems = getCartItems(CART_PREFIX + userInfoTo.getUserKey());
+            if (tempCartItems != null) {
+                tempCartItems.forEach((item) -> {
+                    addToCart(item.getSkuId(), item.getCount());
+                });
+            }
+            List<CartItemVo> cartItems = getCartItems(cartKey);
+            cartVo.setItems(cartItems);
+            return cartVo;
+        } else {
+            String cartKey = CART_PREFIX + userInfoTo.getUserKey();
+            List<CartItemVo> cartItems = getCartItems(cartKey);
+            if (cartItems != null) {
+                cartVo.setItems(cartItems);
+            }
         }
-        return cart;
+        return cartVo;
     }
 
     private BoundHashOperations<String, Object, Object> getCartOps() {
@@ -109,5 +119,17 @@ public class CartServiceImpl implements CartService {
         }
         BoundHashOperations<String, Object, Object> boundHashOps = redisTemplate.boundHashOps(cartKey);
         return boundHashOps;
+    }
+
+    private List<CartItemVo> getCartItems(String cartKey) {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        List<Object> values = cartOps.values();
+        if (values != null && !values.isEmpty()) {
+            List<CartItemVo> collect = values.stream().map((obj) -> {
+                return gson.fromJson((String) obj, CartItemVo.class);
+            }).collect(Collectors.toList());
+            return collect;
+        }
+        return null;
     }
 }
