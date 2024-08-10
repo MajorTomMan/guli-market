@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import com.atguigu.gulimall.common.constant.ElasticConstant;
 import com.atguigu.gulimall.search.enitty.TestEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,6 +38,7 @@ import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
 import co.elastic.clients.elasticsearch.core.DeleteResponse;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -55,6 +57,7 @@ class SearchApplicationTests {
     RestClient restClient;
     @Autowired
     ElasticsearchClient esClient;
+
     @Test
     public void insertData() throws IOException {
         /*
@@ -136,6 +139,7 @@ class SearchApplicationTests {
                 u -> u.index("testentity").id("1").doc(testEntity), TestEntity.class);
         log.info("Indexed with version " + response.version());
     }
+
     @Test
     public void matchData() throws ElasticsearchException, IOException {
         Query byName = MatchQuery.of(
@@ -154,19 +158,21 @@ class SearchApplicationTests {
             System.out.println("找到ID:" + hit.id() + "分数:" + hit.score());
         }
     }
-    public void BulkData() throws ElasticsearchException, IOException{
-        List<TestEntity> entities=new ArrayList<>();
-        entities.add(new TestEntity("1","2"));
-        entities.add(new TestEntity("3","4"));
-        entities.add(new TestEntity("5","6"));
-        List<BulkOperation> bulk = entities.stream().map(entity->{
-          return new BulkOperation.Builder().create(
-            c->c.index("testentity").id(entity.getName())
-            .document(entity)
-          ).build();
+
+    public void BulkData() throws ElasticsearchException, IOException {
+        List<TestEntity> entities = new ArrayList<>();
+        entities.add(new TestEntity("1", "2"));
+        entities.add(new TestEntity("3", "4"));
+        entities.add(new TestEntity("5", "6"));
+        List<BulkOperation> bulk = entities.stream().map(entity -> {
+            return new BulkOperation.Builder().create(
+                    c -> c.index("testentity").id(entity.getName())
+                            .document(entity))
+                    .build();
         }).collect(Collectors.toList());
-        esClient.bulk(b->b.operations(bulk));
-    } 
+        esClient.bulk(b -> b.operations(bulk));
+    }
+
     private void SendData(String method, String path, Map<String, List<TestEntity>> entities) throws IOException {
         Request request = new Request(method, path);
         if (!entities.isEmpty()) {
@@ -183,4 +189,5 @@ class SearchApplicationTests {
     private String createPath(String index, String type, String id) {
         return "/" + index + "/" + type + "/" + id;
     }
+
 }

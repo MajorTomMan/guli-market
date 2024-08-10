@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import com.atguigu.gulimall.common.constant.ElasticConstant;
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
 import com.atguigu.gulimall.search.service.ProductSaveService;
+import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,23 +37,19 @@ import lombok.extern.log4j.Log4j2;
 public class ProductSaveServiceImpl implements ProductSaveService {
     @Autowired
     ElasticsearchClient client;
+    @Autowired
+    private Gson gson;
 
     @Override
-    public void productStatusUp(List<SkuEsModel> skuEsModel) throws ElasticsearchException, IOException {
+    public void productStatusUp(List<SkuEsModel> skuEsModel) throws Exception {
         // TODO Auto-generated method stub
-        /*
-         * 建立索引:product
-         * 并建立映射关系
-         */
         BulkRequest request = BulkRequest.of(b -> {
             List<BulkOperation> bulkList = skuEsModel.stream().map(sku -> {
                 BulkOperation bulk = BulkOperation.of(o -> {
-                    o.create(c -> {
-                        c.index(ElasticConstant.PRODUCT_INDEX)
-                                .id(sku.getSkuId().toString())
-                                .document(sku);
-                        return c;
-                    });
+                    o.update(
+                            c -> c.index(ElasticConstant.PRODUCT_INDEX)
+                                    .id(sku.getSkuId().toString())
+                                    .action(a -> a.doc(sku).upsert(sku)));
                     return o;
                 });
                 return bulk;
@@ -66,11 +63,12 @@ public class ProductSaveServiceImpl implements ProductSaveService {
                 log.error("返回的状态码为:" + item.status());
                 log.error("Id:{}的批量处理失败", item.id());
                 ErrorCause error = item.error();
-                log.warn("原因:" + error.reason());
+                log.error("原因:" + error.reason());
             } else {
                 log.info("商品在ES中上架成功");
                 log.info("状态:" + item.status());
                 log.info("ID:" + item.id());
+                log.info("操作类型:" + item.operationType());
             }
         });
     }

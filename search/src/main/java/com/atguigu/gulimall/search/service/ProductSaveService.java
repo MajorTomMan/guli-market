@@ -18,7 +18,7 @@ import com.atguigu.gulimall.common.to.es.SkuEsModel;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
 
 public interface ProductSaveService {
-    void productStatusUp(List<SkuEsModel> skuEsModel) throws ElasticsearchException, IOException;
+    void productStatusUp(List<SkuEsModel> skuEsModel) throws Exception;
 
     List<SkuEsModel> getSkuInfo();
 }

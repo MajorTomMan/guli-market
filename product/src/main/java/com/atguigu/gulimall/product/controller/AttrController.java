@@ -107,6 +107,13 @@ public class AttrController {
         return R.ok();
     }
 
+    @RequestMapping("/update/{attrId}")
+    // @RequiresPermissions("product:attr:update")
+    public R update(@RequestBody List<ProductAttrValueEntity> productAttrValueEntity, @PathVariable("attrId") Long attrId) {
+        productAttrValueService.updateAttrValue(productAttrValueEntity,attrId);
+        return R.ok();
+    }
+
     /**
      * 修改
      */

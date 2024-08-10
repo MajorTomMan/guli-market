@@ -1,4 +1,4 @@
--- Active: 1683961904399@@192.168.253.131@3306@douban
+-- Active: 1683961904399@@192.168.253.131@3306@gulimall_pms
 
 DROP DATABASE IF EXISTS `gulimall_pms`;
 CREATE DATABASE gulimall_pms default CHARACTER set utf8mb4;
@@ -1550,8 +1550,6 @@ INSERT INTO `pms_category` VALUES ('1420', 'SUV（二手）', '164', '3', '1', '
 INSERT INTO `pms_category` VALUES ('1421', '跑车（二手）', '164', '3', '1', '0', null, null, '0');
 INSERT INTO `pms_category` VALUES ('1422', '皮卡（二手）', '164', '3', '1', '0', null, null, '0');
 INSERT INTO `pms_category` VALUES ('1423', '面包车（二手）', '164', '3', '1', '0', null, null, '0');
-INSERT INTO `pms_category` VALUES ('1431', 'dsa323', '1', '2', '1', null, null, null, null);
-INSERT INTO `pms_category` VALUES ('1432', 'fdsffdsadddd大萨达', '1431', '3', '1', null, null, null, null);
 
 -- ----------------------------
 -- Table structure for pms_category_brand_relation

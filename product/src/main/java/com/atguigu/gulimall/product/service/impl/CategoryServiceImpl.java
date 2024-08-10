@@ -90,7 +90,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public void removeMenuByIds(List<Long> asList) {
         // TODO Auto-generated method stub
-        baseMapper.deleteBatchIds(asList);
+        baseMapper.deleteByIds(asList);
     }
 
     @Override

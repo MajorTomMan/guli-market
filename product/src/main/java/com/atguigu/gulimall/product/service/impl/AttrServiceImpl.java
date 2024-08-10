@@ -82,7 +82,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }
 
         String key = (String) params.get("key");
-        if (!StringUtils.hasText(key)) {
+        if (StringUtils.hasText(key)) {
             // attr_id attr_name
             queryWrapper.and((wrapper) -> {
                 wrapper.eq("attr_id", key).or().like("attr_name", key);
@@ -209,7 +209,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             wrapper.notIn("attr_id", attrIds);
         }
         String key = (String) params.get("key");
-        if (!StringUtils.isEmpty(key)) {
+        if (StringUtils.hasText(key)) {
             wrapper.and((w) -> {
                 w.eq("attr_id", key).or().like("attr_name", key);
             });

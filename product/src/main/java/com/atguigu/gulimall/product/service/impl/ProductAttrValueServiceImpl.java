@@ -10,6 +10,7 @@
  */
 package com.atguigu.gulimall.product.service.impl;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +28,15 @@ import com.atguigu.gulimall.product.dao.ProductAttrValueDao;
 import com.atguigu.gulimall.product.entity.ProductAttrValueEntity;
 import com.atguigu.gulimall.product.service.ProductAttrValueService;
 
-
 @Service("productAttrValueService")
-public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao, ProductAttrValueEntity> implements ProductAttrValueService {
+public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao, ProductAttrValueEntity>
+        implements ProductAttrValueService {
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<ProductAttrValueEntity> page = this.page(
                 new Query<ProductAttrValueEntity>().getPage(params),
-                new QueryWrapper<ProductAttrValueEntity>()
-        );
+                new QueryWrapper<ProductAttrValueEntity>());
 
         return new PageUtils(page);
     }
@@ -50,18 +50,36 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
     @Override
     public List<ProductAttrValueEntity> baseAttrListForSpu(Long spuId) {
         // TODO Auto-generated method stub
-        List<ProductAttrValueEntity> entities = this.baseMapper.selectList(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
+        List<ProductAttrValueEntity> entities = this.baseMapper
+                .selectList(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
         return entities;
     }
+
     @Transactional
     @Override
     public void updateSpuAttr(Long spuId, List<ProductAttrValueEntity> entities) {
         // TODO Auto-generated method stub
         this.baseMapper.delete(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
-        List<ProductAttrValueEntity> collect = entities.stream().map(item->{
+        List<ProductAttrValueEntity> collect = entities.stream().map(item -> {
             item.setSpuId(spuId);
             return item;
         }).collect(Collectors.toList());
         this.saveBatch(collect);
+    }
+
+    @Override
+    public void updateAttrValue(List<ProductAttrValueEntity> productAttrValueEntity, Long attrId) {
+        // TODO Auto-generated method stub
+        List<ProductAttrValueEntity> list = this.baseMapper
+                .selectList(new QueryWrapper<ProductAttrValueEntity>().eq("attr_id", attrId));
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                list.get(i).setAttrName(productAttrValueEntity.get(i).getAttrName());
+                list.get(i).setAttrSort(productAttrValueEntity.get(i).getAttrSort());
+                list.get(i).setQuickShow(productAttrValueEntity.get(i).getQuickShow());
+                list.get(i).setAttrValue(productAttrValueEntity.get(i).getAttrValue());
+            }
+        }
+        this.baseMapper.updateById(list);
     }
 }
