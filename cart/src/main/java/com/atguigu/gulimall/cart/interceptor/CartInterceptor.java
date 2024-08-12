@@ -1,8 +1,16 @@
+/*
+ * @Date: 2024-08-10 10:10:40
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-08-13 00:38:07
+ * @FilePath: \Guli\cart\src\main\java\com\atguigu\gulimall\cart\interceptor\CartInterceptor.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.atguigu.gulimall.cart.interceptor;
 
 import java.time.Duration;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+@Component
 public class CartInterceptor implements HandlerInterceptor {
     public static ThreadLocal<UserInfoTo> threadLocal = new ThreadLocal<>();
 

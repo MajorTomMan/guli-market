@@ -9,7 +9,7 @@
 package io.renren.common.xss;
 
 import io.renren.common.exception.RRException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * SQL过滤

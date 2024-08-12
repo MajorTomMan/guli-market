@@ -91,7 +91,7 @@ public class SearchServiceImpl implements SearchService {
         return null;
     }
 
-    /* 准备检索请求 */
+    /* 准备返回结果 */
     private SearchResult buildSearchResult(SearchResponse<SkuEsModel> response, SearchParam param) {
         SearchResult result = new SearchResult();
         long value = response.hits().total().value();

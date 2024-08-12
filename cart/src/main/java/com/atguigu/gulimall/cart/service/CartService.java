@@ -10,5 +10,8 @@ public interface CartService {
     CartItemVo getCartItem(Long skuId);
 
     CartVo getCart();
-    
+
+    void cleanItems(String[] keys);
+
+    void cleanItems(String key);
 }

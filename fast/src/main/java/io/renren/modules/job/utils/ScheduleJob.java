@@ -12,7 +12,7 @@ import io.renren.common.utils.SpringContextUtils;
 import io.renren.modules.job.entity.ScheduleJobEntity;
 import io.renren.modules.job.entity.ScheduleJobLogEntity;
 import io.renren.modules.job.service.ScheduleJobLogService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;

@@ -17,7 +17,7 @@ import io.renren.common.utils.DateUtils;
 import io.renren.modules.sys.dao.SysCaptchaDao;
 import io.renren.modules.sys.entity.SysCaptchaEntity;
 import io.renren.modules.sys.service.SysCaptchaService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

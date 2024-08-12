@@ -17,7 +17,7 @@ import io.renren.common.utils.Query;
 import io.renren.modules.job.dao.ScheduleJobLogDao;
 import io.renren.modules.job.entity.ScheduleJobLogEntity;
 import io.renren.modules.job.service.ScheduleJobLogService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

@@ -1,9 +1,9 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2022-12-27 22:21:36
- * @FilePath: /common/home/master/project/gulimall/product/src/main/java/com/atguigu/gulimall/product/service/impl/ProductAttrValueServiceImpl.java
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-08-13 00:03:54
+ * @FilePath: \Guli\product\src\main\java\com\atguigu\gulimall\product\service\impl\ProductAttrValueServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -73,7 +73,7 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
         List<ProductAttrValueEntity> list = this.baseMapper
                 .selectList(new QueryWrapper<ProductAttrValueEntity>().eq("attr_id", attrId));
         if (list != null && !list.isEmpty()) {
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < productAttrValueEntity.size(); i++) {
                 list.get(i).setAttrName(productAttrValueEntity.get(i).getAttrName());
                 list.get(i).setAttrSort(productAttrValueEntity.get(i).getAttrSort());
                 list.get(i).setQuickShow(productAttrValueEntity.get(i).getQuickShow());

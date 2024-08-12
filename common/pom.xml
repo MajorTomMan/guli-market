@@ -200,12 +200,19 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <parameters>true</parameters>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
                 <!--该插件主要用途：构建可执行的JAR -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <parameters>true</parameters>
-                </configuration>
             </plugin>
         </plugins>
     </build>

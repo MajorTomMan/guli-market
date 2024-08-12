@@ -9,18 +9,16 @@
 package io.renren;
 
 import io.renren.service.DynamicDataSourceTestService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * 多数据源测试
  *
  * @author Mark sunlightcs@gmail.com
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class DynamicDataSourceTest {
     @Autowired

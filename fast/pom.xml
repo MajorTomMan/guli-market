@@ -7,7 +7,7 @@
     <artifactId>renren-fast</artifactId>
     <version>3.0.0</version>
     <packaging>jar</packaging>
-    <description>renren-fast</description>
+    <description>fast</description>
 
     <parent>
         <groupId>com.atguigu</groupId>
@@ -18,23 +18,23 @@
         <mybatisplus.version>3.5.7</mybatisplus.version>
         <mysql.version>8.0.28</mysql.version>
         <mssql.version>4.0</mssql.version>
-        <oracle.version>11.2.0.3</oracle.version>
+        <oracle.version>23.5.0.24.07</oracle.version>
         <druid.version>1.2.23</druid.version>
-        <quartz.version>2.3.2</quartz.version>
+        <quartz.version>2.5.0-rc1</quartz.version>
         <commons.lang.version>2.6</commons.lang.version>
-        <commons.fileupload.version>1.5</commons.fileupload.version>
-        <commons.io.version>2.13.0</commons.io.version>
-        <commons.codec.version>1.16.0</commons.codec.version>
-        <commons.configuration.version>1.10</commons.configuration.version>
+        <commons.fileupload.version>2.0.0-M2</commons.fileupload.version>
+        <commons.io.version>2.16.1</commons.io.version>
+        <commons.codec.version>1.17.1</commons.codec.version>
+        <commons.configuration.version>2.11.0</commons.configuration.version>
         <shiro.version>2.0.1</shiro.version>
         <jwt.api.version>0.12.6</jwt.api.version>
         <kaptcha.version>0.0.9</kaptcha.version>
-        <qiniu.version>7.2.23</qiniu.version>
-        <qcloud.cos.version>4.4</qcloud.cos.version>
+        <qiniu.version>7.15.1</qiniu.version>
+        <qcloud.cos.version>5.6.227</qcloud.cos.version>
         <springdoc.openapi.version>1.8.0</springdoc.openapi.version>
-        <joda.time.version>2.9.9</joda.time.version>
-        <fastjson.version>2.0.34</fastjson.version>
-        <hutool.version>5.8.29</hutool.version>
+        <joda.time.version>2.12.7</joda.time.version>
+        <fastjson.version>2.0.52</fastjson.version>
+        <hutool.version>5.8.30</hutool.version>
         <service-path>/work/renren</service-path>
         <pack-name>${project.artifactId}-${project.version}.jar</pack-name>
         <remote-addr>192.168.1.10:22</remote-addr>
@@ -76,8 +76,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
             <version>${oracle.version}</version>
         </dependency>
         <dependency>
@@ -105,11 +105,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-fileupload2-javax -->
         <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-fileupload2-javax</artifactId>
             <version>${commons.fileupload.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -121,8 +123,8 @@
             <version>${commons.codec.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
             <version>${commons.configuration.version}</version>
         </dependency>
         <dependency>
@@ -208,8 +210,8 @@
             <version>${joda.time.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
             <version>${fastjson.version}</version>
         </dependency>
         <dependency>
@@ -223,17 +225,18 @@
             <version>1.0</version>
         </dependency>
     </dependencies>
-
     <build>
-        <finalName>${project.artifactId}</finalName>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.8</version>
-            </extension>
-        </extensions>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                    <parameters>true</parameters>
+                    <encoding>utf-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -241,40 +244,8 @@
                     <fork>true</fork>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>1.0</version>
-                <configuration>
-                    <fromFile>target/${pack-name}</fromFile>
-                    <url><![CDATA[scp://${remote-username}:${remote-passwd}@${remote-addr}${service-path}]]></url>
-                    <commands>
-                        <command>kill -9 `ps -ef |grep ${project.artifactId}.jar|grep -v "grep" |awk
-                            '{print $2}'`</command>
-                        <command><![CDATA[nohup java -jar ${service-path}/${pack-name} --spring.profiles.active=test > ${service-path}/renren.log 2>&1 & ]]></command>
-                        <command><![CDATA[netstat -nptl]]></command>
-                        <command><![CDATA[ps -ef | grep java | grep -v grep]]></command>
-                    </commands>
-                    <displayCommandOutputs>true</displayCommandOutputs>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.14</version>
-                <configuration>
-                    <imageName>renren/fast</imageName>
-                    <dockerDirectory>${project.basedir}</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
         </plugins>
+
     </build>
     <repositories>
         <repository>

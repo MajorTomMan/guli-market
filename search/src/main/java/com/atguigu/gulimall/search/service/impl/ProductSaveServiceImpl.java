@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2023-02-11 22:38:08
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-08-22 22:52:24
- * @FilePath: /GuliMall/search/src/main/java/com/atguigu/gulimall/search/service/impl/ProductSaveServiceImpl.java
+ * @LastEditTime: 2024-08-12 23:38:01
+ * @FilePath: \Guli\search\src\main\java\com\atguigu\gulimall\search\service\impl\ProductSaveServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
@@ -49,7 +49,7 @@ public class ProductSaveServiceImpl implements ProductSaveService {
                     o.update(
                             c -> c.index(ElasticConstant.PRODUCT_INDEX)
                                     .id(sku.getSkuId().toString())
-                                    .action(a -> a.doc(sku).upsert(sku)));
+                                    .action(a -> a.doc(sku).docAsUpsert(true)));
                     return o;
                 });
                 return bulk;

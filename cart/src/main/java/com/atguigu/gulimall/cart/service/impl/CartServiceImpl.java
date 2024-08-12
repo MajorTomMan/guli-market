@@ -42,7 +42,7 @@ public class CartServiceImpl implements CartService {
         // TODO Auto-generated method stub
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         String sku = (String) cartOps.get(skuId.toString());
-        if (StringUtils.hasText(sku)) {
+        if (!StringUtils.hasText(sku)) {
             CartItemVo cartItemVo = new CartItemVo();
             CompletableFuture.runAsync(() -> {
                 R skuInfo = feignService.getSkuInfo(skuId);
@@ -95,6 +95,8 @@ public class CartServiceImpl implements CartService {
                 tempCartItems.forEach((item) -> {
                     addToCart(item.getSkuId(), item.getCount());
                 });
+                // 清除临时购物车
+                cleanItems(CART_PREFIX + userInfoTo.getUserKey());
             }
             List<CartItemVo> cartItems = getCartItems(cartKey);
             cartVo.setItems(cartItems);
@@ -131,5 +133,13 @@ public class CartServiceImpl implements CartService {
             return collect;
         }
         return null;
+    }
+
+    public void cleanItems(String[] cartKeys) {
+        redisTemplate.delete(cartKeys);
+    }
+
+    public void cleanItems(String cartKey) {
+        redisTemplate.delete(cartKey);
     }
 }

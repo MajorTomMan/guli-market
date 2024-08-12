@@ -2,8 +2,8 @@
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2023-10-19 00:19:13
- * @FilePath: /common/home/master/project/GuliMall/product/src/main/java/com/atguigu/gulimall/product/service/impl/SpuInfoServiceImpl.java
+ * @LastEditTime: 2024-08-13 00:10:04
+ * @FilePath: \Guli\product\src\main\java\com\atguigu\gulimall\product\service\impl\SpuInfoServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -29,6 +29,7 @@ import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.product.dao.SpuInfoDao;
+import com.atguigu.gulimall.product.entity.AttrEntity;
 import com.atguigu.gulimall.product.entity.BrandEntity;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.entity.ProductAttrValueEntity;
@@ -125,8 +126,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         List<BaseAttrs> baseAttrs = vo.getBaseAttrs();
         List<ProductAttrValueEntity> collect = baseAttrs.stream().map(attr -> {
             ProductAttrValueEntity valueEntity = new ProductAttrValueEntity();
+            AttrEntity entity = attrService.getById(attr.getAttrId());
             valueEntity.setAttrId(attr.getAttrId());
-            valueEntity.setAttrName("");
+            valueEntity.setAttrName(entity.getAttrName());
             valueEntity.setAttrValue(attr.getAttrValues());
             valueEntity.setQuickShow(attr.getShowDesc());
             valueEntity.setSpuId(infoEntity.getId());
@@ -280,12 +282,12 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     esModel.setSkuPrice(sku.getPrice());
                     esModel.setSkuImg(sku.getSkuDefaultImg());
                     BrandEntity brand = brandService.getById(esModel.getBrandId());
-                    CategoryEntity category = categoryService.getById(esModel.getCatelogId());
+                    CategoryEntity category = categoryService.getById(esModel.getCatalogId());
                     if (brand != null && category != null) {
                         esModel.setBrandName(brand.getName());
                         esModel.setBrandImg(brand.getLogo());
-                        esModel.setCatelogId(category.getCatId());
-                        esModel.setCatelogName(category.getName());
+                        esModel.setCatalogId(category.getCatId());
+                        esModel.setCatalogName(category.getName());
                         esModel.setHotScore(0L);
                     }
                     /* 设置库存信息 */
@@ -301,11 +303,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                 }).collect(Collectors.toList());
         // TODO 远程调用ES中的保存SKU接口,将数据保存到ES中
         R r = searchFeignService.productStatusUp(models);
-        if (r.getCode() != 0) 
-        {
+        if (r.getCode() != 0) {
             // 远程调用失败
             log.error("远程调用商品上架服务失败");
-            log.error("原因是:"+r);
+            log.error("原因是:" + r);
         } else {
             // 远程调用成功
             baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());

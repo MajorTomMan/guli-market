@@ -14,7 +14,7 @@ import io.jsonwebtoken.Claims;
 import io.renren.common.exception.RRException;
 import io.renren.modules.app.utils.JwtUtils;
 import io.renren.modules.app.annotation.Login;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

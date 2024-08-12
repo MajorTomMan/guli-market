@@ -1,3 +1,10 @@
+/*
+ * @Date: 2024-08-06 14:08:43
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-08-13 00:58:47
+ * @FilePath: \Guli\cart\src\main\java\com\atguigu\gulimall\cart\controller\CartController.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.atguigu.gulimall.cart.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +31,7 @@ public class CartController {
         return "cartList";
     }
 
-    @GetMapping("/addToCart")
+    @GetMapping("/addCartItem")
     public String addToCart(@RequestParam("skuId") Long skuId, @RequestParam("num") Integer num,
             RedirectAttributes attributes) {
         cartService.addToCart(skuId, num);
@@ -36,9 +43,9 @@ public class CartController {
     public String addToCartSuccessPage(@RequestParam("skuId") Long skuId, Model model) {
         CartItemVo cartItem = cartService.getCartItem(skuId);
         if (cartItem != null) {
-            model.addAttribute("item", cartItem);
+            model.addAttribute("cartItem", cartItem);
         }
-        return "successs";
+        return "success";
     }
 
 }
