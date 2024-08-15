@@ -59,12 +59,11 @@
                         </ol>
                     </li>
                 </ul>
-                `
                 <ul class="header_ul_right">
                     <li style="border: 0;">
                         <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/login.html"
-                            class="aa">你好，请登录</a>
-                        <a th:if="${session.loginUser != null}">欢迎, [[${session.loginUser.nickname}]]</a>
+                            class="aa">你好,请登录</a>
+                        <a th:if="${session.loginUser != null}" class="aa">欢迎, [[${session.loginUser.nickname}]]</a>
                     </li>
                     <li>
                         <a th:if="${session.loginUser == null}" href="http://auth.gulimall.com/reg.html"

@@ -14,18 +14,7 @@
 
 ## 各微服务端口
 
-- gateway:5500
-- member:8000
-- order:8500
-- product:9000
-- ware:9500
-- coupon:10000
-- search:10500
-- auth:11000
-- cart:11500
-- fast-vue:8001
-- fast:6000
-- generator:9999
-- third-party:3000
-
-
+因为各服务固定端口会产生各种冲突崩溃
+为避免这种情况,所有微服务统一将port设置为0让springboot去寻找空闲端口来启动应用
+前端通过访问网关来获取转发后的数据
+网关通过访问nacos来获知其他微服务的端口并获取数据

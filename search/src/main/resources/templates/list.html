@@ -70,7 +70,7 @@
                         class="li_2">你好，[[${session.loginUser==null?"请登录":session.loginUser.nickname}]]</a>
                 </li>
                 <li>
-                    <a href="http://auth.gulimall.com/register.html">免费注册</a>
+                    <a href="http://auth.gulimall.com/reg.html">免费注册</a>
                 </li>
                 <span>|</span>
                 <li>
@@ -1218,7 +1218,6 @@
                                 </div>
                                 <p class="da">
                                     <a th:href="|http://item.gulimall.com/${product.skuId}.html|">
-
                                         <img class="dim" th:src="${product.skuImg}">
                                     </a>
                                 </p>
@@ -1897,49 +1896,52 @@
             location.href = replaceParamVal(location.href, "hasStock", checked ? 1 : 0, false)
         })
 
-        $("#skuPriceSearchBtn").click(function () {
-            var skuPriceFrom = $("#skuPriceFrom").val();
-            var skuPriceTo = $("#skuPriceTo").val();
-            location.href = replaceParamVal(location.href, "skuPrice", skuPriceFrom + "_" + skuPriceTo, false);
-        })
-        // $(".sort_a").click(function () {
-        //     //3 通过修改url排序
-        //     var sort = $(this).attr("sort");
-        //     sort = $(this).hasClass("desc") ? sort + "_desc" : sort + "_asc";
-        //     location.href=replaceParamVal(location.href,"sort",sort+"_desc",false)
-        //     // changeStyle(this);
-        //     return false;
-        // });
-        //
-        // function changeStyle(ele){
-        //     //1. 点击后清除兄弟按钮样式，并添加当前节点样式
-        //     $(".sort_a").css({"color": "#333","border-color": "#CCC","background": "#FFF"});
-        //     $(ele).css({"color": "#FFF","border-color": "#e4393c","background": "#e4393c"});
-        //     //2. 改变升降序符号
-        //     //2.1 清除兄弟节点符号和排序样式
-        //     $(".sort_a").each(function () {
-        //         $(this).removeClass("desc")
-        //         $(this).text($(this).text().replace("↑","").replace("↓",""))
-        //     })
-        //     //2.2 替换当前节点文本
-        //     var text= $(ele).text().replace("↑","").replace("↓","");
-        //     $(ele).toggleClass("desc");
-        //     if ($(ele).hasClass("desc")){
-        //         //替换文本
-        //         $(ele).text(text+"↓");
-        //     }else {
-        //         $(ele).text(text+"↑");
-        //     }
-        // }
+            < !--价格区间-->
+                $("#skuPriceSearchBtn").click(function () {
+                    var skuPriceFrom = $("#skuPriceFrom").val();
+                    var skuPriceTo = $("#skuPriceTo").val();
+                    location.href = replaceParamVal(location.href, "skuPrice", skuPriceFrom + "_" + skuPriceTo, false);
+                })
 
-        $(".sort_a").click(function () {
-            // changeStyle(this);
-            $(this).toggleClass("desc");
-            let sort = $(this).attr("sort");
-            sort = $(this).hasClass("desc") ? sort + "_desc" : sort + "_asc";
-            location.href = replaceParamVal(location.href, "sort", sort, false);
-            return false;
-        });
+                < !--排序-->
+                    // $(".sort_a").click(function () {
+                    // //3 通过修改url排序
+                    // var sort = $(this).attr("sort");
+                    // sort = $(this).hasClass("desc") ? sort + "_desc" : sort + "_asc";
+                    // location.href=replaceParamVal(location.href,"sort",sort+"_desc",false)
+                    // // changeStyle(this);
+                    // return false;
+                    // });
+                    //
+                    // function changeStyle(ele){
+                    // //1. 点击后清除兄弟按钮样式，并添加当前节点样式
+                    // $(".sort_a").css({"color": "#333","border-color": "#CCC","background": "#FFF"});
+                    // $(ele).css({"color": "#FFF","border-color": "#e4393c","background": "#e4393c"});
+                    // //2. 改变升降序符号
+                    // //2.1 清除兄弟节点符号和排序样式
+                    // $(".sort_a").each(function () {
+                    // $(this).removeClass("desc")
+                    // $(this).text($(this).text().replace("↑","").replace("↓",""))
+                    // })
+                    // //2.2 替换当前节点文本
+                    // var text= $(ele).text().replace("↑","").replace("↓","");
+                    // $(ele).toggleClass("desc");
+                    // if ($(ele).hasClass("desc")){
+                    // //替换文本
+                    // $(ele).text(text+"↓");
+                    // }else {
+                    // $(ele).text(text+"↑");
+                    // }
+                    // }
+
+                    $(".sort_a").click(function () {
+                        // changeStyle(this);
+                        $(this).toggleClass("desc");
+                        let sort = $(this).attr("sort");
+                        sort = $(this).hasClass("desc") ? sort + "_desc" : sort + "_asc";
+                        location.href = replaceParamVal(location.href, "sort", sort, false);
+                        return false;
+                    });
 
         function changeStyle(ele) {
             // location.href = replaceParamVal(href, "pageNum", pn,flase);
@@ -1965,14 +1967,17 @@
             }
         };
 
-        $(".page_a").click(function () {
-            var pn = $(this).attr("pn");
-            location.href = replaceParamVal(location.href, "pageNum", pn, false);
-            console.log(replaceParamVal(location.href, "pageNum", pn, false))
-        })
-        function searchByKeyword() {
-            location.href = replaceParamVal(location.href, "keyword", $("#keyword_input").val(), false);
-        };
+    < !--分页函数 -->
+            $(".page_a").click(function () {
+                var pn = $(this).attr("pn");
+                location.href = replaceParamVal(location.href, "pageNum", pn, false);
+                console.log(replaceParamVal(location.href, "pageNum", pn, false))
+            })
+            < !--替换网址相关函数-->
+    < !--搜索框-->
+            function searchByKeyword() {
+                location.href = replaceParamVal(location.href, "keyword", $("#keyword_input").val(), false);
+            };
 
         function searchProducts(name, value) {
             //原來的页面
@@ -1980,12 +1985,12 @@
         };
 
         /**
-         * @param url 目前的url
-         * @param paramName 需要替换的参数属性名
-         * @param replaceVal 需要替换的参数的新属性值
-         * @param forceAdd 该参数是否可以重复查询(attrs=1_3G:4G:5G&attrs=2_骁龙845&attrs=4_高清屏)
-         * @returns {string} 替换或添加后的url
-         */
+        * @param url 目前的url
+        * @param paramName 需要替换的参数属性名
+        * @param replaceVal 需要替换的参数的新属性值
+        * @param forceAdd 该参数是否可以重复查询(attrs=1_3G:4G:5G&attrs=2_骁龙845&attrs=4_高清屏)
+        * @returns {string} 替换或添加后的url
+        */
         function replaceParamVal(url, paramName, replaceVal, forceAdd) {
             var oUrl = url.toString();
             var nUrl;

@@ -543,15 +543,18 @@ public class SearchServiceImpl implements SearchService {
 
     private void saveQuery(String json) {
         try {
-            File queryFile = new File(new ClassPathResource("/").getURL().toString().substring(6), "query.json");
+            File queryFile = new File(new ClassPathResource("/").getFile(), "query.json");
+            queryFile.setReadOnly();
             try (FileOutputStream outputStream = new FileOutputStream(queryFile.getAbsolutePath() + "/", false)) {
                 outputStream.write(json.getBytes());
                 outputStream.flush();
             }
+            log.info("保存DSL查询文件成功");
+            log.info("保存DSL查询文件至:" + queryFile.getCanonicalPath());
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            log.info("保存DSL查询文件失败");
-            log.info("错误原因:" + e.getMessage());
+            log.error("保存DSL查询文件失败");
+            log.error("错误原因:" + e.getMessage());
         }
     }
 }

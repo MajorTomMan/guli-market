@@ -7,10 +7,11 @@
  */
 package com.atguigu.gulimall.cart.interceptor;
 
-import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,8 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.atguigu.gulimall.cart.to.UserInfoTo;
 import com.atguigu.gulimall.common.constant.AuthServerConstant;
 import com.atguigu.gulimall.common.constant.CartConstant;
-import com.atguigu.gulimall.common.vo.MemberResponseVo;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,13 +33,21 @@ public class CartInterceptor implements HandlerInterceptor {
             throws Exception {
         // TODO Auto-generated method stub
         HttpSession session = request.getSession();
-        MemberResponseVo memberResponseVo = (MemberResponseVo) session.getAttribute(AuthServerConstant.LOGIN_USER);
+        LinkedHashMap<String, Object> attribute = (LinkedHashMap) session.getAttribute(AuthServerConstant.LOGIN_USER);
         UserInfoTo userInfoTo = new UserInfoTo();
-        // 1 用户已经登录，设置userId
-        if (memberResponseVo != null) {
-            userInfoTo.setUserId(memberResponseVo.getId());
+        if (attribute != null && !attribute.isEmpty()) {
+            Object id = attribute.get("id");
+            if (id instanceof Integer) {
+                id = NumberUtils.convertNumberToTargetClass((Integer) id, Long.class);
+            }
+            userInfoTo.setUserId((Long) id);
         }
-
+        /*
+         * // 1 用户已经登录，设置userId
+         * if (memberResponseVo != null) {
+         * userInfoTo.setUserId(memberResponseVo.getId());
+         * }
+         */
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             // 2 如果cookie中已经有user-Key，则直接设置
@@ -51,7 +58,7 @@ public class CartInterceptor implements HandlerInterceptor {
         }
 
         // 3 如果cookie没有user-key，我们通过uuid生成user-key
-        if (StringUtils.hasText(userInfoTo.getUserKey())) {
+        if (!StringUtils.hasText(userInfoTo.getUserKey())) {
             String uuid = UUID.randomUUID().toString();
             userInfoTo.setUserKey(uuid);
         }
