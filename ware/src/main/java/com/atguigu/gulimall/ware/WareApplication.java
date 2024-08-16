@@ -18,7 +18,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients(basePackages = "com.atguigu.gulimall.ware.feign")
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = { RedissonAutoConfigurationV2.class })
+@SpringBootApplication
 public class WareApplication {
 
     public static void main(String[] args) {

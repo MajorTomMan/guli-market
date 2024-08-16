@@ -15,9 +15,13 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import com.atguigu.gulimall.common.config.RedisConfig;
+import com.atguigu.gulimall.common.config.SessionConfig;
+
 @EnableFeignClients
 @EnableDiscoveryClient
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class,RedissonAutoConfigurationV2.class })
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, RedissonAutoConfigurationV2.class,
+        RedisConfig.class, SessionConfig.class })
 public class ThirdPartyApplication {
 
     public static void main(String[] args) {

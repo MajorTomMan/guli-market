@@ -1,11 +1,11 @@
 /*
  * @Date: 2024-08-08 18:12:17
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2024-08-08 23:17:06
- * @FilePath: \Guli\auth\src\main\java\com\atguigu\gulimall\auth\config\SessionConfig.java
+ * @LastEditTime: 2024-08-08 23:17:33
+ * @FilePath: \Guli\product\src\main\java\com\atguigu\gulimall\product\config\SessionConfig.java
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
-package com.atguigu.gulimall.search.config;
+package com.atguigu.gulimall.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ public class SessionConfig {
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer defaultCookieSerializer = new DefaultCookieSerializer();
         defaultCookieSerializer.setDomainName("gulimall.com");
-        defaultCookieSerializer.setCookieName("GulimallSession");
+        defaultCookieSerializer.setCookieName("GULISESSION");
         return defaultCookieSerializer;
     }
 

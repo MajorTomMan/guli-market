@@ -1,1 +1,2 @@
+com.atguigu.gulimall.common.config.RedisConfig
 com.atguigu.gulimall.common.config.SessionConfig

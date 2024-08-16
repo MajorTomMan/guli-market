@@ -11,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,7 +22,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Component
 public class CartInterceptor implements HandlerInterceptor {
     public static ThreadLocal<UserInfoTo> threadLocal = new ThreadLocal<>();
@@ -36,11 +37,8 @@ public class CartInterceptor implements HandlerInterceptor {
         LinkedHashMap<String, Object> attribute = (LinkedHashMap) session.getAttribute(AuthServerConstant.LOGIN_USER);
         UserInfoTo userInfoTo = new UserInfoTo();
         if (attribute != null && !attribute.isEmpty()) {
-            Object id = attribute.get("id");
-            if (id instanceof Integer) {
-                id = NumberUtils.convertNumberToTargetClass((Integer) id, Long.class);
-            }
-            userInfoTo.setUserId((Long) id);
+            Integer id = (Integer) attribute.get("id");
+            userInfoTo.setUserId(Long.valueOf(id));
         }
         /*
          * // 1 用户已经登录，设置userId
@@ -50,6 +48,7 @@ public class CartInterceptor implements HandlerInterceptor {
          */
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
+            log.info("cookie.name->" + cookie.getName());
             // 2 如果cookie中已经有user-Key，则直接设置
             if (cookie.getName().equals(CartConstant.TEMP_USER_COOKIE_NAME)) {
                 userInfoTo.setUserKey(cookie.getValue());
@@ -60,6 +59,7 @@ public class CartInterceptor implements HandlerInterceptor {
         // 3 如果cookie没有user-key，我们通过uuid生成user-key
         if (!StringUtils.hasText(userInfoTo.getUserKey())) {
             String uuid = UUID.randomUUID().toString();
+            log.info("uuid->" + uuid);
             userInfoTo.setUserKey(uuid);
         }
 

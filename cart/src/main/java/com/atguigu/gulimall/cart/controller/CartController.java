@@ -44,7 +44,7 @@ public class CartController {
         CartItemVo cartItem = cartService.getCartItem(skuId);
         if (cartItem != null) {
             model.addAttribute("cartItem", cartItem);
-        }
+        } 
         return "success";
     }
 

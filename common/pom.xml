@@ -16,7 +16,7 @@
     <packaging>jar</packaging>
     <properties>
         <jakarta.servlet.version>6.1.0</jakarta.servlet.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <httpclient5.version>5.2.1</httpclient5.version>
         <httpcore5.version>5.2.1</httpcore5.version>
         <commons-lang3.version>3.15.0</commons-lang3.version>

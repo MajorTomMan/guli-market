@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.cart.service.impl;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -18,6 +19,7 @@ import com.atguigu.gulimall.cart.to.UserInfoTo;
 import com.atguigu.gulimall.cart.vo.CartItemVo;
 import com.atguigu.gulimall.cart.vo.CartVo;
 import com.atguigu.gulimall.cart.vo.SkuInfoVo;
+import com.atguigu.gulimall.common.constant.CartConstant;
 import com.atguigu.gulimall.common.utils.R;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.gson.Gson;
@@ -28,21 +30,23 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CartServiceImpl implements CartService {
     @Autowired
-    RedisTemplate redisTemplate;
+    RedisTemplate<String, Object> redisTemplate;
     @Autowired
     ProductFeignService feignService;
     @Autowired
     ThreadPoolExecutor executor;
     @Autowired
     Gson gson;
-    private final String CART_PREFIX = "gulimall:cart";
 
     @Override
     public CartItemVo addToCart(Long skuId, Integer num) {
         // TODO Auto-generated method stub
+        // 拿到要操作的购物车信息
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
-        String sku = (String) cartOps.get(skuId.toString());
-        if (!StringUtils.hasText(sku)) {
+        // 判断Redis是否有该商品的信息
+        LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
+        // 如果没有就添加数据
+        if (sku == null) {
             CartItemVo cartItemVo = new CartItemVo();
             CompletableFuture.runAsync(() -> {
                 R skuInfo = feignService.getSkuInfo(skuId);
@@ -54,19 +58,16 @@ public class CartServiceImpl implements CartService {
                 cartItemVo.setTitle(data.getSkuTitle());
                 cartItemVo.setSkuId(skuId);
                 cartItemVo.setPrice(data.getPrice());
-                cartItemVo.setSkuAttrValues(null);
             }, executor).thenRun(() -> {
                 List<String> values = feignService.getSkuSaleAttrValues(skuId);
                 cartItemVo.setSkuAttrValues(values);
             }).join();
-            String json = gson.toJson(cartItemVo);
-            cartOps.put(skuId.toString(), json);
+            cartOps.put(skuId.toString(), cartItemVo);
             return cartItemVo;
         } else {
-            CartItemVo item = gson.fromJson(sku, CartItemVo.class);
+            CartItemVo item = gson.fromJson(gson.toJson(sku), CartItemVo.class);
             item.setCount(item.getCount() + num);
-            String json = gson.toJson(item);
-            cartOps.put(skuId.toString(), json);
+            cartOps.put(skuId.toString(), item);
             return item;
         }
     }
@@ -75,9 +76,9 @@ public class CartServiceImpl implements CartService {
     public CartItemVo getCartItem(Long skuId) {
         // TODO Auto-generated method stub
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
-        String sku = (String) cartOps.get(skuId.toString());
-        if (StringUtils.hasText(sku)) {
-            CartItemVo item = gson.fromJson(sku, CartItemVo.class);
+        LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
+        if (sku != null && !sku.isEmpty()) {
+            CartItemVo item = gson.fromJson(gson.toJson(sku), CartItemVo.class);
             return item;
         }
         return null;
@@ -89,20 +90,20 @@ public class CartServiceImpl implements CartService {
         CartVo cartVo = new CartVo();
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
         if (userInfoTo.getUserId() != null) {
-            String cartKey = CART_PREFIX + userInfoTo.getUserId();
-            List<CartItemVo> tempCartItems = getCartItems(CART_PREFIX + userInfoTo.getUserKey());
+            String cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserId();
+            List<CartItemVo> tempCartItems = getCartItems(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
             if (tempCartItems != null) {
                 tempCartItems.forEach((item) -> {
                     addToCart(item.getSkuId(), item.getCount());
                 });
                 // 清除临时购物车
-                cleanItems(CART_PREFIX + userInfoTo.getUserKey());
+                cleanItems(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
             }
             List<CartItemVo> cartItems = getCartItems(cartKey);
             cartVo.setItems(cartItems);
             return cartVo;
         } else {
-            String cartKey = CART_PREFIX + userInfoTo.getUserKey();
+            String cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserKey();
             List<CartItemVo> cartItems = getCartItems(cartKey);
             if (cartItems != null) {
                 cartVo.setItems(cartItems);
@@ -115,9 +116,9 @@ public class CartServiceImpl implements CartService {
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
         String cartKey = "";
         if (userInfoTo.getUserId() != null) {
-            cartKey = CART_PREFIX + userInfoTo.getUserId();
+            cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserId();
         } else {
-            cartKey = CART_PREFIX + userInfoTo.getUserKey();
+            cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserKey();
         }
         BoundHashOperations<String, Object, Object> boundHashOps = redisTemplate.boundHashOps(cartKey);
         return boundHashOps;
@@ -136,7 +137,10 @@ public class CartServiceImpl implements CartService {
     }
 
     public void cleanItems(String[] cartKeys) {
-        redisTemplate.delete(cartKeys);
+        for (String key : cartKeys) {
+            cleanItems(key);
+        }
+
     }
 
     public void cleanItems(String cartKey) {
