@@ -129,7 +129,7 @@ public class CartServiceImpl implements CartService {
         List<Object> values = cartOps.values();
         if (values != null && !values.isEmpty()) {
             List<CartItemVo> collect = values.stream().map((obj) -> {
-                return gson.fromJson((String) obj, CartItemVo.class);
+                return gson.fromJson(gson.toJson(obj), CartItemVo.class);
             }).collect(Collectors.toList());
             return collect;
         }
@@ -145,5 +145,25 @@ public class CartServiceImpl implements CartService {
 
     public void cleanItems(String cartKey) {
         redisTemplate.delete(cartKey);
+    }
+
+    @Override
+    public void deleteItem(Long skuId) {
+        // TODO Auto-generated method stub
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
+        if (sku != null && !sku.isEmpty()) {
+            cartOps.delete(skuId.toString());
+        }
+    }
+
+    @Override
+    public void checkCart(Integer isChecked, Long skuId) {
+        // TODO Auto-generated method stub
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
+        CartItemVo cartItemVo = gson.fromJson(gson.toJson(sku), CartItemVo.class);
+        cartItemVo.setCheck(isChecked == 1);
+        cartOps.put(skuId.toString(), cartItemVo);
     }
 }

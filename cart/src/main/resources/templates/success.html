@@ -27,8 +27,13 @@
 
             <ul class="hd_wrap_right">
                 <li class="forel">
-                    <a href="/javascript:;" class="link_login">你好,请登录</a>&nbsp;
-                    <a href="/javascript:;" class="link_regist">免费注册</a>
+					<li>
+						<a
+							href="http://auth.gulimall.com/login.html">你好，[[${session.loginUser==null?"请登录":session.loginUser.nickname}]]</a>
+					</li>
+					<li>
+						<a href="http://auth.gulimall.com/reg.html" class="li_2">免费注册</a>
+					</li>
                 </li>
                 <li class="spacer"></li>
 
