@@ -1,10 +1,13 @@
 package com.atguigu.gulimall.cart.service.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
@@ -100,14 +103,36 @@ public class CartServiceImpl implements CartService {
                 cleanItems(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
             }
             List<CartItemVo> cartItems = getCartItems(cartKey);
-            cartVo.setItems(cartItems);
+            if (cartItems != null && cartItems.isEmpty()) {
+                cartVo.setItems(cartItems);
+            } else {
+                cartVo.setItems(new ArrayList<>());
+            }
             return cartVo;
         } else {
             String cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserKey();
             List<CartItemVo> cartItems = getCartItems(cartKey);
-            if (cartItems != null) {
+            if (cartItems != null && !cartItems.isEmpty()) {
                 cartVo.setItems(cartItems);
+            } else {
+                cartVo.setItems(new ArrayList<>());
             }
+        }
+        List<CartItemVo> items = cartVo.getItems();
+        if (!items.isEmpty()) {
+            // 计算总价
+            BigDecimal totalAmount = items.stream().map(item -> {
+                return item.getTotalPrice();
+            }).reduce(BigDecimal.ZERO, BigDecimal::add);
+            cartVo.setTotalAmount(totalAmount);
+            // 计算总数量
+            int totalNumber = items.stream().mapMultiToInt((item, consumer) -> {
+                consumer.accept(item.getCount());
+            }).sum();
+            cartVo.setCountNum(totalNumber);
+        } else {
+            cartVo.setTotalAmount(BigDecimal.ZERO);
+            cartVo.setCountNum(0);
         }
         return cartVo;
     }
@@ -164,6 +189,21 @@ public class CartServiceImpl implements CartService {
         LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
         CartItemVo cartItemVo = gson.fromJson(gson.toJson(sku), CartItemVo.class);
         cartItemVo.setCheck(isChecked == 1);
+        cartOps.put(skuId.toString(), cartItemVo);
+    }
+
+    @Override
+    public void countItem(Long skuId, Integer num) {
+        // TODO Auto-generated method stub
+        if (num == 0) {
+            deleteItem(skuId);
+            return;
+        }
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
+        CartItemVo cartItemVo = gson.fromJson(gson.toJson(sku), CartItemVo.class);
+        cartItemVo.setCount(num);
+        cartItemVo.setTotalPrice(cartItemVo.getTotalPrice());
         cartOps.put(skuId.toString(), cartItemVo);
     }
 }

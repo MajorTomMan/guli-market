@@ -18,4 +18,6 @@ public interface CartService {
     void deleteItem(Long skuId);
 
     void checkCart(Integer isChecked, Long skuId);
+
+    void countItem(Long skuId, Integer num);
 }

@@ -24,7 +24,6 @@ public class CartVo {
      * 商品总价
      */
     private BigDecimal totalAmount;
-
     /**
      * 减免价格
      */
@@ -38,9 +37,9 @@ public class CartVo {
         this.items = items;
     }
 
-    //总数量=遍历每个购物项总和
+    // 总数量=遍历每个购物项总和
     public Integer getCountNum() {
-        int count=0;
+        int count = 0;
         if (items != null && items.size() > 0) {
             for (CartItemVo item : items) {
                 count += item.getCount();
@@ -52,10 +51,10 @@ public class CartVo {
     public void setCountNum(Integer countNum) {
         this.countNum = countNum;
     }
-	
-    //商品类型数量=遍历所有商品类型和
+
+    // 商品类型数量=遍历所有商品类型和
     public Integer getCountType() {
-        int count=0;
+        int count = 0;
         if (items != null && items.size() > 0) {
             for (CartItemVo item : items) {
                 count += 1;
@@ -68,15 +67,15 @@ public class CartVo {
         this.countType = countType;
     }
 
-    //总价为单个购物项总价-优惠
+    // 总价为单个购物项总价-优惠
     public BigDecimal getTotalAmount() {
         BigDecimal total = new BigDecimal(0);
         if (items != null && items.size() > 0) {
             for (CartItemVo item : items) {
-                total.add(item.getTotalPrice());
+                total = total.add(item.getTotalPrice());
             }
         }
-        total.subtract(reduce);
+        total = total.subtract(reduce);
         return total;
     }
 
