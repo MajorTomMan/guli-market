@@ -139,11 +139,4 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             return regist;
         }
     }
-
-    private Date iso2date(String date) {
-        DateTimeFormatter isoDateTime = DateTimeFormatter.ISO_DATE_TIME;
-        LocalDateTime localDateTime = ZonedDateTime.parse(date, isoDateTime).toLocalDateTime();
-        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
 }

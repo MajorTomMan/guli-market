@@ -206,4 +206,23 @@ public class CartServiceImpl implements CartService {
         cartItemVo.setTotalPrice(cartItemVo.getTotalPrice());
         cartOps.put(skuId.toString(), cartItemVo);
     }
+
+    @Override
+    public List<CartItemVo> getUserCartItems() {
+        // TODO Auto-generated method stub
+        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
+        if (userInfoTo.getUserId() == null) {
+            return null;
+        } else {
+            String cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserKey();
+            List<CartItemVo> cartItems = getCartItems(cartKey);
+            return cartItems.stream().filter(item -> {
+                return item.getCheck();
+            }).map(item -> {
+                BigDecimal price = feignService.getPrice(item.getSkuId());
+                item.setPrice(price);
+                return item;
+            }).toList();
+        }
+    }
 }

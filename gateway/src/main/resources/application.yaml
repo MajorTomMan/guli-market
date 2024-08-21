@@ -50,6 +50,10 @@ spring:
           uri: lb://cart
           predicates:
             - Host=cart.gulimall.com
+        - id: order_route
+          uri: lb://order
+          predicates:
+            - Host=order.gulimall.com
         - id: host_route
           uri: lb://product
           predicates:

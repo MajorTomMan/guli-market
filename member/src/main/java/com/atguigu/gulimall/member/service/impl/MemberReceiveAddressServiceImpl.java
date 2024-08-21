@@ -1,6 +1,8 @@
 package com.atguigu.gulimall.member.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,18 +14,23 @@ import com.atguigu.gulimall.member.dao.MemberReceiveAddressDao;
 import com.atguigu.gulimall.member.entity.MemberReceiveAddressEntity;
 import com.atguigu.gulimall.member.service.MemberReceiveAddressService;
 
-
 @Service("memberReceiveAddressService")
-public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAddressDao, MemberReceiveAddressEntity> implements MemberReceiveAddressService {
+public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAddressDao, MemberReceiveAddressEntity>
+        implements MemberReceiveAddressService {
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<MemberReceiveAddressEntity> page = this.page(
                 new Query<MemberReceiveAddressEntity>().getPage(params),
-                new QueryWrapper<MemberReceiveAddressEntity>()
-        );
+                new QueryWrapper<MemberReceiveAddressEntity>());
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<MemberReceiveAddressEntity> getAddress(Long memberId) {
+        // TODO Auto-generated method stub
+        return this.list(new QueryWrapper<MemberReceiveAddressEntity>().eq("member_id", memberId));
     }
 
 }

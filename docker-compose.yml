@@ -72,9 +72,8 @@ services:
       - "15672:15672"
       - "5672:5672"
     restart: always
-    #volumes:
-    #- /home/master/rabbitmq/data:/var/lib/rabbitmq
-    #- /home/master/rabbitmq/conf:/etc/rabbitmq
+    volumes:
+      - /home/master/rabbitmq/data:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=master
       - RABBITMQ_DEFAULT_PASS=root

@@ -1,5 +1,7 @@
 package com.atguigu.gulimall.cart.service;
 
+import java.util.List;
+
 import com.atguigu.gulimall.cart.vo.CartItemVo;
 import com.atguigu.gulimall.cart.vo.CartVo;
 
@@ -20,4 +22,6 @@ public interface CartService {
     void checkCart(Integer isChecked, Long skuId);
 
     void countItem(Long skuId, Integer num);
+
+    List<CartItemVo> getUserCartItems();
 }

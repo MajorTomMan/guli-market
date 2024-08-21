@@ -45,7 +45,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
     @Autowired
-    couponFeignService FeignService;
+    private couponFeignService FeignService;
 
     @RequestMapping("/coupons")
     public R test() {
