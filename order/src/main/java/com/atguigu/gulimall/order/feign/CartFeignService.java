@@ -9,6 +9,6 @@ import com.atguigu.gulimall.order.vo.OrderItemVo;
 
 @FeignClient("cart")
 public interface CartFeignService {
-    @GetMapping("/cart/currentUserCartItems")
+    @GetMapping("/currentUserCartItems")
     public List<OrderItemVo> getCurrentCartItems();
 }

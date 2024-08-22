@@ -25,6 +25,6 @@ public interface ProductFeignService {
     @GetMapping("/product/skusaleattrvalue/stringlist/{skuId}")
     public List<String> getSkuSaleAttrValues(@PathVariable("skuId") Long skuId);
 
-    @GetMapping("/{skuId}/price")
+    @GetMapping("/product/skuinfo/{skuId}/price")
     public BigDecimal getPrice(@PathVariable("skuId") Long skuId);
 }

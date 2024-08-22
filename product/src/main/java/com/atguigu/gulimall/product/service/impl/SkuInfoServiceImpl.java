@@ -51,7 +51,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
     @Autowired
-    private ThreadPoolExecutor executor;
+    private ThreadPoolExecutor threadPoolExecutor;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -125,28 +125,28 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             SkuInfoEntity info = getById(skuId);
             skuItemVo.setInfo(info);
             return info;
-        }, executor);
+        }, threadPoolExecutor);
         CompletableFuture<Void> imagesFuture = CompletableFuture.runAsync(() -> {
             /* 2.Sku的图片信息 */
             List<SkuImagesEntity> images = imagesService.getImagesBySkuId(skuId);
             skuItemVo.setImages(images);
-        }, executor);
+        }, threadPoolExecutor);
         CompletableFuture<Void> saleAttrFuture = infoFuture.thenAcceptAsync((res) -> {
             /* 3.获取SPU的销售信息组合 */
             List<SkuItemSaleAttrVo> saleAttrVos = skuSaleAttrValueService.getSaleAttrsBySpuId(res.getSpuId());
             skuItemVo.setSaleAttr(saleAttrVos);
-        }, executor);
+        }, threadPoolExecutor);
         CompletableFuture<Void> descFuture = infoFuture.thenAcceptAsync((res) -> {
             /* 4.获取SPU的介绍 */
             SpuInfoDescEntity spuInfoDescEntity = spuInfoDescService.getById(res.getSpuId());
             skuItemVo.setDesc(spuInfoDescEntity);
-        }, executor);
+        }, threadPoolExecutor);
         CompletableFuture<Void> baseAttrFuture = infoFuture.thenAcceptAsync((res) -> {
             /* 5.获取SPU的规格参数信息 */
             List<SpuItemAttrGroupVo> spuItemAttrGroupVos = attrGroupService.getAttrGroupWithAttrsBySpuId(res.getSpuId(),
                     res.getCatalogId());
             skuItemVo.setGroupAttrs(spuItemAttrGroupVos);
-        }, executor);
+        }, threadPoolExecutor);
         CompletableFuture.allOf(infoFuture, saleAttrFuture, descFuture, baseAttrFuture, imagesFuture).get();
         return skuItemVo;
     }

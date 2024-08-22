@@ -37,7 +37,7 @@ public class CartServiceImpl implements CartService {
     @Autowired
     ProductFeignService feignService;
     @Autowired
-    ThreadPoolExecutor executor;
+    ThreadPoolExecutor threadPoolExecutor;
     @Autowired
     Gson gson;
 
@@ -61,7 +61,7 @@ public class CartServiceImpl implements CartService {
                 cartItemVo.setTitle(data.getSkuTitle());
                 cartItemVo.setSkuId(skuId);
                 cartItemVo.setPrice(data.getPrice());
-            }, executor).thenRun(() -> {
+            }, threadPoolExecutor).thenRun(() -> {
                 List<String> values = feignService.getSkuSaleAttrValues(skuId);
                 cartItemVo.setSkuAttrValues(values);
             }).join();
@@ -97,13 +97,13 @@ public class CartServiceImpl implements CartService {
             List<CartItemVo> tempCartItems = getCartItems(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
             if (tempCartItems != null) {
                 tempCartItems.forEach((item) -> {
-                    addToCart(item.getSkuId(), item.getCount());
+                        addToCart(item.getSkuId(), item.getCount());
                 });
                 // 清除临时购物车
                 cleanItems(CartConstant.CART_PREFIX + userInfoTo.getUserKey());
             }
             List<CartItemVo> cartItems = getCartItems(cartKey);
-            if (cartItems != null && cartItems.isEmpty()) {
+            if (cartItems != null && !cartItems.isEmpty()) {
                 cartVo.setItems(cartItems);
             } else {
                 cartVo.setItems(new ArrayList<>());

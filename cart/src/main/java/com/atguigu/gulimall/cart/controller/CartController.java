@@ -20,6 +20,7 @@ import com.atguigu.gulimall.cart.vo.CartItemVo;
 import com.atguigu.gulimall.cart.vo.CartVo;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -29,6 +30,7 @@ public class CartController {
     CartService cartService;
 
     @GetMapping("/currentUserCartItems")
+    @ResponseBody
     public List<CartItemVo> getCurrentCartItems() {
         return cartService.getUserCartItems();
     }
