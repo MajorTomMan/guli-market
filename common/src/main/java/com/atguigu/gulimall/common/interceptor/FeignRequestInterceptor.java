@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.bouncycastle.util.Arrays;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
@@ -27,11 +28,17 @@ public class FeignRequestInterceptor implements RequestInterceptor {
                 .getRequestAttributes();
         if (requestAttributes != null) {
             Cookie[] cookies = requestAttributes.getRequest().getCookies();
-            String finalCookie = Stream.of(cookies).map(cookie -> cookie.getName() + "=" + cookie.getValue())
-                    .collect(Collectors.joining(";"));
-            if (StringUtils.hasText(finalCookie)) {
-                template.header("Cookie", finalCookie);
+            if (!Arrays.isNullOrEmpty(cookies)) {
+                String finalCookie = Stream.of(cookies).map(cookie -> cookie.getName() + "=" + cookie.getValue())
+                        .collect(Collectors.joining(";"));
+                if (StringUtils.hasText(finalCookie)) {
+                    template.header("Cookie", finalCookie);
+                }
             }
+            else{
+                template.header("login", "");
+            }
+
         }
 
     }

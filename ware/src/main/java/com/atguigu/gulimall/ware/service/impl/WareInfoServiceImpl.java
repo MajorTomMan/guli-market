@@ -10,22 +10,30 @@
  */
 package com.atguigu.gulimall.ware.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
-
+import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.ware.dao.WareInfoDao;
 import com.atguigu.gulimall.ware.entity.WareInfoEntity;
+import com.atguigu.gulimall.ware.feign.MemberFeignService;
 import com.atguigu.gulimall.ware.service.WareInfoService;
-
+import com.atguigu.gulimall.ware.vo.MemberAddressVo;
 
 @Service("wareInfoService")
 public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity> implements WareInfoService {
+    @Autowired
+    private MemberFeignService memberFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -33,15 +41,30 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
             wrapper.eq("id", key)
-            .or().like("name", key)
-            .or().like("address",key)
-            .or().like("areacode", key);
+                    .or().like("name", key)
+                    .or().like("address", key)
+                    .or().like("areacode", key);
         }
         IPage<WareInfoEntity> page = this.page(
                 new Query<WareInfoEntity>().getPage(params),
-                wrapper
-        );
+                wrapper);
         return new PageUtils(page);
+    }
+
+    @Override
+    public BigDecimal getFare(Long addrId) {
+        // TODO Auto-generated method stub
+        R r = memberFeignService.info(addrId);
+        MemberAddressVo data = (MemberAddressVo) r.getData(new TypeReference<MemberAddressVo>() {
+        });
+        if (data != null) {
+            String phone = data.getPhone();
+            if (StringUtils.hasText(phone)) {
+                String substring = phone.substring(phone.length() - 1, phone.length());
+                return new BigDecimal(substring);
+            }
+        }
+        return null;
     }
 
 }

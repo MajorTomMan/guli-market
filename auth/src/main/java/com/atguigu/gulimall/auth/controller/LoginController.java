@@ -56,7 +56,7 @@ public class LoginController {
             }
         }
         String code = UUID.randomUUID().toString().substring(0, 6);
-        //String code = "" + 123456;
+        // String code = "" + 123456;
         String subString = code + "_" + System.currentTimeMillis();
         /* 2.验证码的再次校验 */
         stringRedisTemplate.opsForValue().set(AuthServerConstant.SMS_CODE_CACHE_PREFIX + phone, subString, 1,
@@ -115,6 +115,12 @@ public class LoginController {
             return "redirect:http://gulimall.com";
         }
 
+    }
+
+    @GetMapping("/logout.html")
+    public String logOut(HttpSession session) {
+        session.removeAttribute(AuthServerConstant.LOGIN_USER);
+        return "redirect:http://gulimall.com";
     }
 
     @PostMapping("/login")

@@ -17,7 +17,7 @@ import java.util.Map;
 public class OrderConfirmVo {
 
     @Getter @Setter
-    /** 会员收获地址列表 **/
+    /** 会员收货地址列表 **/
     List<MemberAddressVo> memberAddressVos;
 
     @Getter @Setter

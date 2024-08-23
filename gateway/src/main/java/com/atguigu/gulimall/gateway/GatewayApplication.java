@@ -10,17 +10,17 @@ package com.atguigu.gulimall.gateway;
 
 import org.redisson.spring.starter.RedissonAutoConfigurationV2;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+import com.atguigu.gulimall.common.config.FeignConfig;
 import com.atguigu.gulimall.common.config.RedisConfig;
 import com.atguigu.gulimall.common.config.SessionConfig;
 
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, RedissonAutoConfigurationV2.class,
-        RedisConfig.class, SessionConfig.class })
+        RedisConfig.class, SessionConfig.class, FeignConfig.class })
 public class GatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class, args);
