@@ -55,7 +55,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
 
     @Override
     public PageUtils queryPageUnreceivePurchase(Map<String, Object> params) {
-        // TODO Auto-generated method stub
+
         QueryWrapper<PurchaseEntity> wrapper = new QueryWrapper<PurchaseEntity>();
         IPage<PurchaseEntity> page = this.page(
                 new Query<PurchaseEntity>().getPage(params),
@@ -66,7 +66,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
     @Transactional
     @Override
     public void mergePurchase(MergeVo mergeVo) {
-        // TODO Auto-generated method stub
+
         Long purchaseId = mergeVo.getPurchaseId();
         if (purchaseId == null) {
             PurchaseEntity purchaseEntity = new PurchaseEntity();
@@ -94,7 +94,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
 
     @Override
     public void recevied(List<Long> ids) {
-        // TODO Auto-generated method stub
+
         List<PurchaseEntity> collect = ids.stream().map(id -> {
             PurchaseEntity byId = this.getById(id);
             return byId;
@@ -129,7 +129,7 @@ public class PurchaseServiceImpl extends ServiceImpl<PurchaseDao, PurchaseEntity
 
     @Override
     public void done(PurchaseFinishVo finishVo) {
-        // TODO Auto-generated method stub
+
         Long id = finishVo.getId();
         List<ItemVo> items = finishVo.getItems();
         List<PurchaseDetailEntity> updates=new ArrayList<>();

@@ -43,7 +43,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartItemVo addToCart(Long skuId, Integer num) {
-        // TODO Auto-generated method stub
+
         // 拿到要操作的购物车信息
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         // 判断Redis是否有该商品的信息
@@ -77,7 +77,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartItemVo getCartItem(Long skuId) {
-        // TODO Auto-generated method stub
+
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
         if (sku != null && !sku.isEmpty()) {
@@ -89,7 +89,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartVo getCart() {
-        // TODO Auto-generated method stub
+
         CartVo cartVo = new CartVo();
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
         if (userInfoTo.getUserId() != null) {
@@ -174,7 +174,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void deleteItem(Long skuId) {
-        // TODO Auto-generated method stub
+
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
         if (sku != null && !sku.isEmpty()) {
@@ -184,7 +184,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void checkCart(Integer isChecked, Long skuId) {
-        // TODO Auto-generated method stub
+
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         LinkedHashMap<String, Object> sku = (LinkedHashMap) cartOps.get(skuId.toString());
         CartItemVo cartItemVo = gson.fromJson(gson.toJson(sku), CartItemVo.class);
@@ -194,7 +194,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void countItem(Long skuId, Integer num) {
-        // TODO Auto-generated method stub
+
         if (num == 0) {
             deleteItem(skuId);
             return;
@@ -209,7 +209,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<CartItemVo> getUserCartItems() {
-        // TODO Auto-generated method stub
+
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
         if (userInfoTo.getUserId() == null) {
             return null;

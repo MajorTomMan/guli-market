@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.order.vo.WareSkuLockVo;
 
 @FeignClient("ware")
 public interface WareFeignService {
@@ -18,4 +19,7 @@ public interface WareFeignService {
 
     @GetMapping("ware/waresku/getFare")
     public R getFare(@RequestParam("addrId") Long addrId);
+
+    @PostMapping("ware/waresku//lock/order")
+    public R orderLockStock(@RequestBody WareSkuLockVo vo);
 }

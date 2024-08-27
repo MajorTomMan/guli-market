@@ -16,7 +16,7 @@ public class WebViewConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // TODO Auto-generated method stub
+
         // registry.addViewController("/login.html").setViewName("login");
         registry.addViewController("/register.html").setViewName("register");
     }

@@ -43,13 +43,13 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
 
     @Override
     public void saveProductAttr(List<ProductAttrValueEntity> collect) {
-        // TODO Auto-generated method stub
+
         this.saveBatch(collect);
     }
 
     @Override
     public List<ProductAttrValueEntity> baseAttrListForSpu(Long spuId) {
-        // TODO Auto-generated method stub
+
         List<ProductAttrValueEntity> entities = this.baseMapper
                 .selectList(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
         return entities;
@@ -58,7 +58,7 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
     @Transactional
     @Override
     public void updateSpuAttr(Long spuId, List<ProductAttrValueEntity> entities) {
-        // TODO Auto-generated method stub
+
         this.baseMapper.delete(new QueryWrapper<ProductAttrValueEntity>().eq("spu_id", spuId));
         List<ProductAttrValueEntity> collect = entities.stream().map(item -> {
             item.setSpuId(spuId);
@@ -69,7 +69,7 @@ public class ProductAttrValueServiceImpl extends ServiceImpl<ProductAttrValueDao
 
     @Override
     public void updateAttrValue(List<ProductAttrValueEntity> productAttrValueEntity, Long attrId) {
-        // TODO Auto-generated method stub
+
         List<ProductAttrValueEntity> list = this.baseMapper
                 .selectList(new QueryWrapper<ProductAttrValueEntity>().eq("attr_id", attrId));
         if (list != null && !list.isEmpty()) {

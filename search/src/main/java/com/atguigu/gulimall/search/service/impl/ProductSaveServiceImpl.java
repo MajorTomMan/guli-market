@@ -42,7 +42,7 @@ public class ProductSaveServiceImpl implements ProductSaveService {
 
     @Override
     public void productStatusUp(List<SkuEsModel> skuEsModel) throws Exception {
-        // TODO Auto-generated method stub
+
         BulkRequest request = BulkRequest.of(b -> {
             List<BulkOperation> bulkList = skuEsModel.stream().map(sku -> {
                 BulkOperation bulk = BulkOperation.of(o -> {
@@ -76,7 +76,7 @@ public class ProductSaveServiceImpl implements ProductSaveService {
     @Override
     public List<SkuEsModel> getSkuInfo() {
         List<SkuEsModel> skus = null;
-        // TODO Auto-generated method stub
+
         SearchResponse<SkuEsModel> response;
         try {
             response = client.search(

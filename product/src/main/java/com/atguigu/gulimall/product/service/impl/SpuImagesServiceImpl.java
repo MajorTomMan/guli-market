@@ -40,7 +40,7 @@ public class SpuImagesServiceImpl extends ServiceImpl<SpuImagesDao, SpuImagesEnt
 
     @Override
     public void saveImage(Long id, List<String> images) {
-        // TODO Auto-generated method stub
+
         if(images==null || images.size()==0){
 
         }else{

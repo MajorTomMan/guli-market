@@ -76,7 +76,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public SearchResult search(SearchParam param) {
-        // TODO Auto-generated method stub
+
         try {
             SearchRequest request = buildSearchRequest(param);
             SearchResponse<SkuEsModel> response = elasticsearchClient.search(request, SkuEsModel.class);

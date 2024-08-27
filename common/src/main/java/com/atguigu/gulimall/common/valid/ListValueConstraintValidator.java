@@ -17,7 +17,7 @@ public class ListValueConstraintValidator implements ConstraintValidator<ListVal
     private Set<Integer> set=new HashSet<>();
     @Override
     public void initialize(ListValue constraintAnnotation) {
-        // TODO Auto-generated method stub
+
         int[] values = constraintAnnotation.values();
         for (int value : values) {
             set.add(value);
@@ -30,7 +30,7 @@ public class ListValueConstraintValidator implements ConstraintValidator<ListVal
      */
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        // TODO Auto-generated method stub
+
         return set.contains(value);
     }
     

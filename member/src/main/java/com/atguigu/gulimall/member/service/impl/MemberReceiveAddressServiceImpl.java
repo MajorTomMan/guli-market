@@ -29,7 +29,7 @@ public class MemberReceiveAddressServiceImpl extends ServiceImpl<MemberReceiveAd
 
     @Override
     public List<MemberReceiveAddressEntity> getAddress(Long memberId) {
-        // TODO Auto-generated method stub
+
         return this.list(new QueryWrapper<MemberReceiveAddressEntity>().eq("member_id", memberId));
     }
 

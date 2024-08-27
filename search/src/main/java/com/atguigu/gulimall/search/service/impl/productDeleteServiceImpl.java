@@ -35,7 +35,7 @@ public class productDeleteServiceImpl implements ProductDeleteService {
 
     @Override
     public void deleteById(List<Long> skuIds) throws ElasticsearchException, IOException {
-        // TODO Auto-generated method stub
+
         BulkRequest request = BulkRequest.of(b -> {
             List<BulkOperation> collect = skuIds.stream().map(id -> {
                 BulkOperation bulkOperation = BulkOperation.of(bulk -> {

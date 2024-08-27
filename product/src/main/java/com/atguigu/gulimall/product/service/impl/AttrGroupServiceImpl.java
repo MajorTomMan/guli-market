@@ -48,7 +48,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Override
     public PageUtils queryPage(Map<String, Object> params, Long catelogId) {
-        // TODO Auto-generated method stub
+
         String key = (String) params.get("key");
         QueryWrapper<AttrGroupEntity> wrapper = new QueryWrapper<AttrGroupEntity>();
         if (!StringUtils.isEmpty(key)) {
@@ -74,7 +74,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
      */
     @Override
     public List<AttrGroupWithAttrsVo> getAttrGroupWithAttrsByCatelogId(Long catelogId) {
-        // TODO Auto-generated method stub
+
         List<AttrGroupEntity> attrGroupEntities = this
                 .list(new QueryWrapper<AttrGroupEntity>().eq("catelog_id", catelogId));
         List<AttrGroupWithAttrsVo> collect = attrGroupEntities.stream().map(group -> {
@@ -91,7 +91,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Override
     public List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId) {
-        // TODO Auto-generated method stub
+
         // 1.查出当前SPU对应的所有属性的分组信息和当前分组下所有属性对应的值
         AttrGroupDao baseMapper = this.getBaseMapper();
         List<SpuItemAttrGroupVo> spuItemAttrGroupVos = baseMapper.getAttrGroupWithAttrsBySpuId(spuId, catalogId);

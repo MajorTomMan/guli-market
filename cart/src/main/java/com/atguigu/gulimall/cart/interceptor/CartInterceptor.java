@@ -32,7 +32,7 @@ public class CartInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        // TODO Auto-generated method stub
+
         HttpSession session = request.getSession();
         LinkedHashMap<String, Object> attribute = (LinkedHashMap) session.getAttribute(AuthServerConstant.LOGIN_USER);
         UserInfoTo userInfoTo = new UserInfoTo();

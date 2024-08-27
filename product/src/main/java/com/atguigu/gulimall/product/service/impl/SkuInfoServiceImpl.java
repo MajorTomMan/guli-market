@@ -64,13 +64,13 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
     @Override
     public void saveSkuInfo(SkuInfoEntity skuInfoEntity) {
-        // TODO Auto-generated method stub
+
         this.baseMapper.insert(skuInfoEntity);
     }
 
     @Override
     public PageUtils queryPageByCondition(Map<String, Object> params) {
-        // TODO Auto-generated method stub
+
         QueryWrapper<SkuInfoEntity> wrapper = new QueryWrapper<SkuInfoEntity>();
         String key = (String) params.get("key");
         String brandId = (String) params.get("brandId");
@@ -111,14 +111,14 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
     @Override
     public List<SkuInfoEntity> getSkusBySpuId(Long spuId) {
-        // TODO Auto-generated method stub
+
         List<SkuInfoEntity> list = this.list(new QueryWrapper<SkuInfoEntity>().eq("spu_id", spuId));
         return list;
     }
 
     @Override
     public SkuItemVo item(Long skuId) throws InterruptedException, ExecutionException {
-        // TODO Auto-generated method stub
+
         /* 1.Sku基本信息获取 */
         SkuItemVo skuItemVo = new SkuItemVo();
         CompletableFuture<SkuInfoEntity> infoFuture = CompletableFuture.supplyAsync(() -> {

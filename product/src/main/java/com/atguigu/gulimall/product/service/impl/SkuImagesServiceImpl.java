@@ -36,7 +36,7 @@ public class SkuImagesServiceImpl extends ServiceImpl<SkuImagesDao, SkuImagesEnt
 
     @Override
     public List<SkuImagesEntity> getImagesBySkuId(Long skuId) {
-        // TODO Auto-generated method stub
+
         SkuImagesDao skuImagesDao = this.baseMapper;
         List<SkuImagesEntity> imagesEntities = skuImagesDao
                 .selectList(new QueryWrapper<SkuImagesEntity>().eq("sku_id", skuId));

@@ -14,7 +14,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // TODO Auto-generated method stub
+
         registry.addInterceptor(new LoginUserInterceptor()).addPathPatterns("/**");
     }
 }

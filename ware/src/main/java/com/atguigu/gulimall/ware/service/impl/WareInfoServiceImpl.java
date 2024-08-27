@@ -53,7 +53,7 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
 
     @Override
     public BigDecimal getFare(Long addrId) {
-        // TODO Auto-generated method stub
+
         R r = memberFeignService.info(addrId);
         MemberAddressVo data = (MemberAddressVo) r.getData(new TypeReference<MemberAddressVo>() {
         });

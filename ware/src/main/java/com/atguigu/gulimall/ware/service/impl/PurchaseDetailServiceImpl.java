@@ -55,7 +55,7 @@ public class PurchaseDetailServiceImpl extends ServiceImpl<PurchaseDetailDao, Pu
 
     @Override
     public List<PurchaseDetailEntity> listDetailByPurchaseId(Long id) {
-        // TODO Auto-generated method stub
+
         List<PurchaseDetailEntity> purchaseId = this.list(new QueryWrapper<PurchaseDetailEntity>().eq("purchase_id", id));
         return purchaseId;
     }

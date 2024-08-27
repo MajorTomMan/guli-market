@@ -48,7 +48,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
 
     @Override
     public void updateDetail(BrandEntity brand) {
-        // TODO Auto-generated method stub
+
         this.updateById(brand);
         if(!StringUtils.isEmpty(brand.getName())){
             relationService.updateBrand(brand.getBrandId(),brand.getName());
@@ -57,7 +57,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
 
     @Override
     public List<BrandEntity> getBrandsByIds(List<Long> brandIds) {
-        // TODO Auto-generated method stub
+
         return baseMapper.selectList(new QueryWrapper<BrandEntity>().in("brand_id",brandIds));
         
     }

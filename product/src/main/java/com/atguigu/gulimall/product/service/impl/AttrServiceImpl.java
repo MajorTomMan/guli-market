@@ -57,7 +57,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Transactional
     @Override
     public void saveAttr(AttrVo attr) {
-        // TODO Auto-generated method stub
+
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attr, attrEntity);
         this.save(attrEntity);
@@ -71,7 +71,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     @Override
     public PageUtils queryBaseAttrPage(Map<String, Object> params, Long catelogId, String type) {
-        // TODO Auto-generated method stub
+
         QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>()
                 .eq("attr_type", "base".equalsIgnoreCase(type) ? ProductConstant.AttrEnum.ATTR_TYPE_BASE.getCode()
                         : ProductConstant.AttrEnum.ATTR_TYPE_SALE.getCode());
@@ -126,7 +126,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Cacheable(value = "attr", key = "'attrinfo:'+#root.args[0]")
     @Override
     public AttrRespVo getAttrInfo(Long attrId) {
-        // TODO Auto-generated method stub
+
         AttrRespVo respVo = new AttrRespVo();
         AttrEntity attrEntity = this.getById(attrId);
         BeanUtils.copyProperties(attrEntity, respVo);
@@ -154,7 +154,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
     @Transactional
     @Override
     public void updateAttr(AttrVo attr) {
-        // TODO Auto-generated method stub
+
         AttrEntity attrEntity = new AttrEntity();
         BeanUtils.copyProperties(attr, attrEntity);
         this.updateById(attrEntity);
@@ -175,7 +175,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     @Override
     public List<AttrEntity> getRelationAttr(Long attrgroupId) {
-        // TODO Auto-generated method stub
+
         List<AttrAttrgroupRelationEntity> entities = relationDao
                 .selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_group_id", attrgroupId));
         List<Long> attrIds = entities.stream().map((attr) -> {
@@ -190,7 +190,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     @Override
     public PageUtils getNoRelationAttr(Long attrgroupId, Map<String, Object> params) {
-        // TODO Auto-generated method stub
+
         AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrgroupId);
         Long catelogId = attrGroupEntity.getCatelogId();
         List<AttrGroupEntity> group = attrGroupDao.selectList(
@@ -220,7 +220,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
     @Override
     public List<Long> selectSearchAttrs(List<Long> attrIds) {
-        // TODO Auto-generated method stub
+
         return this.baseMapper.selectSearchAttrs(attrIds);
     }
 }

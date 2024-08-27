@@ -31,6 +31,8 @@ import com.atguigu.gulimall.ware.dao.WareSkuDao;
 import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.feign.ProductFeignService;
 import com.atguigu.gulimall.ware.service.WareSkuService;
+import com.atguigu.gulimall.ware.vo.LockStockResultVo;
+import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
 
 @Service("wareSkuService")
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
@@ -60,7 +62,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     @Transactional
     @Override
     public void addStock(Long skuId, Long wareId, Integer skuNum) {
-        // TODO Auto-generated method stub
+
         List<WareSkuEntity> entities = wareSkuDao
                 .selectList(new QueryWrapper<WareSkuEntity>().eq("sku_id", skuId).eq("ware_id", wareId));
         if (entities == null || entities.size() == 0) {
@@ -86,7 +88,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
 
     @Override
     public List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
-        // TODO Auto-generated method stub
+
         List<SkuHasStockVo> collect = skuIds.stream().map(skuId->{
             SkuHasStockVo vo=new SkuHasStockVo();
             Long count =baseMapper.getSkuStock(skuId);
@@ -95,6 +97,12 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             return vo;
         }).collect(Collectors.toList());
         return collect;
+    }
+
+    @Override
+    public List<LockStockResultVo> orderLockStock(WareSkuLockVo vo) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

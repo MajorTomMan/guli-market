@@ -89,13 +89,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public void removeMenuByIds(List<Long> asList) {
-        // TODO Auto-generated method stub
+
         baseMapper.deleteByIds(asList);
     }
 
     @Override
     public Long[] findCateLogPath(Long cateLogId) {
-        // TODO Auto-generated method stub
+
         List<Long> paths = new ArrayList<>();
         List<Long> parentPath = findParentPath(cateLogId, paths);
         Collections.reverse(parentPath);
@@ -115,7 +115,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
-        // TODO Auto-generated method stub
+
         this.updateById(category);
         if (!StringUtils.isEmpty(category.getName())) {
             relationService.updateCategory(category.getCatId(), category.getName());
@@ -126,7 +126,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
 
-        // TODO Auto-generated method stub
+
         List<CategoryEntity> categoryEntities = baseMapper
                 .selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
         return categoryEntities;
@@ -135,7 +135,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson()
             throws JsonProcessingException, InterruptedException {
-        // TODO Auto-generated method stub
+
         List<CategoryEntity> selectList = baseMapper.selectList(null);
         List<CategoryEntity> level1Categorys = getParent_cid(selectList, 0L);
 
@@ -165,7 +165,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return parent_cid;
     }
     public Map<String, List<Catelog2Vo>> getCatalogJson2() throws JsonProcessingException, InterruptedException {
-        // TODO Auto-generated method stub
+
         ObjectMapper mapper = new ObjectMapper();
         String catalogJSON = redisClient.opsForValue().get("catalogJSON");
         if (StringUtils.isEmpty(catalogJSON)) {
@@ -182,7 +182,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     public Map<String, List<Catelog2Vo>> getCatalogJsonFromDBWithRedisLock()
             throws JsonMappingException, JsonProcessingException, InterruptedException {
-        // TODO Auto-generated method stub
+
         System.out.println("获取分布式锁成功");
         Map<String, List<Catelog2Vo>> dataFromDB;
         RLock lock = redissonClient.getLock("catalogJson-lock");

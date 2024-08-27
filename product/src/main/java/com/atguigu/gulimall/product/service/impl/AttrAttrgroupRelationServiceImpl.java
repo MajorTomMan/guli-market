@@ -41,7 +41,7 @@ public class AttrAttrgroupRelationServiceImpl extends ServiceImpl<AttrAttrgroupR
 
     @Override
     public void saveBatch(List<AttrGroupRelationVo> vos) {
-        // TODO Auto-generated method stub
+
         List<AttrAttrgroupRelationEntity> collect = vos.stream().map(item -> {
             AttrAttrgroupRelationEntity groupRelationEntity = new AttrAttrgroupRelationEntity();
             BeanUtils.copyProperties(item, groupRelationEntity);

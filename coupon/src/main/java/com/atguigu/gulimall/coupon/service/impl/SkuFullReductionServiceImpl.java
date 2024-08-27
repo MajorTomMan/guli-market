@@ -53,7 +53,7 @@ public class SkuFullReductionServiceImpl extends ServiceImpl<SkuFullReductionDao
 
     @Override
     public void saveSkuReduction(SkuReductionTo reductionTo) {
-        // TODO Auto-generated method stub
+
         /* 保存满减优惠等信息 */
         SkuLadderEntity skuLadderEntity = new SkuLadderEntity();
         skuLadderEntity.setSkuId(reductionTo.getSkuId());

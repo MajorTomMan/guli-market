@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.service.WareSkuService;
+import com.atguigu.gulimall.ware.vo.LockStockResultVo;
+import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
 import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
@@ -31,6 +33,13 @@ import com.atguigu.gulimall.common.utils.R;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+    @PostMapping("/lock/order")
+    public R orderLockStock(@RequestBody WareSkuLockVo vo) {
+        // TODO: process POST request
+        List<LockStockResultVo> response = wareSkuService.orderLockStock(vo);
+        return R.ok().put(null, vo);
+    }
 
     @PostMapping("/hasstock")
     public R<List<SkuHasStockVo>> getSkuHasStock(@RequestBody List<Long> skuIds) {

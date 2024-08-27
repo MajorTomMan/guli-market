@@ -106,7 +106,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     @Transactional
     @Override
     public void saveSpuInfo(SpuSaveVo vo) {
-        // TODO Auto-generated method stub
+
         /* 1.保存SPU基本信息: pms_spu_info */
         SpuInfoEntity infoEntity = new SpuInfoEntity();
         BeanUtils.copyProperties(vo, infoEntity);
@@ -207,7 +207,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Override
     public PageUtils queryPageByCondition(Map<String, Object> params) {
-        // TODO Auto-generated method stub
+
         QueryWrapper<SpuInfoEntity> wrapper = new QueryWrapper<SpuInfoEntity>();
         String key = (String) params.get("key");
         String status = (String) params.get("status");
@@ -235,7 +235,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Override
     public void up(Long spuId) {
-        // TODO Auto-generated method stub
+
         List<SkuInfoEntity> skuInfoEntities = skuInfoService.getSkusBySpuId(spuId);
         List<Long> skuIdList = skuInfoEntities.stream().map(
                 sku -> {
@@ -315,5 +315,24 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     private void saveBaseSpuInfo(SpuInfoEntity infoEntity) {
         this.baseMapper.insert(infoEntity);
+    }
+
+    @Override
+    public SpuInfoEntity getSpuInfoBySkuId(Long skuId) {
+
+
+        // 先查询sku表里的数据
+        SkuInfoEntity skuInfoEntity = skuInfoService.getById(skuId);
+
+        // 获得spuId
+        Long spuId = skuInfoEntity.getSpuId();
+
+        // 再通过spuId查询spuInfo信息表里的数据
+        SpuInfoEntity spuInfoEntity = this.baseMapper.selectById(spuId);
+
+        // 查询品牌表的数据获取品牌名
+        BrandEntity brandEntity = brandService.getById(spuInfoEntity.getBrandId());
+        spuInfoEntity.setSpuName(brandEntity.getName());
+        return spuInfoEntity;
     }
 }

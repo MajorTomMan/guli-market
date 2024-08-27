@@ -21,7 +21,7 @@ public class LoginUserInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        // TODO Auto-generated method stub
+
         /*
          * 解决以下异常
          * jakarta.servlet.ServletException:

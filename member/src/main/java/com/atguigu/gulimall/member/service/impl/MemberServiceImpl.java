@@ -56,7 +56,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
     @Override
     public void register(RegisterVo vo) {
-        // TODO Auto-generated method stub
+
         MemberEntity entity = new MemberEntity();
         MemberLevelEntity levelEntity = memberLevelDao.getDefaultLevel();
         entity.setLevelId(levelEntity.getId());
@@ -72,7 +72,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
     @Override
     public void checkPhoneIsUnique(String phone) throws PhoneExistException {
-        // TODO Auto-generated method stub
+
         MemberDao memberDao = this.baseMapper;
         Long count = memberDao.selectCount(new QueryWrapper<MemberEntity>().eq("mobile", phone));
         if (count > 0) {
@@ -82,7 +82,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
     @Override
     public void checkUserNameIsUnique(String username) throws UserNameExistException {
-        // TODO Auto-generated method stub
+
         MemberDao memberDao = this.baseMapper;
         Long count = memberDao.selectCount(new QueryWrapper<MemberEntity>().eq("username", username));
         if (count > 0) {
@@ -92,7 +92,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
 
     @Override
     public MemberEntity login(MemberLoginVo vo) {
-        // TODO Auto-generated method stub
+
         MemberDao dao = this.baseMapper;
         MemberEntity entity = dao.selectOne(new QueryWrapper<MemberEntity>().eq("username", vo.getLoginAccount()).or()
                 .eq("mobile", vo.getLoginAccount()));
@@ -112,7 +112,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
     }
 
     public MemberEntity login(GithubUserInfo info) {
-        // TODO Auto-generated method stub
+
         MemberEntity entity = this.baseMapper
                 .selectOne(new QueryWrapper<MemberEntity>().eq("social_uid", info.getId()));
         if (entity != null) {

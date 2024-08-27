@@ -38,7 +38,7 @@ public class SpuInfoDescServiceImpl extends ServiceImpl<SpuInfoDescDao, SpuInfoD
 
     @Override
     public void saveSpuInfoDesc(SpuInfoDescEntity descEntity) {
-        // TODO Auto-generated method stub
+
         this.baseMapper.insert(descEntity);
     }
 

@@ -51,7 +51,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Override
     public void saveDetail(CategoryBrandRelationEntity categoryBrandRelation) {
-        // TODO Auto-generated method stub
+
         Long brandId = categoryBrandRelation.getBrandId();
         Long catelogId = categoryBrandRelation.getCatelogId();
         String brandName = brandDao.selectById(brandId).getName();
@@ -63,7 +63,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Override
     public void updateBrand(Long brandId, String name) {
-        // TODO Auto-generated method stub
+
         CategoryBrandRelationEntity relationEntity = new CategoryBrandRelationEntity();
         relationEntity.setBrandId(brandId);
         relationEntity.setBrandName(name);
@@ -73,7 +73,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Override
     public void updateCategory(Long catId, String name) {
-        // TODO Auto-generated method stub
+
         CategoryBrandRelationEntity relationEntity = new CategoryBrandRelationEntity();
         relationEntity.setCatelogName(name);
         this.update(relationEntity, new UpdateWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
@@ -81,7 +81,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
 
     @Override
     public List<BrandEntity> getBrandsByCatId(Long catId) {
-        // TODO Auto-generated method stub
+
         List<CategoryBrandRelationEntity> catelogId = relationDao.selectList(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
         List<BrandEntity> collect = new ArrayList<>();
         catelogId.stream().forEach(item->{
