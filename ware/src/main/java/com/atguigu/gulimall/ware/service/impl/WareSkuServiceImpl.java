@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mysql.cj.x.protobuf.MysqlxCrud.Collection;
+import com.atguigu.gulimall.common.exception.NoStockException;
 import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
@@ -32,6 +33,8 @@ import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.feign.ProductFeignService;
 import com.atguigu.gulimall.ware.service.WareSkuService;
 import com.atguigu.gulimall.ware.vo.LockStockResultVo;
+import com.atguigu.gulimall.ware.vo.OrderItemVo;
+import com.atguigu.gulimall.ware.vo.SkuWareHasStock;
 import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
 
 @Service("wareSkuService")
@@ -89,20 +92,54 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     @Override
     public List<SkuHasStockVo> getSkuHasStock(List<Long> skuIds) {
 
-        List<SkuHasStockVo> collect = skuIds.stream().map(skuId->{
-            SkuHasStockVo vo=new SkuHasStockVo();
-            Long count =baseMapper.getSkuStock(skuId);
+        List<SkuHasStockVo> collect = skuIds.stream().map(skuId -> {
+            SkuHasStockVo vo = new SkuHasStockVo();
+            Long count = baseMapper.getSkuStock(skuId);
             vo.setSkuId(skuId);
-            vo.setHasStock(count==null?false:count>0);
+            vo.setHasStock(count == null ? false : count > 0);
             return vo;
         }).collect(Collectors.toList());
         return collect;
     }
 
+    @Transactional(rollbackFor = NoStockException.class)
     @Override
-    public List<LockStockResultVo> orderLockStock(WareSkuLockVo vo) {
+    public Boolean orderLockStock(WareSkuLockVo vo) {
         // TODO Auto-generated method stub
-        
+        List<OrderItemVo> locks = vo.getLocks();
+        List<SkuWareHasStock> list = locks.stream().map((item) -> {
+            SkuWareHasStock skuWareHasStock = new SkuWareHasStock();
+            Long skuId = item.getSkuId();
+            skuWareHasStock.setSkuId(skuId);
+            List<Long> ids = wareSkuDao.listWareIdHasStock(skuId);
+            skuWareHasStock.setWareId(ids);
+            return skuWareHasStock;
+        }).toList();
+        boolean allLocked = false;
+        list.forEach(item -> {
+            boolean skuLocked = false;
+            Long skuId = item.getSkuId();
+            List<Long> ids = item.getWareId();
+            if (ids == null || ids.isEmpty()) {
+                // 库存不足
+                throw new NoStockException(skuId);
+            }
+            for (Long wareId : ids) {
+                /* 如果库存足够返回1,否则0 */
+                Long count = wareSkuDao.lockSkuStock(skuId, wareId, item.getNum());
+                if (count == 1) {
+                    // 锁住了
+                    skuLocked = true;
+                    break;
+                }
+            }
+            /* 如果锁住了 */
+            if (skuLocked == false) {
+                throw new NoStockException(skuId);
+            }
+        });
+        /* 全局锁定成功 */
+        return true;
     }
 
 }

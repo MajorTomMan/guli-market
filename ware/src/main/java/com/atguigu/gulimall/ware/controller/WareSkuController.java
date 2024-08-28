@@ -17,6 +17,7 @@ import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.service.WareSkuService;
 import com.atguigu.gulimall.ware.vo.LockStockResultVo;
 import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
+import com.atguigu.gulimall.common.exception.BizCodeEmum;
 import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
@@ -37,8 +38,16 @@ public class WareSkuController {
     @PostMapping("/lock/order")
     public R orderLockStock(@RequestBody WareSkuLockVo vo) {
         // TODO: process POST request
-        List<LockStockResultVo> response = wareSkuService.orderLockStock(vo);
-        return R.ok().put(null, vo);
+        try {
+            Boolean response = wareSkuService.orderLockStock(vo);
+            if(response){
+                return R.ok();
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+            return R.error(BizCodeEmum.NO_STOCK_EXCEPTION.getCode(), BizCodeEmum.NO_STOCK_EXCEPTION.getMsg());
+        }
+        return R.ok();
     }
 
     @PostMapping("/hasstock")

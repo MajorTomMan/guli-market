@@ -59,8 +59,8 @@ public class MemberController {
     public R login(@RequestBody MemberLoginVo vo) {
         MemberEntity entity = memberService.login(vo);
         if (entity == null) {
-            return R.error(BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(),
-                    BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
+            return R.error(BizCodeEmum.LOGINACCT_PASSWORD_EXCEPTION.getCode(),
+                    BizCodeEmum.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
         }
         return R.ok().put("entity", entity);
     }
@@ -72,8 +72,8 @@ public class MemberController {
         if (entity != null) {
             return R.ok().put("entity", entity);
         } else {
-            return R.error(BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getCode(),
-                    BizCodeEmum.LOGINACCT_PASSWORD_INVAILD_EXCEPTION.getMsg());
+            return R.error(BizCodeEmum.LOGINACCT_PASSWORD_EXCEPTION.getCode(),
+                    BizCodeEmum.LOGINACCT_PASSWORD_EXCEPTION.getMsg());
         }
     }
 

@@ -36,13 +36,13 @@ public class ExceptionControllerAdvice {
         bindingResult.getFieldErrors().forEach((fieldError)->{
             errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
         });
-        return R.error(BizCodeEmum.VALID_EXCEPTION.getCode(),BizCodeEmum.VALID_EXCEPTION.getMsg()).put("data",errorMap);
+        return R.error(BizCodeEmum.VAILD_EXCEPTION.getCode(),BizCodeEmum.VAILD_EXCEPTION.getMsg()).put("data",errorMap);
     }
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable t){
         log.error("错误打印:{}\n异常类打印:{}\n",t.getMessage(),t.getClass());
         t.printStackTrace();
-        return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
+        return R.error(BizCodeEmum.UNKNOW_EXCEPTION.getCode(),BizCodeEmum.UNKNOW_EXCEPTION.getMsg());
     }
     @ExceptionHandler(value = NullPointerException.class)
     public R handleException(NullPointerException nullPtrs){
@@ -50,6 +50,6 @@ public class ExceptionControllerAdvice {
         log.error("报错原因:{}\n",nullPtrs.getCause().getMessage());
         log.error("打印堆栈:");
         nullPtrs.printStackTrace();
-        return R.error(BizCodeEmum.UNKNOWN_EXCEPTION.getCode(),BizCodeEmum.UNKNOWN_EXCEPTION.getMsg());
+        return R.error(BizCodeEmum.UNKNOW_EXCEPTION.getCode(),BizCodeEmum.UNKNOW_EXCEPTION.getMsg());
     }
 }

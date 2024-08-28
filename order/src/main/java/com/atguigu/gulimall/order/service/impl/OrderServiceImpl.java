@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.atguigu.gulimall.common.exception.NoStockException;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.common.utils.R;
@@ -168,7 +169,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) {
         SubmitOrderResponseVo submitOrderResponseVo = new SubmitOrderResponseVo();
         orderConfirmVoLocal.set(vo);
-
+        submitOrderResponseVo.setCode(0);
         String key = OrderConstant.USER_ORDER_TOKEN_PREFIX + LoginUserInterceptor.loginUser.get().get("id");
         // 1、验证令牌是否合法【令牌的对比和删除必须保证原子性】
         String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
@@ -199,12 +200,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 R r = wareFeignService.orderLockStock(wareSkuLockVo);
                 if (r.getCode() == 0) {
                     // 锁定成功
+                    submitOrderResponseVo.setOrder(order.getOrder());
                 } else {
                     // 锁定失败
+                    String message = (String) r.get("msg");
+                    throw new NoStockException(message);
                 }
             } else {
                 submitOrderResponseVo.setCode(2);
-                return submitOrderResponseVo;
             }
         }
         return submitOrderResponseVo;
@@ -228,6 +231,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         List<OrderItemEntity> orderItemEntities = buildOrderItems(timeId);
         // 验证价格
         computePrice(orderEntity, orderItemEntities);
+        // 保存到实体类
+        orderCreateTo.setOrder(orderEntity);
+        orderCreateTo.setOrderItems(orderItemEntities);
+
         return orderCreateTo;
     }
 
