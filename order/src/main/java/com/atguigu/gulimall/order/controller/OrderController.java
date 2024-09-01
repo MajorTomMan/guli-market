@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,12 @@ import com.atguigu.gulimall.common.utils.R;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+    @GetMapping("/status/{orderSn}")
+    public R getOrderStatus(@PathVariable("orderSn") String orderSn) {
+        OrderEntity entity = orderService.getOrderByOrderSn(orderSn);
+        return R.ok().setData(entity);
+    }
 
     /**
      * 列表

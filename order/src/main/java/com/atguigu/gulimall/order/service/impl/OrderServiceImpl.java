@@ -58,7 +58,6 @@ import com.atguigu.gulimall.order.vo.WareSkuLockVo;
 
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
-    @Autowired
     private ThreadLocal<OrderSubmitVo> orderConfirmVoLocal = new ThreadLocal<>();
     @Autowired
     private MemberFeignService memberFeignService;
@@ -372,5 +371,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         orderItemEntity.setRealAmount(realPrice);
 
         return orderItemEntity;
+    }
+
+    @Override
+    public OrderEntity getOrderByOrderSn(String orderSn) {
+        // TODO Auto-generated method stub
+        OrderEntity order_sn = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
+        return order_sn;
     }
 }

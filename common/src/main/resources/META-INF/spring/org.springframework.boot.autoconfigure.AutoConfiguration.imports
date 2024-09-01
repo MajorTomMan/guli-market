@@ -5,3 +5,4 @@ com.atguigu.gulimall.common.config.MybatisPlusConfig
 com.atguigu.gulimall.common.config.RedissonConfig
 com.atguigu.gulimall.common.config.ThreadConfig
 com.atguigu.gulimall.common.config.FeignConfig
+com.atguigu.gulimall.common.config.RabbitMQConfig

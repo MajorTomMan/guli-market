@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.atguigu.gulimall.ware.dao.WareSkuDao">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-    <resultMap id="wareSkuMap" type="com.atguigu.gulimall.ware.entity.WareSkuEntity">
-        <result column="id" jdbcType="BIGINT" property="id" />
-        <result column="sku_id" jdbcType="BIGINT" property="skuId" />
-        <result column="ware_id" jdbcType="BIGINT" property="wareId" />
-        <result column="stock" jdbcType="INTEGER" property="stock" />
-        <result column="sku_name" jdbcType="VARCHAR" property="skuName" />
-        <result column="stock_locked" jdbcType="INTEGER" property="stockLocked" />
+<mapper namespace="com.xunqi.gulimall.ware.dao.WareSkuDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.xunqi.gulimall.ware.entity.WareSkuEntity" id="wareSkuMap">
+        <result property="id" column="id"/>
+        <result property="skuId" column="sku_id"/>
+        <result property="wareId" column="ware_id"/>
+        <result property="stock" column="stock"/>
+        <result property="skuName" column="sku_name"/>
+        <result property="stockLocked" column="stock_locked"/>
     </resultMap>
+
+
     <update id="addStock">
-        update `wms_ware_sku` set stock=stock+#{skuNum} where sku_id=#{skuId} and ware_id=#{wareId}
+        UPDATE wms_ware_sku SET stock = stock + #{skuNum} WHERE sku_id = #{skuId} AND ware_id = #{wareId}
     </update>
     <select id="getSkuStock" resultType="java.lang.Long">
-        select sum(stock-stock_locked) from `wms_ware_sku` where sku_id=#{skuId}
+        SELECT SUM(stock - stock_locked) FROM wms_ware_sku WHERE sku_id = #{skuId}
     </select>
 
-    <!-- listWareIdHasStock --> 
+
     <select id="listWareIdHasSkuStock" resultType="java.lang.Long">
         SELECT
             ware_id
@@ -27,7 +31,7 @@
             sku_id = #{skuId}
           AND stock - stock_locked > 0
     </select>
-<!-- 如果库存大于当前订单数量才锁定 -->
+
     <update id="lockSkuStock">
         UPDATE wms_ware_sku
         SET stock_locked = stock_locked + #{num}
@@ -44,5 +48,6 @@
             sku_id = ${skuId}
           AND ware_id = #{wareId}
     </update>
+
 
 </mapper>
