@@ -3,6 +3,8 @@ package com.atguigu.gulimall.cart.vo;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.atguigu.gulimall.common.vo.CartItemVo;
+
 public class CartVo {
 
     /**

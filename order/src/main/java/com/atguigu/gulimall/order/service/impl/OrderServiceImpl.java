@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.math.BigDecimal;
@@ -83,12 +84,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         return new PageUtils(page);
     }
 
+    /**
+     * 确认订单页
+     */
     @Override
     public OrderConfirmVo confirmOrder() {
-
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         OrderConfirmVo vo = new OrderConfirmVo();
         // 进行异步改造
         CompletableFuture<Void> addressFuture = CompletableFuture.runAsync(() -> {
+            setupAttributes(requestAttributes);
             // 获得地址页
             LinkedHashMap<String, Object> user = (LinkedHashMap<String, Object>) LoginUserInterceptor.loginUser.get();
             if (user != null && !user.isEmpty()) {
@@ -107,13 +112,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         }, threadPoolExecutor);
         CompletableFuture<Void> cartItemsFuture = CompletableFuture.supplyAsync(() -> {
+            setupAttributes(requestAttributes);
             // 获得购物车
             List<OrderItemVo> currentCartItems = cartFeignService.getCurrentCartItems();
-            if (currentCartItems != null && !currentCartItems.isEmpty()) {
-                vo.setItems(currentCartItems);
-            } else {
-                vo.setItems(new ArrayList<>());
+            if (currentCartItems == null || currentCartItems.isEmpty()) {
+                currentCartItems = new ArrayList<>();
             }
+            vo.setItems(currentCartItems);
             return currentCartItems.stream().map(item -> item.getSkuId()).toList();
         }, threadPoolExecutor).thenAcceptAsync((item) -> {
             R r = wareFeignService.getSkuHasStock(item);
@@ -128,6 +133,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             }
         });
         CompletableFuture<Void> integrationFuture = CompletableFuture.runAsync(() -> {
+            setupAttributes(requestAttributes);
             // 获得用户积分
             LinkedHashMap<String, Object> user = LoginUserInterceptor.loginUser.get();
             if (user != null && !user.isEmpty()) {
@@ -175,7 +181,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         String orderToken = vo.getOrderToken();
         Long result = redisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class), Arrays.asList(key),
                 orderToken);
-        ;
         if (result == 0L) {
             // 验证令牌不通过
             submitOrderResponseVo.setCode(1);
@@ -306,7 +311,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         OrderSubmitVo orderSubmitVo = orderConfirmVoLocal.get();
         // 2) 获取邮费和收件人信息并设置
-        R r = wareFeignService.getFare(orderSubmitVo.getAddrId());
+        Long addrId = orderSubmitVo.getAddrId();
+        R r = wareFeignService.getFare(addrId);
         FareVo fareVo = (FareVo) r.getData(new TypeReference<FareVo>() {
         });
         if (fareVo != null) {
@@ -378,5 +384,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         // TODO Auto-generated method stub
         OrderEntity order_sn = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", orderSn));
         return order_sn;
+    }
+
+    private void setupAttributes(RequestAttributes attributes) {
+        RequestContextHolder.setRequestAttributes(attributes);
     }
 }

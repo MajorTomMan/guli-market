@@ -6,9 +6,12 @@ import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
+import jakarta.servlet.http.HttpSession;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 
 @SpringBootTest
 class OrderApplicationTests {
@@ -21,5 +24,6 @@ class OrderApplicationTests {
             System.out.println(item);
         });
     }
+
 
 }

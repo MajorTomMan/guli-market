@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.ware.entity.WareInfoEntity;
 import com.atguigu.gulimall.ware.service.WareInfoService;
+import com.atguigu.gulimall.ware.vo.FareVo;
+
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,15 +30,21 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @email flashnamesl@gmail.com
  * @date 2022-07-19 21:08:09
  */
+
+@Log4j2
 @RestController
 @RequestMapping("ware/wareinfo")
 public class WareInfoController {
     @Autowired
     private WareInfoService wareInfoService;
 
-    @GetMapping("/getFare")
+    @GetMapping("/fare")
     public R getFare(@RequestParam("addrId") Long addrId) {
-        BigDecimal fare = wareInfoService.getFare(addrId);
+        if (addrId == null) {
+            log.error("addrId is null");
+            return R.error();
+        }
+        FareVo fare = wareInfoService.getFare(addrId);
         return R.ok().put("data", fare);
     }
 

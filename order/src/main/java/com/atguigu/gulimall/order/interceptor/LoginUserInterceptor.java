@@ -3,6 +3,9 @@ package com.atguigu.gulimall.order.interceptor;
 import java.util.LinkedHashMap;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.atguigu.gulimall.common.constant.AuthServerConstant;
@@ -21,7 +24,14 @@ public class LoginUserInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
+        /*
+         * 解决远程请求被拦截的问题
+         */
+        String requestURI = request.getRequestURI();
+        boolean match = new AntPathMatcher().match("/order/order/status/**", requestURI);
+        if (match) {
+            return true;
+        }
         /*
          * 解决以下异常
          * jakarta.servlet.ServletException:

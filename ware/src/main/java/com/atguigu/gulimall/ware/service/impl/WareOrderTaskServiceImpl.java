@@ -12,18 +12,26 @@ import com.atguigu.gulimall.ware.dao.WareOrderTaskDao;
 import com.atguigu.gulimall.ware.entity.WareOrderTaskEntity;
 import com.atguigu.gulimall.ware.service.WareOrderTaskService;
 
-
 @Service("wareOrderTaskService")
-public class WareOrderTaskServiceImpl extends ServiceImpl<WareOrderTaskDao, WareOrderTaskEntity> implements WareOrderTaskService {
+public class WareOrderTaskServiceImpl extends ServiceImpl<WareOrderTaskDao, WareOrderTaskEntity>
+        implements WareOrderTaskService {
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<WareOrderTaskEntity> page = this.page(
                 new Query<WareOrderTaskEntity>().getPage(params),
-                new QueryWrapper<WareOrderTaskEntity>()
-        );
+                new QueryWrapper<WareOrderTaskEntity>());
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public WareOrderTaskEntity getOrderTaskByOrderSn(String orderSn) {
+        // TODO Auto-generated method stub
+        WareOrderTaskEntity orderTaskEntity = this.baseMapper.selectOne(
+                new QueryWrapper<WareOrderTaskEntity>().eq("order_sn", orderSn));
+
+        return orderTaskEntity;
     }
 
 }

@@ -17,6 +17,9 @@ import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.service.WareSkuService;
 import com.atguigu.gulimall.ware.vo.LockStockResultVo;
 import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
+
+import lombok.extern.log4j.Log4j2;
+
 import com.atguigu.gulimall.common.exception.BizCodeEmum;
 import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.utils.PageUtils;
@@ -29,6 +32,7 @@ import com.atguigu.gulimall.common.utils.R;
  * @email flashnamesl@gmail.com
  * @date 2022-07-19 21:08:09
  */
+@Log4j2
 @RestController
 @RequestMapping("ware/waresku")
 public class WareSkuController {
@@ -45,6 +49,8 @@ public class WareSkuController {
             }
         } catch (Exception e) {
             // TODO: handle exception
+            log.error(e.getMessage());
+            
             return R.error(BizCodeEmum.NO_STOCK_EXCEPTION.getCode(), BizCodeEmum.NO_STOCK_EXCEPTION.getMsg());
         }
         return R.ok();
@@ -78,7 +84,7 @@ public class WareSkuController {
     public R info(@PathVariable("id") Long id) {
         WareSkuEntity wareSku = wareSkuService.getById(id);
 
-        return R.ok().put("wareSku", wareSku);
+        return R.ok().put("data", wareSku);
     }
 
     /**

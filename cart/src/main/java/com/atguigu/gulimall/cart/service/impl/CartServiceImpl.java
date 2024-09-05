@@ -19,11 +19,11 @@ import com.atguigu.gulimall.cart.feign.ProductFeignService;
 import com.atguigu.gulimall.cart.interceptor.CartInterceptor;
 import com.atguigu.gulimall.cart.service.CartService;
 import com.atguigu.gulimall.cart.to.UserInfoTo;
-import com.atguigu.gulimall.cart.vo.CartItemVo;
 import com.atguigu.gulimall.cart.vo.CartVo;
 import com.atguigu.gulimall.cart.vo.SkuInfoVo;
 import com.atguigu.gulimall.common.constant.CartConstant;
 import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.common.vo.CartItemVo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.gson.Gson;
 
@@ -108,7 +108,6 @@ public class CartServiceImpl implements CartService {
             } else {
                 cartVo.setItems(new ArrayList<>());
             }
-            return cartVo;
         } else {
             String cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserKey();
             List<CartItemVo> cartItems = getCartItems(cartKey);
@@ -149,8 +148,13 @@ public class CartServiceImpl implements CartService {
         return boundHashOps;
     }
 
+    private BoundHashOperations<String, Object, Object> getCartOps(String cartKey) {
+        BoundHashOperations<String, Object, Object> boundHashOps = redisTemplate.boundHashOps(cartKey);
+        return boundHashOps;
+    }
+
     private List<CartItemVo> getCartItems(String cartKey) {
-        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps(cartKey);
         List<Object> values = cartOps.values();
         if (values != null && !values.isEmpty()) {
             List<CartItemVo> collect = values.stream().map((obj) -> {
@@ -158,7 +162,7 @@ public class CartServiceImpl implements CartService {
             }).collect(Collectors.toList());
             return collect;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public void cleanItems(String[] cartKeys) {
@@ -211,10 +215,12 @@ public class CartServiceImpl implements CartService {
     public List<CartItemVo> getUserCartItems() {
 
         UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
+        /*  如果没登录则直接返回 */
         if (userInfoTo.getUserId() == null) {
             return null;
         } else {
-            String cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserKey();
+            /* 构造购物车项 */
+            String cartKey = CartConstant.CART_PREFIX + userInfoTo.getUserId();
             List<CartItemVo> cartItems = getCartItems(cartKey);
             return cartItems.stream().filter(item -> {
                 return item.getCheck();

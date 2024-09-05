@@ -2,8 +2,8 @@ package com.atguigu.gulimall.cart.service;
 
 import java.util.List;
 
-import com.atguigu.gulimall.cart.vo.CartItemVo;
 import com.atguigu.gulimall.cart.vo.CartVo;
+import com.atguigu.gulimall.common.vo.CartItemVo;
 
 public interface CartService {
 

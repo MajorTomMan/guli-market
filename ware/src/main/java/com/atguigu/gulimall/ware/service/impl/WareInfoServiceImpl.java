@@ -28,6 +28,7 @@ import com.atguigu.gulimall.ware.dao.WareInfoDao;
 import com.atguigu.gulimall.ware.entity.WareInfoEntity;
 import com.atguigu.gulimall.ware.feign.MemberFeignService;
 import com.atguigu.gulimall.ware.service.WareInfoService;
+import com.atguigu.gulimall.ware.vo.FareVo;
 import com.atguigu.gulimall.ware.vo.MemberAddressVo;
 
 @Service("wareInfoService")
@@ -52,8 +53,8 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
     }
 
     @Override
-    public BigDecimal getFare(Long addrId) {
-
+    public FareVo getFare(Long addrId) {
+        FareVo vo=new FareVo();
         R r = memberFeignService.info(addrId);
         MemberAddressVo data = (MemberAddressVo) r.getData(new TypeReference<MemberAddressVo>() {
         });
@@ -61,10 +62,11 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
             String phone = data.getPhone();
             if (StringUtils.hasText(phone)) {
                 String substring = phone.substring(phone.length() - 1, phone.length());
-                return new BigDecimal(substring);
+                vo.setFare(new BigDecimal(substring));
             }
+            vo.setAddress(data);
         }
-        return null;
+        return vo;
     }
 
 }

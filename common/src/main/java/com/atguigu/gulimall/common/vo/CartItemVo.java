@@ -1,4 +1,4 @@
-package com.atguigu.gulimall.cart.vo;
+package com.atguigu.gulimall.common.vo;
 
 import java.math.BigDecimal;
 import java.util.List;

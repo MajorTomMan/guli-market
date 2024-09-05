@@ -15,9 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.atguigu.gulimall.cart.interceptor.CartInterceptor;
 import com.atguigu.gulimall.cart.service.CartService;
-import com.atguigu.gulimall.cart.vo.CartItemVo;
 import com.atguigu.gulimall.cart.vo.CartVo;
+import com.atguigu.gulimall.common.vo.CartItemVo;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +40,7 @@ public class CartController {
     public String cartListPage(Model model) {
         CartVo cart = cartService.getCart();
         model.addAttribute("cart", cart);
+        //model.addAttribute("userId", CartInterceptor.threadLocal.get().getUserId());
         return "cartList";
     }
 

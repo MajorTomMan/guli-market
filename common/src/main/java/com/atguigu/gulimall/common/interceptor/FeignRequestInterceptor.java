@@ -21,7 +21,6 @@ public class FeignRequestInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
 
-
         // 为了解决feign发请求时没有cookie
         // 导致其他微服务认为没有登录的问题而将浏览器请求中的cookie附加到feign请求中
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
@@ -35,10 +34,6 @@ public class FeignRequestInterceptor implements RequestInterceptor {
                     template.header("Cookie", finalCookie);
                 }
             }
-            else{
-                template.header("login", "");
-            }
-
         }
 
     }

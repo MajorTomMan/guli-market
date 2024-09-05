@@ -125,9 +125,9 @@
       <div class="header_gw">
         <img src="/static/index/img/img_15.png" />
         <span><a href="http://cart.gulimall.com/cart.html">我的购物车</a></span>
-        <span>0</span>
+        <span th:text="${cart != null ? cart.size() : 0}">0</span>
       </div>
-      <div class="header_ko">
+      <div class="header_ko" th:if="${cart == null}">
         <p>购物车中还没有商品，赶紧选购吧！</p>
       </div>
     </div>

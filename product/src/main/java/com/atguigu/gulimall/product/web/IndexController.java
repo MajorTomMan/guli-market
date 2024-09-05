@@ -13,7 +13,9 @@ package com.atguigu.gulimall.product.web;
 import java.util.List;
 import java.util.Map;
 
+import com.atguigu.gulimall.common.vo.CartItemVo;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
+import com.atguigu.gulimall.product.service.CartService;
 import com.atguigu.gulimall.product.service.CategoryService;
 import com.atguigu.gulimall.product.vo.Catelog2Vo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,11 +32,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class IndexController {
     @Autowired
     CategoryService categoryService;
-
+    @Autowired
+    CartService cartService;
     @GetMapping({ "/", "/index.html" })
     public String indexPage(Model model) {
         List<CategoryEntity> categoryEntities = categoryService.getLevel1Categorys();
         model.addAttribute("categories", categoryEntities);
+        List<CartItemVo> cartItems = cartService.getCartItems();
+        model.addAttribute("cart",cartItems);
         return "index";
     }
 

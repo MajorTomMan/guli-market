@@ -39,7 +39,7 @@ public class OrderWebController {
      * @return 订单提交信息
      */
     @PostMapping("/submitOrder")
-    public String SubmitOrder(@RequestBody OrderSubmitVo vo, Model model, RedirectAttributes attributes) {
+    public String SubmitOrder(OrderSubmitVo vo, Model model, RedirectAttributes attributes) {
         // TODO: process POST request
         try {
             SubmitOrderResponseVo response = orderService.submitOrder(vo);
@@ -56,7 +56,7 @@ public class OrderWebController {
                         msg += "库存锁定失败，商品库存不足";
                         break;
                 }
-                attributes.addFlashAttribute("msg", msg);
+                //attributes.addAttribute("msg", msg);
                 return "redirect:http://order.gulimall.com/toTrade";
             } else {
                 model.addAttribute("submitOrderResp", response);
@@ -66,7 +66,7 @@ public class OrderWebController {
             // TODO: handle exception
             if (e instanceof NoStockException) {
                 String message = ((NoStockException) e).getMessage();
-                attributes.addFlashAttribute("msg", message);
+                //attributes.addAttribute("msg", message);
             }
             return "redirect:http://order.gulimall.com/toTrade";
         }

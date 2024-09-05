@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.atguigu.gulimall.common.interceptor.FeignRequestInterceptor;
 
+import feign.Logger;
 import feign.RequestInterceptor;
 
 @Configuration
@@ -13,4 +14,5 @@ public class FeignConfig {
     public RequestInterceptor requestInterceptor() {
         return new FeignRequestInterceptor();
     }
+
 }

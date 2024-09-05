@@ -10,6 +10,8 @@
  */
 package com.atguigu.gulimall.common.to.mq;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 @Data

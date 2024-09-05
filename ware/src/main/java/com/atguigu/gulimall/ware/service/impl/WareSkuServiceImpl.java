@@ -25,7 +25,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gulimall.common.exception.NoStockException;
+import com.atguigu.gulimall.common.to.OrderTo;
 import com.atguigu.gulimall.common.to.SkuHasStockVo;
 import com.atguigu.gulimall.common.to.mq.StockDetailTo;
 import com.atguigu.gulimall.common.to.mq.StockLockedTo;
@@ -36,15 +38,16 @@ import com.atguigu.gulimall.ware.dao.WareSkuDao;
 import com.atguigu.gulimall.ware.entity.WareOrderTaskDetailEntity;
 import com.atguigu.gulimall.ware.entity.WareOrderTaskEntity;
 import com.atguigu.gulimall.ware.entity.WareSkuEntity;
+import com.atguigu.gulimall.ware.feign.OrderFeignService;
 import com.atguigu.gulimall.ware.feign.ProductFeignService;
 import com.atguigu.gulimall.ware.service.WareOrderTaskDetailService;
 import com.atguigu.gulimall.ware.service.WareOrderTaskService;
 import com.atguigu.gulimall.ware.service.WareSkuService;
 import com.atguigu.gulimall.ware.vo.OrderItemVo;
+import com.atguigu.gulimall.ware.vo.OrderVo;
 import com.atguigu.gulimall.ware.vo.SkuWareHasStock;
 import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
 
-@RabbitListener(queues = {""})
 @Service("wareSkuService")
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
     @Autowired
@@ -57,6 +60,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     private WareOrderTaskService wareOrderTaskService;
     @Autowired
     private WareOrderTaskDetailService wareOrderTaskDetailService;
+    @Autowired
+    private OrderFeignService orderFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -132,7 +137,8 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             SkuWareHasStock skuWareHasStock = new SkuWareHasStock();
             Long skuId = item.getSkuId();
             skuWareHasStock.setSkuId(skuId);
-            List<Long> ids = wareSkuDao.listWareIdHasStock(skuId);
+            skuWareHasStock.setNum(item.getCount());
+            List<Long> ids = wareSkuDao.listWareIdHasSkuStock(skuId);
             skuWareHasStock.setWareId(ids);
             return skuWareHasStock;
         }).toList();
@@ -161,6 +167,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                     wareOrderTaskDetailEntity.setSkuNum(item.getNum());
                     wareOrderTaskDetailEntity.setTaskId(wareOrderTaskEntity.getId());
                     wareOrderTaskDetailEntity.setLockStatus(1);
+                    wareOrderTaskDetailEntity.setWareId(wareId);
                     wareOrderTaskDetailService.save(wareOrderTaskDetailEntity);
                     // 告诉MQ
                     StockLockedTo stockLockedTo = new StockLockedTo();
@@ -180,6 +187,96 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         });
         /* 全局锁定成功 */
         return true;
+    }
+
+    @Override
+    public void unlockStock(StockLockedTo to) {
+        // 库存工作单的id
+        StockDetailTo detail = to.getDetailTo();
+        Long detailId = detail.getId();
+
+        /**
+         * 解锁
+         * 1、查询数据库关于这个订单锁定库存信息
+         * 有：证明库存锁定成功了
+         * 解锁：订单状况
+         * 1、没有这个订单，必须解锁库存
+         * 2、有这个订单，不一定解锁库存
+         * 订单状态：已取消：解锁库存
+         * 已支付：不能解锁库存
+         */
+        WareOrderTaskDetailEntity taskDetailInfo = wareOrderTaskDetailService.getById(detailId);
+        if (taskDetailInfo != null) {
+            // 查出wms_ware_order_task工作单的信息
+            Long id = to.getId();
+            WareOrderTaskEntity orderTaskInfo = wareOrderTaskService.getById(id);
+            // 获取订单号查询订单状态
+            String orderSn = orderTaskInfo.getOrderSn();
+            // 远程查询订单信息
+            R orderData = orderFeignService.getOrderStatus(orderSn);
+            if (orderData.getCode() == 0) {
+                // 订单数据返回成功
+                OrderVo orderInfo = (OrderVo) orderData.getData("data", new TypeReference<OrderVo>() {
+                });
+
+                // 判断订单状态是否已取消或者支付或者订单不存在
+                if (orderInfo == null || orderInfo.getStatus() == 4) {
+                    // 订单已被取消，才能解锁库存
+                    if (taskDetailInfo.getLockStatus() == 1) {
+                        // 当前库存工作单详情状态1，已锁定，但是未解锁才可以解锁
+                        unLockStock(detail.getSkuId(), detail.getWareId(), detail.getSkuNum(), detailId);
+                    }
+                }
+            } else {
+                // 消息拒绝以后重新放在队列里面，让别人继续消费解锁
+                // 远程调用服务失败
+                throw new RuntimeException("远程调用服务失败");
+            }
+        } else {
+            // 无需解锁
+        }
+    }
+
+    /**
+     * 解锁库存的方法
+     * 
+     * @param skuId
+     * @param wareId
+     * @param num
+     * @param taskDetailId
+     */
+    public void unLockStock(Long skuId, Long wareId, Integer num, Long taskDetailId) {
+
+        // 库存解锁
+        wareSkuDao.unLockStock(skuId, wareId, num);
+
+        // 更新工作单的状态
+        WareOrderTaskDetailEntity taskDetailEntity = new WareOrderTaskDetailEntity();
+        taskDetailEntity.setId(taskDetailId);
+        // 变为已解锁
+        taskDetailEntity.setLockStatus(2);
+        wareOrderTaskDetailService.updateById(taskDetailEntity);
+
+    }
+
+    @Override
+    public void unlockStock(OrderTo orderTo) {
+        // TODO Auto-generated method stub
+        String orderSn = orderTo.getOrderSn();
+        //查一下最新的库存解锁状态，防止重复解锁库存
+        WareOrderTaskEntity orderTaskEntity = wareOrderTaskService.getOrderTaskByOrderSn(orderSn);
+
+        //按照工作单的id找到所有 没有解锁的库存，进行解锁
+        Long id = orderTaskEntity.getId();
+        List<WareOrderTaskDetailEntity> list = wareOrderTaskDetailService.list(new QueryWrapper<WareOrderTaskDetailEntity>()
+                .eq("task_id", id).eq("lock_status", 1));
+
+        for (WareOrderTaskDetailEntity taskDetailEntity : list) {
+            unLockStock(taskDetailEntity.getSkuId(),
+                    taskDetailEntity.getWareId(),
+                    taskDetailEntity.getSkuNum(),
+                    taskDetailEntity.getId());
+        }
     }
 
 }

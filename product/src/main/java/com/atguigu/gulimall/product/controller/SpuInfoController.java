@@ -53,7 +53,7 @@ public class SpuInfoController {
 
         SpuInfoEntity spuInfoEntity = spuInfoService.getSpuInfoBySkuId(skuId);
 
-        return R.ok().setData(spuInfoEntity);
+        return R.ok().put("data", spuInfoEntity);
     }
 
     /**
