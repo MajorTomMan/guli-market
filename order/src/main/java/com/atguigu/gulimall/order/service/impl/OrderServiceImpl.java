@@ -1,5 +1,7 @@
 package com.atguigu.gulimall.order.service.impl;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -30,6 +32,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gulimall.common.exception.NoStockException;
+import com.atguigu.gulimall.common.to.OrderTo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.common.utils.R;
@@ -74,6 +77,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
     private OrderItemService orderItemService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -205,6 +211,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 if (r.getCode() == 0) {
                     // 锁定成功
                     submitOrderResponseVo.setOrder(order.getOrder());
+                    // 订单创建完成发消息给MQ
+                    rabbitTemplate.convertAndSend("order-event-exchange", "order.create.order", order.getOrder());
                 } else {
                     // 锁定失败
                     String message = (String) r.get("msg");
@@ -331,7 +339,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             orderEntity.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
             orderEntity.setConfirmStatus(0);
             orderEntity.setAutoConfirmDay(7);
-
+            orderEntity.setCreateTime(new Date());
             return orderEntity;
         } else {
             return null;
@@ -388,5 +396,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     private void setupAttributes(RequestAttributes attributes) {
         RequestContextHolder.setRequestAttributes(attributes);
+    }
+
+    @Override
+    public void closeOrder(OrderEntity entity) {
+        // TODO Auto-generated method stub
+        OrderEntity byId = this.getById(entity.getId());
+        if(byId.getStatus()==OrderStatusEnum.CREATE_NEW.getCode()){
+            OrderEntity update = new OrderEntity();
+            update.setId(byId.getId());
+            update.setStatus(OrderStatusEnum.CANCLED.getCode());
+            this.updateById(update);
+            OrderTo orderTo = new OrderTo();
+            BeanUtils.copyProperties(byId, orderTo);
+            try {
+                // 保证消息一定会发送出去,每个消息都做好日志记录,给数据库保存每个消息的详细信息
+                // 定期扫描数据库,将失败的消息重新发送
+                rabbitTemplate.convertAndSend("order-event-exchange","order.release.other",byId);
+            } catch (Exception e) {
+                // 重试发送失败消息
+            }
+            
+        }
     }
 }

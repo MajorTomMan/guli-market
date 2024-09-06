@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.order.config;
 
+import java.time.Duration;
 import java.util.HashMap;
 
 import org.springframework.amqp.core.Binding;
@@ -9,6 +10,13 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/* 
+ *  路径 生产者-> 交换机->延时队列->队列->消费者
+ *                                order-event-exchange->order.delay.queue->order.release.order.queue
+ * 
+ * 
+ * 
+ */
 @Configuration
 public class OrderRabbitMQConfig {
     @Bean
@@ -28,7 +36,7 @@ public class OrderRabbitMQConfig {
         arguments.put("x-dead-letter-exchange", "order-event-exchange");
         // 死信路由键
         arguments.put("x-dead-letter-routing-key", "order.release.order");
-        arguments.put("x-message-ttl", 60000); // 消息过期时间 1分钟
+        arguments.put("x-message-ttl", Duration.ofMinutes(3).toMillis()); // 消息过期时间 1分钟
         return new Queue("order.delay.queue", true, false, false, arguments);
     }
 
@@ -72,6 +80,11 @@ public class OrderRabbitMQConfig {
                 null);
     }
 
+    /*
+     * 该绑定是为了解决假设库存解锁时查询订单服务因为订单服务器出于各种原因的情况下
+     * 没能成功处理取消订单,而导致此时订单还处于新建状态,
+     * 进而使得消息被消费而无法成功解锁库存的情况
+     */
     @Bean
     public Binding orderReleaseOrderBinding() {
         return new Binding("stock.release.stock.queue",

@@ -1,9 +1,9 @@
 /*
  * @Author: flashnames 765719516@qq.com
  * @Date: 2022-07-21 16:08:04
- * @LastEditors: flashnames 765719516@qq.com
- * @LastEditTime: 2023-02-12 16:20:17
- * @FilePath: /GuliMall/ware/src/main/java/com/atguigu/gulimall/ware/service/impl/WareSkuServiceImpl.java
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-09-06 23:26:29
+ * @FilePath: \Guli\ware\src\main\java\com\atguigu\gulimall\ware\service\impl\WareSkuServiceImpl.java
  * @Description: 
  * 
  * Copyright (c) 2022 by flashnames 765719516@qq.com, All Rights Reserved. 
@@ -258,7 +258,11 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         wareOrderTaskDetailService.updateById(taskDetailEntity);
 
     }
-
+    /**
+     * 防止订单服务卡顿，导致订单状态消息一直改不了，库存优先到期，查订单状态新建，什么都不处理
+     * 导致卡顿的订单，永远都不能解锁库存
+     * @param orderTo
+     */
     @Override
     public void unlockStock(OrderTo orderTo) {
         // TODO Auto-generated method stub
