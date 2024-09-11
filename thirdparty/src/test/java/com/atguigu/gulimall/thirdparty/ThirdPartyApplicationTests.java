@@ -63,7 +63,7 @@ class ThirdPartyApplicationTests {
                     + "such as not being able to access the network.");
             System.out.println("Error Message:" + ce.getMessage());
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         } finally {
             if (client != null) {

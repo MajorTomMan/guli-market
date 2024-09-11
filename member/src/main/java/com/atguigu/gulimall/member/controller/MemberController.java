@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.atguigu.gulimall.member.entity.MemberEntity;
 import com.atguigu.gulimall.member.exception.PhoneExistException;
 import com.atguigu.gulimall.member.exception.UserNameExistException;
-import com.atguigu.gulimall.member.feign.couponFeignService;
+import com.atguigu.gulimall.member.feign.CouponFeignService;
 import com.atguigu.gulimall.member.service.MemberService;
 import com.atguigu.gulimall.member.vo.MemberLoginVo;
 import com.atguigu.gulimall.member.vo.RegisterVo;
@@ -45,7 +45,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
     @Autowired
-    private couponFeignService FeignService;
+    private CouponFeignService FeignService;
 
     @RequestMapping("/coupons")
     public R test() {

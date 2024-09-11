@@ -15,7 +15,7 @@ public class CartServiceImpl implements CartService{
     private CartFeignService cartFeignService;
     @Override
     public List<CartItemVo> getCartItems() {
-        // TODO Auto-generated method stub
+
         List<CartItemVo> currentCartItems = cartFeignService.getCurrentCartItems();
         return currentCartItems;
     }

@@ -13,5 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface OrderDao extends BaseMapper<OrderEntity> {
+
+    void updateOrderStatus(String out_trade_no, Integer code);
 	
 }

@@ -62,7 +62,7 @@ public class OauthController {
                 return "redirect:http://auth.gulimall.com/login.html";
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             log.error(e.getMessage());
             log.error("用户三方登录失败");
             log.error("重定向至登录页");
@@ -87,7 +87,7 @@ public class OauthController {
                     return "redirect:http://auth.gulimall.com/login.html";
                 }
             } catch (Exception e) {
-                // TODO Auto-generated catch block
+    
                 log.error(e.getMessage());
                 log.error("查询Github用户信息失败");
                 log.error("重定向至登录页");

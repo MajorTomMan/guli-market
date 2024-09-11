@@ -27,7 +27,7 @@ public class WareOrderTaskServiceImpl extends ServiceImpl<WareOrderTaskDao, Ware
 
     @Override
     public WareOrderTaskEntity getOrderTaskByOrderSn(String orderSn) {
-        // TODO Auto-generated method stub
+
         WareOrderTaskEntity orderTaskEntity = this.baseMapper.selectOne(
                 new QueryWrapper<WareOrderTaskEntity>().eq("order_sn", orderSn));
 

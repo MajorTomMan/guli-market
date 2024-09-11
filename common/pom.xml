@@ -34,6 +34,7 @@
         <alibabacloud.dysmsapi20170525.version>2.0.24</alibabacloud.dysmsapi20170525.version>
         <spring-session-core.version>3.3.1</spring-session-core.version>
         <logback-classic.version>1.5.7</logback-classic.version>
+        <alipay-sdk-java.version>4.39.200.ALL</alipay-sdk-java.version>
     </properties>
 
     <dependencies>
@@ -222,7 +223,11 @@
             <version>${logback-classic.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>${alipay-sdk-java.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

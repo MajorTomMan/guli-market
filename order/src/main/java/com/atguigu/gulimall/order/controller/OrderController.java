@@ -58,6 +58,13 @@ public class OrderController {
         return R.ok().put("page", page);
     }
 
+    @RequestMapping("/listWithItem")
+    // @RequiresPermissions("order:order:list")
+    public R listWithItem(@RequestBody Map<String, Object> params) {
+        PageUtils page = orderService.queryListWithItem(params);
+        return R.ok().put("page", page);
+    }
+
     /**
      * 信息
      */

@@ -124,7 +124,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     @Transactional(rollbackFor = NoStockException.class)
     @Override
     public Boolean orderLockStock(WareSkuLockVo vo) {
-        // TODO Auto-generated method stub
+
         /*
          * 保存库存工作单的详情
          * 追溯
@@ -265,7 +265,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
      */
     @Override
     public void unlockStock(OrderTo orderTo) {
-        // TODO Auto-generated method stub
+
         String orderSn = orderTo.getOrderSn();
         //查一下最新的库存解锁状态，防止重复解锁库存
         WareOrderTaskEntity orderTaskEntity = wareOrderTaskService.getOrderTaskByOrderSn(orderSn);

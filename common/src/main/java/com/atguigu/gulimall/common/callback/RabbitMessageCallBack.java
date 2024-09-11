@@ -49,7 +49,7 @@ public class RabbitMessageCallBack implements RabbitTemplate.ConfirmCallback, Ra
      */
     @Override
     public void returnedMessage(ReturnedMessage returned) {
-        // TODO Auto-generated method stub
+
         log.info(returned);
     }
 
@@ -61,7 +61,7 @@ public class RabbitMessageCallBack implements RabbitTemplate.ConfirmCallback, Ra
      */
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-        // TODO Auto-generated method stub
+
         log.info("correlationData" + "==>ack:[" + ack + "]==>cause:[" + cause + "]");
     }
 

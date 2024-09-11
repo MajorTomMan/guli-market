@@ -82,7 +82,7 @@ public class SearchServiceImpl implements SearchService {
             SearchResponse<SkuEsModel> response = elasticsearchClient.search(request, SkuEsModel.class);
             return buildSearchResult(response, param);
         } catch (ElasticsearchException | IOException e) {
-            // TODO Auto-generated catch block
+
             log.warn("ElasticSearch检索搜索参数的SKU失败");
             log.warn(e.getMessage());
             log.warn(e.getCause());
@@ -271,7 +271,7 @@ public class SearchServiceImpl implements SearchService {
             encode = URLEncoder.encode(item, "UTF-8").replace("+", "%20")
                     .replace("%28", "(").replace("%29", ")");
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
         String replace = param.get_queryString().replace("&" + key + "=" + encode, "");
@@ -552,7 +552,7 @@ public class SearchServiceImpl implements SearchService {
             log.info("保存DSL查询文件成功");
             log.info("保存DSL查询文件至:" + queryFile.getCanonicalPath());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+
             log.error("保存DSL查询文件失败");
             log.error("错误原因:" + e.getMessage());
         }

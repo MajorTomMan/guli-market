@@ -1,4 +1,4 @@
-package com.atguigu.gulimall.order.controller;
+package com.atguigu.gulimall.order.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
