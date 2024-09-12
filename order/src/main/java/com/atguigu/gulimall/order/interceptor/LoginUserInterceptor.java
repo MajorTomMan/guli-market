@@ -28,8 +28,9 @@ public class LoginUserInterceptor implements HandlerInterceptor {
          * 解决远程请求被拦截的问题
          */
         String requestURI = request.getRequestURI();
-        boolean match = new AntPathMatcher().match("/order/order/status/**", requestURI);
-        if (match) {
+        boolean status = new AntPathMatcher().match("/order/order/status/**", requestURI);
+        boolean payed = new AntPathMatcher().match("/payed/**", requestURI);
+        if (status || payed) {
             return true;
         }
         /*

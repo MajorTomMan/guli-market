@@ -473,9 +473,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         String status = vo.getTrade_status();
         if (status.equals(AlipayStatusConstant.TRADE_SUCCESS) || status.equals(AlipayStatusConstant.TRADE_FINISHED)) {
             String out_trade_no = vo.getOut_trade_no();
-            this.baseMapper.updateOrderStatus(out_trade_no, OrderStatusEnum.PAYED.getCode());
+            this.baseMapper.updateOrderStatus(out_trade_no, OrderStatusEnum.PAYED.getCode(), 1);
+            return "success";
         }
-        return "success";
+        return "failed";
     }
 
 }
