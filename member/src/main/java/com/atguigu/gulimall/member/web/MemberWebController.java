@@ -1,7 +1,6 @@
 package com.atguigu.gulimall.member.web;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,9 +19,9 @@ public class MemberWebController {
     private OrderFeignService orderFeignService;
 
     @GetMapping("/memberOrder.html")
-    public String memberOrderPage(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, Model model) {
+    public String memberOrderPage(@RequestParam(value = "pageNum", defaultValue = "1",required = false) Integer pageNum, Model model) {
         HashMap<String, Object> page = new HashMap<>();
-        page.put("page", pageNum);
+        page.put("page", pageNum + "");
         R r = orderFeignService.listWithItem(page);
         model.addAttribute("orders", r);
         return "orderList";

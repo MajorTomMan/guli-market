@@ -14,6 +14,12 @@ spring:
             - Path=/api/third/**
           filters:
             - RewritePath=/api/third/(?<segment>.*),/$\{segment} #该处填third的路径名
+        - id: coupon_route
+          uri: lb://coupon
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*),/$\{segment} #该处填coupon的路径名
         - id: member_route
           uri: lb://member
           predicates:
@@ -58,6 +64,10 @@ spring:
           uri: lb://member
           predicates:
             - Host=member.gulimall.com
+        - id:  coupon_route
+          uri: lb://coupon
+          predicates:
+            - Host=coupon.gulimall.com
         - id: host_route
           uri: lb://product
           predicates:

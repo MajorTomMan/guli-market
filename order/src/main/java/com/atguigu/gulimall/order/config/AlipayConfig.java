@@ -12,7 +12,6 @@ import com.alipay.api.response.AlipayTradePagePayResponse;
 import com.atguigu.gulimall.order.vo.PayVo;
 import com.google.gson.Gson;
 
-import lombok.experimental.var;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -21,8 +20,8 @@ public class AlipayConfig {
     private static String APP_PRIVATE_KEY = "MIIEwAIBADANBgkqhkiG9w0BAQEFAASCBKowggSmAgEAAoIBAQDNhMzGRwv4vuww2ks7BOpAk2fPc3x5SL87Co5FTZoFMBBCnt9DFrQmhlFtp6SnnjzyAcaySbInjl3sK/FlAq5rYwDNF/TuTnEvwLbxt2qtfWZr+6Oz2ksOR41nHz2amlFBrU88MJA+XtDC/bd40CmVYKxFK3zXFvfJrlxdX5SLU0ZyVGMP17LQ6MJ4+CCSoLRnXh0A67JEYbQghcGJcT28YX7PVLlI3GF93jQIAVNLW0ZfGmnm9kkSFbEw4pzUgUL7dqTcxdo9Up4QIVMlmkmUz5qGTFCufyoqBHba51GeN/t3NidX7LQ1/e26FX4XhP/akzr7WO4vsO+x3n4N36sZAgMBAAECggEBAK05nPwW0DFmg2Ad7sEdQHETjbFejvEPbxfNquMhKIvs2he9H0PF9CxwlFvPrMoXZxk4hAisczxCFEpHM51HKEqdVQSJh8oBVgfA8LJGPeVjSBwGKxIiEZdEmhvsShlwrsKj2KBL8piPhHiGL8nl8tbUd/+JSx1kX5CfpXySXnsbQB0XjS8MxZnjy+/+LfdVECI21l04h12Li/IxuuQdd2+knzECE6CByVRYXiQjado5cu5BOVIFu+AZPi19wfr3u9yLzmpamRrA2T8kvtbOzqBDlAmU2y5QIR9GNYtuDyY10Wz5QmQPM9AIPjAl3Uf7RSkQEubU5Rf5w/EQJQ+MqIECgYEA5rWxb0Zmjfmxd546oX3PFeHZ935Rns1bW1fSEwXOgyq+g6H17hdU1xX16sajS3JhMFj+WVpqQvMzyBuJI5u4AXYoXzBn1sF9C06XEKdwW+fhmPkeEvJmMoG3Rr7eVFaaE7rqGmm8scMRIiyHYSyrLp21Ai5JiKmlhiNBqIe0WjECgYEA5Awu2+943J/Rrw+BzQGqKOPGiU6lYZr3C94xcMjc3pd1CoJyjniEc0QD6gsyolUiyhALilJQvbV0K8wCpB6BeXKMFgfmvrnds7dIv3KhYNS3E+Jr+Pkoto5Y6MAmi4D6HiFqqekDRjPvEdFpcFxP/nowfyWpY5UX2MnMWZ65PWkCgYEAtbXxlLUcXUKHFrHXeA6BJrkGVjp1yt/vzpfy6+ys5P6roz3TV72kouu3Dz14rBnglpXhbzsZarXm2PtnHlatrOkFj0Ou5aTr+hXiQcm/Y4PVWgkMONwWxj0Iv33h2weCv3t+m2Mgrdn4CrSLxGvMQCESyi7u1+bWajomoriPwmECgYEAj0IgBcYQNPipLsIdFn4fOQSt6f/f4MsKuwfgIyvrpGGdAvcjo+CNxCNMGjDipBu7eRhPR5uiYSqmSgUk+5i2WWbeHdDk4Ze9cHKJXstSGZRHVlR847ESJGyT6dMb47MobNktOoPIrMdfPeBBznYPQpvb72PnX0l/644Js5sEX1ECgYEAzzMXvG0eMs/LaPu0dzzNoweyXBxFnnYty8+azDgt53N/DLn04F/pxREzznKrcfUShfsuFV5jA424q99qvBu47A9Amuh8sLE2LVE8YusmL8ndFDeniU03KjJonXFov6n4kU8jW6KEHIt62kOvMjaYFQz3Limb74exHHMwhosAOQs=";
     private static String CHARSET = "UTF-8";
     private static String ALIPAY_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgUnftVfRNQ/JKW91OgLPBh3s7p1Z87EIbZry0oXuy+yBTzJA4wdMf/huFMMiFUxbtTDL8JjuR/r7Dqi4DfJH3ua9opiuCArPL1gisW0hAJkVhzeyrTNDRvRG0XKeik2pegOfHLgbQSCdqZGOZ19NyvMobPUiGuC+Zx92uiYuIleI6rqyy5fJoGdT1xjZiRCZoH4nsYn3vogXLstnS0Hw4WVDyb8NxLL4mUS8C5gCcVsEZmzsGbV/G723/DketSXt4cKzWMq+QyKWSuOqbWtE6MkwhIWAQ3ES72Sc7Eoi+YwrggquFEqTRUXPNfM9aFy6TL4MeGdhxNnejA7eS7lJqwIDAQAB";
-    private static String NOTIFY_URL = "https://70aebb5c.r8.cpolar.top/payed/notify";
-    private static String RETURN_URL = "https://70aebb5c.r8.cpolar.top/payed/return";
+    private static String NOTIFY_URL = "https://4835ce33.r8.cpolar.top/payed/notify";
+    private static String RETURN_URL = "https://4835ce33.r8.cpolar.top/payed/return";
 
     public static String pay(PayVo vo) throws AlipayApiException {
         Gson gson = new Gson();
@@ -101,8 +100,9 @@ public class AlipayConfig {
     public static boolean check(Map<String, String> params) {
         String charset = params.get("charset");
         String sign_type = params.get("sign_type");
+        // 验证签名
         try {
-            boolean isPass = AlipaySignature.rsaCheckV2(params, ALIPAY_PUBLIC_KEY, charset, sign_type);
+            boolean isPass = AlipaySignature.rsaCheckV1(params, ALIPAY_PUBLIC_KEY, charset, sign_type);
             return isPass;
         } catch (AlipayApiException e) {
             // TODO Auto-generated catch block

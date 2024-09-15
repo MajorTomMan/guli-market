@@ -202,44 +202,44 @@
                     </ul>
                 </div>
 
-                <table class="table" th:each="order:#{orders.page.list}">
+                <table class="table" th:each="order:${orders.page.list}">
                     <tr>
                         <td colspan="7" style="background:#F7F7F7">
-                            <span style="color:#AAAAAA">[[#{order.createTime}]]</span>
-                            <span><ruby style="color:#AAAAAA">订单号:</ruby> [[#{order.orderSn}]]</span>
+                            <span style="color:#AAAAAA">[[${order.createTime}]]</span>
+                            <span><ruby style="color:#AAAAAA">订单号:</ruby> [[${order.orderSn}]]</span>
                             <span>谷粒商城<i class="table_i"></i></span>
                             <i class="table_i5 isShow"></i>
                         </td>
                     </tr>
-                    <tr class="tr" th:each="orderItem,itemStat:#{order.orderItemEntityList}">
+                    <tr class="tr" th:each="orderItem,itemStat:${order.itemEntities}">
                         <td colspan="3" style="border-right: 1px solid #ccc">
-                            <img style="height: 60px; width: 60px;" th:src="#{orderItem.skuPic}" alt="" class="img">
+                            <img style="height: 60px; width: 60px;" th:src="${orderItem.skuPic}" alt="" class="img">
                             <div>
                                 <p style="width: 242px; height: auto;overflow: auto">
-                                    [[#{orderItem.skuName}]]
+                                    [[${orderItem.skuName}]]
                                 </p>
                                 <div><i class="table_i4"></i>找搭配</div>
                             </div>
-                            <div style="margin-left:15px;">x[[#{orderItem.skuQuantity}]]</div>
+                            <div style="margin-left:15px;">x[[${orderItem.skuQuantity}]]</div>
                             <div style="clear:both"></div>
                         </td>
-                        <td th:if="#{itemStat.index==0}" th:rowspan="#{itemStat.size}">[[#{order.receiverName}]]<i><i
+                        <td th:if="${itemStat.index==0}" th:rowspan="${itemStat.size}">[[${order.receiverName}]]<i><i
                                     class="table_i1"></i></i></td>
-                        <td th:if="#{itemStat.index==0}" th:rowspan="#{itemStat.size}"
+                        <td th:if="${itemStat.index==0}" th:rowspan="${itemStat.size}"
                             style="padding-left:10px;color:#AAAAB1;">
-                            <p style="margin-bottom:5px;">总额 ￥[[#{#numbers.formatDecimal(order.payAmount,3,2)}]]</p>
+                            <p style="margin-bottom:5px;">总额 ￥[[${#numbers.formatDecimal(order.payAmount,3,2)}]]</p>
                             <hr style="width:90%;">
                             <p>在线支付</p>
                         </td>
-                        <td th:if="#{itemStat.index==0}" th:rowspan="#{itemStat.size}">
+                        <td th:if="${itemStat.index==0}" th:rowspan="${itemStat.size}">
                             <ul>
-                                <li style="color:#71B247;" th:if="#{order.status==0}">待付款</li>
-                                <li style="color:#71B247;" th:if="#{order.status==1}">已付款</li>
-                                <li style="color:#71B247;" th:if="#{order.status==2}">已发货</li>
-                                <li style="color:#71B247;" th:if="#{order.status==3}">已完成</li>
-                                <li style="color:#71B247;" th:if="#{order.status==4}">已取消</li>
-                                <li style="color:#71B247;" th:if="#{order.status==5}">售后中</li>
-                                <li style="color:#71B247;" th:if="#{order.status==6}">售后完成</li>
+                                <li style="color:#71B247;" th:if="${order.status==0}">待付款</li>
+                                <li style="color:#71B247;" th:if="${order.status==1}">已付款</li>
+                                <li style="color:#71B247;" th:if="${order.status==2}">已发货</li>
+                                <li style="color:#71B247;" th:if="${order.status==3}">已完成</li>
+                                <li style="color:#71B247;" th:if="${order.status==4}">已取消</li>
+                                <li style="color:#71B247;" th:if="${order.status==5}">售后中</li>
+                                <li style="color:#71B247;" th:if="${order.status==6}">售后完成</li>
                                 <li style="margin:4px 0;" class="hide"><i class="table_i2"></i>跟踪<i
                                         class="table_i3"></i>
                                     <div class="hi">
@@ -269,7 +269,7 @@
                                 <li class="tdLi">订单详情</li>
                             </ul>
                         </td>
-                        <td th:if="#{itemStat.index==0}" th:rowspan="#{itemStat.size}">
+                        <td th:if="${itemStat.index==0}" th:rowspan="${itemStat.size}">
                             <button>确认收货</button>
                             <p style="margin:4px 0; ">取消订单</p>
                             <p>催单</p>

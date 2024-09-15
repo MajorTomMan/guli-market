@@ -18,13 +18,15 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Log4j2
-@RestController
+@Controller
 @RequestMapping
 public class OrderPayListener {
     @Autowired
@@ -33,15 +35,13 @@ public class OrderPayListener {
     // 日期时间格式
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
-
     @PostMapping("/payed/notify")
+    @ResponseBody
     public String handleAliPayedNotify(@RequestParam Map<String, String> map) {
         log.info("收到支付宝异步通知");
         map.forEach((k, v) -> {
             log.info("k->" + k + " v->" + v);
         });
-        // 验证签名
-        // 获取签名
         boolean check = AlipayConfig.check(map);
         if (check) {
             /*
@@ -62,7 +62,7 @@ public class OrderPayListener {
         param.forEach((k, v) -> {
             log.info("k->" + k + " v->" + v);
         });
-        return "success";
+        return "redirect:http://member.gulimall.com/memberOrder.html";
     }
 
     /**

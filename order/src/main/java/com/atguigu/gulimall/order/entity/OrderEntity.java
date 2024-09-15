@@ -197,5 +197,5 @@ public class OrderEntity implements Serializable {
 	 *  商品列表
 	 */
 	@TableField(exist = false)
-	private List<OrderItemEntity> itemEntites;
+	private List<OrderItemEntity> itemEntities;
 }

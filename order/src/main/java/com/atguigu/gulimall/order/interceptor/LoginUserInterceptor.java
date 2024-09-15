@@ -49,6 +49,7 @@ public class LoginUserInterceptor implements HandlerInterceptor {
             loginUser.set(attribute);
             return true;
         }
+        /* 没有登录,此处feign调用也会经过这个拦截器 */
         session.setAttribute("msg", "请先登录");
         response.sendRedirect("http://auth.gulimall.com/login.html");
         return false;

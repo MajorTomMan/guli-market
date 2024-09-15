@@ -3,6 +3,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -32,10 +33,12 @@ public class SeckillSessionEntity implements Serializable {
 	/**
 	 * 每日开始时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Shanghai")
 	private Date startTime;
 	/**
 	 * 每日结束时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Shanghai")
 	private Date endTime;
 	/**
 	 * 启用状态
@@ -44,6 +47,7 @@ public class SeckillSessionEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Shanghai")
 	private Date createTime;
 
 }

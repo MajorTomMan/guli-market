@@ -39,6 +39,7 @@
     <module>search</module>
     <module>auth</module>
     <module>cart</module>
+    <module>seckill</module>
   </modules>
 
   <dependencyManagement>
