@@ -1,3 +1,10 @@
+/*
+ * @Date: 2024-09-18 17:58:55
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-09-18 21:14:18
+ * @FilePath: \Guli\seckill\src\main\java\com\atguigu\gulimall\seckill\service\impl\SecKillServiceImpl.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.atguigu.gulimall.seckill.service.impl;
 
 import java.util.List;
@@ -53,31 +60,36 @@ public class SecKillServiceImpl implements SecKillService {
         vos.forEach(vo -> {
             BoundHashOperations<String, Object, Object> boundHashOps = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
             vo.getRelationbEntities().forEach(entity -> {
-                SeckillSkuRedisTo seckillSkuRedisTo = new SeckillSkuRedisTo();
-                // 1. sku的基本信息
-                R r = productFeignService.getSkuInfo(entity.getId());
-                if (r.getCode() == 0) {
-                    SkuInfoVo skuInfoVo = (SkuInfoVo) r.getData(new TypeReference<SkuInfoVo>() {
-                    });
-                    if (skuInfoVo != null) {
-                        seckillSkuRedisTo.setSkuInfo(skuInfoVo);
-                    }
-                }
-                // 2. sku的秒杀信息
-                BeanUtils.copyProperties(entity, seckillSkuRedisTo);
-                // 3. 设置商品的秒杀信息
-                seckillSkuRedisTo.setStartTime(vo.getStartTime().getTime());
-                seckillSkuRedisTo.setEndTime(vo.getEndTime().getTime());
                 // 4. 随机码
                 String token = UUID.randomUUID().toString().replace("=", ",");
-                seckillSkuRedisTo.setRandomCode(token);
-                // 5.使用库存作为分布式信号量
-                RSemaphore semaphore = redissonClient.getSemaphore(SKU_STOCK_SEMAPHORE + token);
-                /*
-                 * 商品可以秒杀的数量作为信号量
-                 */
-                semaphore.trySetPermits(entity.getSeckillCount());
-                boundHashOps.put(entity.getSkuId().toString(), seckillSkuRedisTo);
+                String key = entity.getPromotionSessionId().toString() + "-" + entity.getSkuId().toString();
+                SeckillSkuRedisTo seckillSkuRedisTo = new SeckillSkuRedisTo();
+                if (redisTemplate.hasKey(key)) {
+
+                    // 1. sku的基本信息
+                    R r = productFeignService.getSkuInfo(entity.getId());
+                    if (r.getCode() == 0) {
+                        SkuInfoVo skuInfoVo = (SkuInfoVo) r.getData(new TypeReference<SkuInfoVo>() {
+                        });
+                        if (skuInfoVo != null) {
+                            seckillSkuRedisTo.setSkuInfo(skuInfoVo);
+                        }
+                    }
+                    // 2. sku的秒杀信息
+                    BeanUtils.copyProperties(entity, seckillSkuRedisTo);
+                    // 3. 设置商品的秒杀信息
+                    seckillSkuRedisTo.setStartTime(vo.getStartTime().getTime());
+                    seckillSkuRedisTo.setEndTime(vo.getEndTime().getTime());
+                    seckillSkuRedisTo.setRandomCode(token);
+                    boundHashOps.put(key, seckillSkuRedisTo);
+                    // 5.使用库存作为分布式信号量
+                    RSemaphore semaphore = redissonClient.getSemaphore(key);
+                    /*
+                     * 商品可以秒杀的数量作为信号量
+                     */
+                    semaphore.trySetPermits(entity.getSeckillCount());
+                }
+
             });
         });
     }
@@ -88,8 +100,18 @@ public class SecKillServiceImpl implements SecKillService {
             long startTime = vo.getStartTime().getTime();
             long endTime = vo.getEndTime().getTime();
             String key = SESSION_CACHE_PREFIX + startTime + "_" + endTime;
-            List<Long> list = vo.getRelationbEntities().stream().map(SeckillSkuVo::getSkuId).toList();
-            redisTemplate.opsForList().leftPushAll(key, list);
+            if (!redisTemplate.hasKey(key)) {
+                List<String> list = vo.getRelationbEntities().stream()
+                        .map(item -> item.getPromotionSessionId() + "-" + item.getSkuId().toString()).toList();
+                redisTemplate.opsForList().leftPushAll(key, list);
+            }
+
         });
+    }
+
+    @Override
+    public List<SeckillSkuRedisTo> getCurrentSeckillSkus() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCurrentSeckillSkus'");
     }
 }

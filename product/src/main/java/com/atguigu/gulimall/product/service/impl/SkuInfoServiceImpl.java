@@ -147,6 +147,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
                     res.getCatalogId());
             skuItemVo.setGroupAttrs(spuItemAttrGroupVos);
         }, threadPoolExecutor);
+        // 3. 查询当前sku是否参与秒杀优惠
+        
         CompletableFuture.allOf(infoFuture, saleAttrFuture, descFuture, baseAttrFuture, imagesFuture).get();
         return skuItemVo;
     }
