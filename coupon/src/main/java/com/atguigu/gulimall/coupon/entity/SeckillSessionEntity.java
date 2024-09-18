@@ -1,12 +1,14 @@
 package com.atguigu.gulimall.coupon.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
-
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -49,5 +51,9 @@ public class SeckillSessionEntity implements Serializable {
 	 */
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Shanghai")
 	private Date createTime;
-
+	/* 
+	 *  关联列表
+	 */
+	@TableField(exist = false)
+	private List<SeckillSkuRelationEntity> relationEntities;
 }
