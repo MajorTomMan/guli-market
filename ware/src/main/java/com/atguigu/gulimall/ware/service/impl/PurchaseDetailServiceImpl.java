@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.springframework.util.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
@@ -35,15 +35,15 @@ public class PurchaseDetailServiceImpl extends ServiceImpl<PurchaseDetailDao, Pu
         String key = (String) params.get("key");
         String status = (String) params.get("status");
         String wareId = (String) params.get("wareId");
-        if (!StringUtils.isEmpty(key)) {
+        if (StringUtils.hasText(key)) {
             wrapper.and(w -> {
                 w.eq("purchase_id", key).or().eq("sku_id", key);
             });
         }
-        if (!StringUtils.isEmpty(status)) {
+        if (StringUtils.hasText(status)) {
             wrapper.eq("status", status);
         }
-        if (!StringUtils.isEmpty(wareId)) {
+        if (StringUtils.hasText(wareId)) {
             wrapper.eq("ware_id", wareId);
         }
         IPage<PurchaseDetailEntity> page = this.page(

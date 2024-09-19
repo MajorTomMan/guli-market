@@ -111,13 +111,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return paths;
     }
 
-    @CacheEvict(value="category",key = "'getLevel1Categorys'")
+    @CacheEvict(value = "category", key = "'getLevel1Categorys'")
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
 
         this.updateById(category);
-        if (!StringUtils.isEmpty(category.getName())) {
+        if (StringUtils.hasText(category.getName())) {
             relationService.updateCategory(category.getCatId(), category.getName());
         }
     }
@@ -126,12 +126,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
 
-
         List<CategoryEntity> categoryEntities = baseMapper
                 .selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
         return categoryEntities;
     }
-    @Cacheable(value="category",key="#root.methodName")
+
+    @Cacheable(value = "category", key = "#root.methodName")
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson()
             throws JsonProcessingException, InterruptedException {
@@ -164,11 +164,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         }));
         return parent_cid;
     }
+
     public Map<String, List<Catelog2Vo>> getCatalogJson2() throws JsonProcessingException, InterruptedException {
 
         ObjectMapper mapper = new ObjectMapper();
         String catalogJSON = redisClient.opsForValue().get("catalogJSON");
-        if (StringUtils.isEmpty(catalogJSON)) {
+        if (!StringUtils.hasText(catalogJSON)) {
             System.out.println("缓存未命中...开始查询数据库.....");
             Map<String, List<Catelog2Vo>> catalogJsonFromDB = getCatalogJsonFromDBWithRedisLock();
             return catalogJsonFromDB;
@@ -201,7 +202,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     private Map<String, List<Catelog2Vo>> getDataFromDB() throws JsonProcessingException, JsonMappingException {
         ObjectMapper mapper = new ObjectMapper();
         String catalogJSON = redisClient.opsForValue().get("catalogJSON");
-        if (!StringUtils.isEmpty(catalogJSON)) {
+        if (StringUtils.hasText(catalogJSON)) {
             Map<String, List<Catelog2Vo>> result = mapper.readValue(catalogJSON,
                     new TypeReference<Map<String, List<Catelog2Vo>>>() {
                     });

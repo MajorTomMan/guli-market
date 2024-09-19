@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.springframework.util.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gulimall.common.exception.NoStockException;
@@ -68,10 +68,10 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         QueryWrapper<WareSkuEntity> wrapper = new QueryWrapper<WareSkuEntity>();
         String skuId = (String) params.get("skuId");
         String wareId = (String) params.get("wareId");
-        if (!StringUtils.isEmpty(skuId)) {
+        if (StringUtils.hasText(skuId)) {
             wrapper.eq("sku_id", skuId);
         }
-        if (!StringUtils.isEmpty(wareId)) {
+        if (StringUtils.hasText(wareId)) {
             wrapper.eq("ware_id", wareId);
         }
         IPage<WareSkuEntity> page = this.page(

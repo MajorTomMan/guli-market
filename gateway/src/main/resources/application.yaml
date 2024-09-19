@@ -68,6 +68,10 @@ spring:
           uri: lb://coupon
           predicates:
             - Host=coupon.gulimall.com
+        - id:  seckill_route
+          uri: lb://seckill
+          predicates:
+            - Host=seckill.gulimall.com
         - id: host_route
           uri: lb://product
           predicates:

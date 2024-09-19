@@ -40,7 +40,7 @@ public class WareInfoServiceImpl extends ServiceImpl<WareInfoDao, WareInfoEntity
     public PageUtils queryPage(Map<String, Object> params) {
         QueryWrapper<WareInfoEntity> wrapper = new QueryWrapper<WareInfoEntity>();
         String key = (String) params.get("key");
-        if (!StringUtils.isEmpty(key)) {
+        if (StringUtils.hasText(key)) {
             wrapper.eq("id", key)
                     .or().like("name", key)
                     .or().like("address", key)

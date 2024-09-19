@@ -59,7 +59,7 @@ import com.atguigu.gulimall.product.vo.Skus;
 import com.atguigu.gulimall.product.vo.SpuSaveVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.springframework.util.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.BeanUtils;
@@ -173,7 +173,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
                     skuImagesEntity.setDefaultImg(img.getDefaultImg());
                     return skuImagesEntity;
                 }).filter(entity -> {
-                    return StringUtils.isNotEmpty(entity.getImgUrl());
+                    return StringUtils.hasText(entity.getImgUrl());
                 }).collect(Collectors.toList());
                 /* 5.2 SKU的图片信息: PMS_SKU_IMAGES */
                 // TODO 没有图片无需保存
@@ -213,18 +213,18 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         String status = (String) params.get("status");
         String brandId = (String) params.get("brandId");
         String catelogId = (String) params.get("catelogId");
-        if (!StringUtils.isEmpty(key)) {
+        if (StringUtils.hasText(key)) {
             wrapper.and((w) -> {
                 w.eq("id", key).or().like("spu_name", key);
             });
         }
-        if (!StringUtils.isEmpty(status)) {
+        if (StringUtils.hasText(status)) {
             wrapper.eq("publish_status", status);
         }
-        if (!StringUtils.isEmpty(brandId) && !"0".equalsIgnoreCase(brandId)) {
+        if (StringUtils.hasText(brandId) && !"0".equalsIgnoreCase(brandId)) {
             wrapper.eq("brand_id", brandId);
         }
-        if (!StringUtils.isEmpty(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
+        if (StringUtils.hasText(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
             wrapper.eq("catelog_Id", catelogId);
         }
         IPage<SpuInfoEntity> page = this.page(

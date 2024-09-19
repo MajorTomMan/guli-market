@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
  */
 @Component
 public class LoginUserInterceptor implements HandlerInterceptor {
-    public static ThreadLocal<LinkedHashMap<String, Object>> loginUser = new InheritableThreadLocal<>();
+    public static ThreadLocal<LinkedHashMap<String, Object>> loginUser = new ThreadLocal<>();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -26,8 +26,11 @@ public class LoginUserInterceptor implements HandlerInterceptor {
          * 解决远程请求被拦截的问题
          */
         String requestURI = request.getRequestURI();
-        boolean match = new AntPathMatcher().match("/order/order/status/**", requestURI);
-        if (match) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        boolean match = antPathMatcher.match("/order/order/status/**", requestURI);
+        boolean payed = antPathMatcher.match("/payed/**", requestURI);
+        boolean kill = antPathMatcher.match("/kill", requestURI);
+        if (match || kill || payed) {
             return true;
         }
         /*

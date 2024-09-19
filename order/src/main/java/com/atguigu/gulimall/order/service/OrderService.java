@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.atguigu.gulimall.common.to.mq.SeckillOrderTo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.vo.OrderConfirmVo;
@@ -35,5 +36,7 @@ public interface OrderService extends IService<OrderEntity> {
     PageUtils queryListWithItem(Map<String, Object> params);
 
     String handlePayResult(PayAsyncVo vo);
+
+    void createSecKillOrder(SeckillOrderTo to);
 }
 

@@ -32,7 +32,9 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gulimall.common.exception.NoStockException;
+import com.atguigu.gulimall.common.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimall.common.to.OrderTo;
+import com.atguigu.gulimall.common.to.mq.SeckillOrderTo;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.common.utils.R;
@@ -48,7 +50,6 @@ import com.atguigu.gulimall.order.feign.CartFeignService;
 import com.atguigu.gulimall.order.feign.MemberFeignService;
 import com.atguigu.gulimall.order.feign.ProductFeignService;
 import com.atguigu.gulimall.order.feign.WareFeignService;
-import com.atguigu.gulimall.order.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimall.order.service.OrderItemService;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.atguigu.gulimall.order.service.PaymentInfoService;
@@ -477,6 +478,44 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             return "success";
         }
         return "failed";
+    }
+
+    @Override
+    public void createSecKillOrder(SeckillOrderTo to) {
+        // 保存订单信息
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderSn(to.getOrderSn());
+        orderEntity.setMemberId(to.getMemberId());
+        orderEntity.setCreateTime(new Date());
+        BigDecimal totalPrice = to.getSeckillPrice().multiply(BigDecimal.valueOf(to.getNum()));
+        orderEntity.setPayAmount(totalPrice);
+        orderEntity.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
+
+        // 保存订单
+        this.save(orderEntity);
+
+        // 保存订单项信息
+        OrderItemEntity orderItem = new OrderItemEntity();
+        orderItem.setOrderSn(to.getOrderSn());
+        orderItem.setRealAmount(totalPrice);
+
+        orderItem.setSkuQuantity(to.getNum());
+
+        // 保存商品的spu信息
+        R r = productFeignService.getSpuInfoBySkuId(to.getSkuId());
+        if (r.getCode() == 0) {
+            SpuInfoVo data = (SpuInfoVo) r.getData(new TypeReference<SpuInfoVo>() {
+            });
+            if (data != null) {
+                orderItem.setSpuId(data.getId());
+                orderItem.setSpuName(data.getSpuName());
+                orderItem.setSpuBrand(data.getBrandName());
+                orderItem.setCategoryId(data.getCatalogId());
+            }
+        }
+
+        // 保存订单项数据
+        orderItemService.save(orderItem);
     }
 
 }

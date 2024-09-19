@@ -22,20 +22,23 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.springframework.util.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.Query;
-
+import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.product.dao.SkuInfoDao;
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
 import com.atguigu.gulimall.product.entity.SkuInfoEntity;
 import com.atguigu.gulimall.product.entity.SpuInfoDescEntity;
+import com.atguigu.gulimall.product.feign.SecKillFeignService;
 import com.atguigu.gulimall.product.service.AttrGroupService;
 import com.atguigu.gulimall.product.service.SkuImagesService;
 import com.atguigu.gulimall.product.service.SkuInfoService;
 import com.atguigu.gulimall.product.service.SkuSaleAttrValueService;
 import com.atguigu.gulimall.product.service.SpuInfoDescService;
+import com.atguigu.gulimall.product.vo.SeckillSkuVo;
 import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.atguigu.gulimall.product.vo.SkuItemVo;
 import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
@@ -52,6 +55,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     private SkuSaleAttrValueService skuSaleAttrValueService;
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
+    @Autowired
+    private SecKillFeignService secKillFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -77,21 +82,21 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         String catelogId = (String) params.get("catelogId");
         String min = (String) params.get("min");
         String max = (String) params.get("max");
-        if (!StringUtils.isEmpty(key)) {
+        if (StringUtils.hasText(key)) {
             wrapper.and((w) -> {
                 w.eq("sku_id", key).or().like("sku_name", key);
             });
         }
-        if (!StringUtils.isEmpty(brandId) && !"0".equalsIgnoreCase(brandId)) {
+        if (StringUtils.hasText(brandId) && !"0".equalsIgnoreCase(brandId)) {
             wrapper.eq("brand_id", brandId);
         }
-        if (!StringUtils.isEmpty(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
+        if (StringUtils.hasText(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
             wrapper.eq("catelog_Id", catelogId);
         }
-        if (!StringUtils.isEmpty(min)) {
+        if (StringUtils.hasText(min)) {
             wrapper.ge("price", min);
         }
-        if (!StringUtils.isEmpty(max)) {
+        if (StringUtils.hasText(max)) {
             try {
                 BigDecimal bigDecimal = new BigDecimal(max);
                 BigDecimal bigDec = new BigDecimal("0");
@@ -147,9 +152,20 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
                     res.getCatalogId());
             skuItemVo.setGroupAttrs(spuItemAttrGroupVos);
         }, threadPoolExecutor);
-        // 3. 查询当前sku是否参与秒杀优惠
-        
-        CompletableFuture.allOf(infoFuture, saleAttrFuture, descFuture, baseAttrFuture, imagesFuture).get();
+        CompletableFuture<Void> secKillFuture = CompletableFuture.runAsync(() -> {
+            // 3. 查询当前sku是否参与秒杀优惠
+            R r = secKillFeignService.getSkuSecKillInfo(skuId);
+            if (r.getCode() == 0) {
+                SeckillSkuVo data = (SeckillSkuVo) r.getData(new TypeReference<List<SeckillSkuVo>>() {
+                });
+                if (data != null) {
+                    skuItemVo.setSeckillSkuVo(data);
+                }
+            }
+        }, threadPoolExecutor);
+
+        CompletableFuture.allOf(infoFuture, saleAttrFuture, descFuture, baseAttrFuture, imagesFuture, secKillFuture)
+                .get();
         return skuItemVo;
     }
 }

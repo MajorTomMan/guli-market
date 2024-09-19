@@ -40,6 +40,7 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     CategoryBrandRelationDao relationDao;
     @Autowired
     BrandService brandService;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<CategoryBrandRelationEntity> page = this.page(
@@ -82,12 +83,13 @@ public class CategoryBrandRelationServiceImpl extends ServiceImpl<CategoryBrandR
     @Override
     public List<BrandEntity> getBrandsByCatId(Long catId) {
 
-        List<CategoryBrandRelationEntity> catelogId = relationDao.selectList(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
+        List<CategoryBrandRelationEntity> catelogId = relationDao
+                .selectList(new QueryWrapper<CategoryBrandRelationEntity>().eq("catelog_id", catId));
         List<BrandEntity> collect = new ArrayList<>();
-        catelogId.stream().forEach(item->{
-            Long brandId=item.getBrandId();
+        catelogId.stream().forEach(item -> {
+            Long brandId = item.getBrandId();
             BrandEntity byId = brandService.getById(brandId);
-            if(byId!=null){
+            if (byId != null) {
                 collect.add(byId);
             }
         });
