@@ -1,13 +1,18 @@
+/*
+ * @Date: 2024-09-02 10:04:38
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-09-21 22:49:44
+ * @FilePath: \Guli\ware\src\main\java\com\atguigu\gulimall\ware\config\WareRabbitMQConfig.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.atguigu.gulimall.ware.config;
 
 import java.util.HashMap;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Exchange;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
