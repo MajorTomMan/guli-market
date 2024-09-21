@@ -1,4 +1,4 @@
-package com.atguigu.gulimall.common.interceptor;
+package com.atguigu.gulimall.order.interceptor;
 
 import java.util.LinkedHashMap;
 
@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
  */
 @Component
 public class LoginUserInterceptor implements HandlerInterceptor {
-    public static ThreadLocal<LinkedHashMap<String, Object>> loginUser = new ThreadLocal<>();
+    public static ThreadLocal<LinkedHashMap<String, Object>> loginUser = new InheritableThreadLocal<>();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -26,11 +26,9 @@ public class LoginUserInterceptor implements HandlerInterceptor {
          * 解决远程请求被拦截的问题
          */
         String requestURI = request.getRequestURI();
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        boolean match = antPathMatcher.match("/order/order/status/**", requestURI);
-        boolean payed = antPathMatcher.match("/payed/**", requestURI);
-        boolean kill = antPathMatcher.match("/kill", requestURI);
-        if (match || kill || payed) {
+        boolean status = new AntPathMatcher().match("/order/order/status/**", requestURI);
+        boolean payed = new AntPathMatcher().match("/payed/**", requestURI);
+        if (status || payed) {
             return true;
         }
         /*
@@ -49,6 +47,7 @@ public class LoginUserInterceptor implements HandlerInterceptor {
             loginUser.set(attribute);
             return true;
         }
+        /* 没有登录,此处feign调用也会经过这个拦截器 */
         session.setAttribute("msg", "请先登录");
         response.sendRedirect("http://auth.gulimall.com/login.html");
         return false;

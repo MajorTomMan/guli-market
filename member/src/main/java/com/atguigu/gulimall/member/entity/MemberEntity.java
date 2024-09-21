@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -61,7 +62,8 @@ public class MemberEntity implements Serializable {
 	/**
 	 * 生日
 	 */
-	private Date birth;
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date birth;
 	/**
 	 * 所在城市
 	 */
@@ -93,7 +95,8 @@ public class MemberEntity implements Serializable {
 	/**
 	 * 注册时间
 	 */
-	private Date createTime;
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date createTime;
 
 	private Integer social_uid;
 

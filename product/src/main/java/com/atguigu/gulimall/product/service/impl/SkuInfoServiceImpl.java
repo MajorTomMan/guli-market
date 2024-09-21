@@ -156,7 +156,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             // 3. 查询当前sku是否参与秒杀优惠
             R r = secKillFeignService.getSkuSecKillInfo(skuId);
             if (r.getCode() == 0) {
-                SeckillSkuVo data = (SeckillSkuVo) r.getData(new TypeReference<List<SeckillSkuVo>>() {
+                SeckillSkuVo data = (SeckillSkuVo) r.getData(new TypeReference<SeckillSkuVo>() {
                 });
                 if (data != null) {
                     skuItemVo.setSeckillSkuVo(data);

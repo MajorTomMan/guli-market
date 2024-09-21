@@ -9,17 +9,18 @@ import com.atguigu.gulimall.seckill.to.SeckillSkuRedisTo;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
+@Controller
 public class SecKillController {
     @Autowired
     SecKillService secKillService;
 
-    @GetMapping("/currentSeckillSkus")
+    @GetMapping("/getCurrentSeckillSkus")
     public R getCurrentSeckillSkus() {
         List<SeckillSkuRedisTo> vos = secKillService.getCurrentSeckillSkus();
         return R.ok().put("data", vos);
@@ -34,9 +35,16 @@ public class SecKillController {
     @GetMapping("/kill")
     public String secKill(@RequestParam("killId") String killId, @RequestParam("key") String key,
             @RequestParam("num") Integer num, Model model) {
-        String orderSn = secKillService.kill(killId, key, num);
-        model.addAttribute("orderSn", orderSn);
-        return "success";
+        String orderSn = null;
+        try {
+            // 1、判断是否登录
+            orderSn = secKillService.kill(killId, key, num);
+            model.addAttribute("orderSn", orderSn);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "failed";
     }
 
 }

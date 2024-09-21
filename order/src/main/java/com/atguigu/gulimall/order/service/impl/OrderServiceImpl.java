@@ -32,7 +32,6 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.atguigu.gulimall.common.exception.NoStockException;
-import com.atguigu.gulimall.common.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimall.common.to.OrderTo;
 import com.atguigu.gulimall.common.to.mq.SeckillOrderTo;
 import com.atguigu.gulimall.common.utils.PageUtils;
@@ -65,6 +64,7 @@ import com.atguigu.gulimall.order.vo.PayVo;
 import com.atguigu.gulimall.order.vo.SkuStockVo;
 import com.atguigu.gulimall.order.vo.SubmitOrderResponseVo;
 import com.atguigu.gulimall.order.vo.WareSkuLockVo;
+import com.atguigu.gulimall.order.interceptor.LoginUserInterceptor;
 
 @Service("orderService")
 public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> implements OrderService {
@@ -431,6 +431,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         PayVo payVo = new PayVo();
         OrderEntity orderByOrderSn = this.getOrderByOrderSn(orderSn);
+        if (orderByOrderSn == null) {
+            return null;
+        }
         BigDecimal totalAmount = orderByOrderSn.getTotalAmount().setScale(2, RoundingMode.UP);
         payVo.setTotal_amount(totalAmount.toString());
         payVo.setOut_trade_no(orderByOrderSn.getOrderSn());

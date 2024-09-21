@@ -53,7 +53,7 @@ public class CartServiceImpl implements CartService {
             CartItemVo cartItemVo = new CartItemVo();
             CompletableFuture.runAsync(() -> {
                 R skuInfo = feignService.getSkuInfo(skuId);
-                SkuInfoVo data = (SkuInfoVo) skuInfo.getData("skuInfo", new TypeReference<SkuInfoVo>() {
+                SkuInfoVo data = (SkuInfoVo) skuInfo.getData(new TypeReference<SkuInfoVo>() {
                 });
                 cartItemVo.setCheck(true);
                 cartItemVo.setCount(num);

@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
@@ -27,11 +28,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import com.atguigu.gulimall.common.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimall.common.to.mq.SeckillOrderTo;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.seckill.feign.CouponFeignService;
 import com.atguigu.gulimall.seckill.feign.ProductFeignService;
+import com.atguigu.gulimall.seckill.interceptor.LoginUserInterceptor;
 import com.atguigu.gulimall.seckill.service.SecKillService;
 import com.atguigu.gulimall.seckill.to.SeckillSkuRedisTo;
 import com.atguigu.gulimall.seckill.vo.SeckillSessionWithSkusVo;
@@ -70,23 +71,25 @@ public class SecKillServiceImpl implements SecKillService {
             List<SeckillSessionWithSkusVo> data = (List<SeckillSessionWithSkusVo>) r
                     .getData(new TypeReference<List<SeckillSessionWithSkusVo>>() {
                     });
-            saveSessionInfos(data);
-            saveSessionSkuInfos(data);
+            if (data != null && !data.isEmpty()) {
+                saveSessionInfos(data);
+                saveSessionSkuInfos(data);
+            }
         }
     }
 
     private void saveSessionSkuInfos(List<SeckillSessionWithSkusVo> vos) {
         vos.forEach(vo -> {
             BoundHashOperations<String, Object, Object> boundHashOps = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
-            vo.getRelationbEntities().forEach(entity -> {
+            vo.getRelationEntities().forEach(entity -> {
                 // 4. 随机码
                 String token = UUID.randomUUID().toString().replace("=", ",");
                 String key = entity.getPromotionSessionId().toString() + "-" + entity.getSkuId().toString();
                 SeckillSkuRedisTo seckillSkuRedisTo = new SeckillSkuRedisTo();
-                if (redisTemplate.hasKey(key)) {
+                if (!redisTemplate.hasKey(key)) {
 
                     // 1. sku的基本信息
-                    R r = productFeignService.getSkuInfo(entity.getId());
+                    R r = productFeignService.getSkuInfo(entity.getSkuId());
                     if (r.getCode() == 0) {
                         SkuInfoVo skuInfoVo = (SkuInfoVo) r.getData(new TypeReference<SkuInfoVo>() {
                         });
@@ -120,7 +123,7 @@ public class SecKillServiceImpl implements SecKillService {
             long endTime = vo.getEndTime().getTime();
             String key = SESSION_CACHE_PREFIX + startTime + "_" + endTime;
             if (!redisTemplate.hasKey(key)) {
-                List<String> list = vo.getRelationbEntities().stream()
+                List<String> list = vo.getRelationEntities().stream()
                         .map(item -> item.getPromotionSessionId() + "-" + item.getSkuId().toString()).toList();
                 redisTemplate.opsForList().leftPushAll(key, list);
             }
@@ -143,11 +146,13 @@ public class SecKillServiceImpl implements SecKillService {
                 if (currentTime > startTime && currentTime < endTime) {
                     // 取出当前秒杀活动对应商品存储的hash key
                     List<Object> range = redisTemplate.opsForList().range(key, -100, 100);
-                    BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
+                    List<Object> list = transList2String(range);
+                    BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
                     // 取出存储的商品信息并返回
-                    List<SeckillSkuRedisTo> collect = range.stream().map(s -> {
-                        String json = ops.get(s);
-                        SeckillSkuRedisTo redisTo = gson.fromJson(json, SeckillSkuRedisTo.class);
+                    List<Object> multiGet = ops.multiGet(list);
+                    List<SeckillSkuRedisTo> collect = multiGet.stream().map(json -> {
+                        SeckillSkuRedisTo redisTo = gson.fromJson(gson.toJson(json),
+                                SeckillSkuRedisTo.class);
                         return redisTo;
                     }).collect(Collectors.toList());
                     return collect;
@@ -160,14 +165,14 @@ public class SecKillServiceImpl implements SecKillService {
     @Override
     public SeckillSkuRedisTo getSkuSecKillInfo(Long skuId) {
         // TODO Auto-generated method stub
-        BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(SESSION_CACHE_PREFIX);
+        BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
         // 获取所有商品的hash key
-        Set<String> keys = ops.keys();
-        for (String key : keys) {
+        Set<Object> keys = ops.keys();
+        for (Object key : keys) {
             // 通过正则表达式匹配 数字-当前skuid的商品
-            if (Pattern.matches("\\d-" + skuId, key)) {
-                String v = ops.get(key);
-                SeckillSkuRedisTo redisTo = gson.fromJson(v, SeckillSkuRedisTo.class);
+            if (Pattern.matches("\\d-" + skuId, String.valueOf(key))) {
+                Object v = ops.get(key);
+                SeckillSkuRedisTo redisTo = gson.fromJson(gson.toJson(v), SeckillSkuRedisTo.class);
                 // 当前商品参与秒杀活动
                 if (redisTo != null) {
                     long current = System.currentTimeMillis();
@@ -191,16 +196,20 @@ public class SecKillServiceImpl implements SecKillService {
         // TODO Auto-generated method stub
         Long startTime = System.currentTimeMillis();
         LinkedHashMap<String, Object> user = LoginUserInterceptor.loginUser.get();
+        if (user == null) {
+            log.error("用户未登录,返回");
+            return null;
+        }
         BoundHashOperations<String, Object, Object> boundHashOps = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
         Object json = boundHashOps.get(killId);
         if (json != null || !ObjectUtils.isEmpty(json)) {
-            SeckillSkuRedisTo to = gson.fromJson(String.valueOf(json), SeckillSkuRedisTo.class);
+            SeckillSkuRedisTo to = gson.fromJson(gson.toJson(json), SeckillSkuRedisTo.class);
             // 校验合法性
             long time = new Date().getTime();
             if (time >= to.getStartTime() && time <= to.getEndTime()) {
                 // 校验随机码和商品id是否正确
                 String randomCode = to.getRandomCode();
-                String pid = to.getPromotionSessionId() + "_" + to.getSkuId();
+                String pid = to.getPromotionSessionId() + "-" + to.getSkuId();
                 if (randomCode.equals(key) && killId.equals(pid)) {
                     // 校验购物数量是否合理
                     if (num <= to.getSeckillLimit()) {
@@ -232,7 +241,7 @@ public class SecKillServiceImpl implements SecKillService {
                                     log.info("耗时时间:" + (endTime - startTime));
                                     return timeId;
                                 }
-                            } catch (InterruptedException e) {
+                            } catch (Exception e) {
                                 // TODO Auto-generated catch block
                                 // 若抛出异常则代表秒杀失败
                                 log.error(e.getMessage());
@@ -244,5 +253,22 @@ public class SecKillServiceImpl implements SecKillService {
             }
         }
         return null;
+    }
+
+    // 用于解决range返回结果中list套娃的问题
+    private List<Object> transList2String(List<Object> list) {
+        List<Object> result = new ArrayList<>();
+        if (list != null) {
+            for (Object item : list) {
+                if (item instanceof List) {
+                    // 如果元素是一个嵌套的List，递归调用该方法并将其结果加入结果列表
+                    result.addAll(transList2String((List<Object>) item));
+                } else {
+                    // 如果元素不是List，转换为字符串并加入结果列表
+                    result.add(item);
+                }
+            }
+        }
+        return result;
     }
 }

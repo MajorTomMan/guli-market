@@ -3,6 +3,7 @@ package com.atguigu.gulimall.order.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
@@ -41,7 +42,8 @@ public class OrderReturnApplyEntity implements Serializable {
 	/**
 	 * 申请时间
 	 */
-	private Date createTime;
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date createTime;
 	/**
 	 * 会员用户名
 	 */
@@ -65,7 +67,8 @@ public class OrderReturnApplyEntity implements Serializable {
 	/**
 	 * 处理时间
 	 */
-	private Date handleTime;
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date handleTime;
 	/**
 	 * 商品图片
 	 */
@@ -121,7 +124,8 @@ public class OrderReturnApplyEntity implements Serializable {
 	/**
 	 * 收货时间
 	 */
-	private Date receiveTime;
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date receiveTime;
 	/**
 	 * 收货备注
 	 */

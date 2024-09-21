@@ -1,13 +1,10 @@
-package com.atguigu.gulimall.common.callback;
-
-import java.io.IOException;
+package com.atguigu.gulimall.common.config;
 
 import org.springframework.amqp.core.ReturnedMessage;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.RecoveryCallback;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
@@ -27,9 +24,9 @@ import lombok.extern.log4j.Log4j2;
  */
 
 // 回调接口
-@Component
 @Log4j2
-public class RabbitMessageCallBack implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnsCallback {
+@Configuration
+public class RabbitMessageCallBackConfig implements RabbitTemplate.ConfirmCallback, RabbitTemplate.ReturnsCallback {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
@@ -49,7 +46,6 @@ public class RabbitMessageCallBack implements RabbitTemplate.ConfirmCallback, Ra
      */
     @Override
     public void returnedMessage(ReturnedMessage returned) {
-
         log.info(returned);
     }
 
@@ -61,7 +57,7 @@ public class RabbitMessageCallBack implements RabbitTemplate.ConfirmCallback, Ra
      */
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-
+        log.info("rabbit 收到消息");
         log.info("correlationData" + "==>ack:[" + ack + "]==>cause:[" + cause + "]");
     }
 

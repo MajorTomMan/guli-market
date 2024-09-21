@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
@@ -44,6 +45,7 @@ public class OrderEntity implements Serializable {
 	/**
 	 * create_time
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date createTime;
 	/**
 	 * 用户名
@@ -176,25 +178,30 @@ public class OrderEntity implements Serializable {
 	/**
 	 * 支付时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date paymentTime;
 	/**
 	 * 发货时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date deliveryTime;
 	/**
 	 * 确认收货时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date receiveTime;
 	/**
 	 * 评价时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date commentTime;
 	/**
 	 * 修改时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date modifyTime;
-	/* 
-	 *  商品列表
+	/*
+	 * 商品列表
 	 */
 	@TableField(exist = false)
 	private List<OrderItemEntity> itemEntities;

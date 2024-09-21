@@ -7,9 +7,6 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 @Configuration
 public class RabbitMQConfig {
 

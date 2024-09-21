@@ -6,6 +6,8 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @ToString
 @Data
 public class MemberResponseVo implements Serializable {
@@ -48,6 +50,7 @@ public class MemberResponseVo implements Serializable {
     /**
      * 生日
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date birth;
     /**
      * 所在城市
@@ -80,6 +83,7 @@ public class MemberResponseVo implements Serializable {
     /**
      * 注册时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date createTime;
 
     /**

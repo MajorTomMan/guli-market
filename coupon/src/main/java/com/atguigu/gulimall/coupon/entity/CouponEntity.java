@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
@@ -58,11 +59,13 @@ public class CouponEntity implements Serializable {
 	/**
 	 * 开始时间
 	 */
-	private Date startTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date startTime;
 	/**
 	 * 结束时间
 	 */
-	private Date endTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date endTime;
 	/**
 	 * 使用类型[0->全场通用；1->指定分类；2->指定商品]
 	 */
@@ -86,11 +89,13 @@ public class CouponEntity implements Serializable {
 	/**
 	 * 可以领取的开始日期
 	 */
-	private Date enableStartTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date enableStartTime;
 	/**
 	 * 可以领取的结束日期
 	 */
-	private Date enableEndTime;
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date enableEndTime;
 	/**
 	 * 优惠码
 	 */

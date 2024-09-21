@@ -35,6 +35,9 @@ public class SeckillSessionServiceImpl extends ServiceImpl<SeckillSessionDao, Se
         return new PageUtils(page);
     }
 
+    /* 
+     *  查找在开始至结束时间段内开始的活动
+     */
     @Override
     public List<SeckillSessionEntity> getLatest3DaySession() {
         // TODO Auto-generated method stub
@@ -48,24 +51,23 @@ public class SeckillSessionServiceImpl extends ServiceImpl<SeckillSessionDao, Se
                 entity.setRelationEntities(relations);
                 return entity;
             })).toList();
+            return entities;
         }
         return null;
     }
 
     private String endTime() {
-        // TODO Auto-generated method stub
         LocalDateTime now = LocalDateTime.now().plusDays(2);
         LocalDateTime max = now.with(LocalTime.MAX);
-        String format = max.format(DateTimeFormatter.ofPattern(DateTimeFormatter.ISO_LOCAL_DATE_TIME.toString()));
-        return format;
+        // 直接使用 ISO_LOCAL_DATE_TIME 格式化
+        return max.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     private String startTime() {
-        // TODO Auto-generated method stub
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().minusDays(1);
         LocalDateTime min = now.with(LocalTime.MIN);
-        String format = min.format(DateTimeFormatter.ofPattern(DateTimeFormatter.ISO_LOCAL_DATE_TIME.toString()));
-        return format;
+        // 直接使用 ISO_LOCAL_DATE_TIME 格式化
+        return min.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
 }

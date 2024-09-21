@@ -3,6 +3,7 @@ package com.atguigu.gulimall.order.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public class PaymentInfoEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 订单号（对外业务号）
@@ -53,10 +54,12 @@ public class PaymentInfoEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date createTime;
 	/**
 	 * 确认时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date confirmTime;
 	/**
 	 * 回调内容
@@ -65,6 +68,7 @@ public class PaymentInfoEntity implements Serializable {
 	/**
 	 * 回调时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date callbackTime;
 
 }

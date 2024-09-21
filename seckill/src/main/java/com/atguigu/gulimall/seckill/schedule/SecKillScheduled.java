@@ -14,33 +14,41 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.seckill.service.SecKillService;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-@Service
+@RequestMapping("test")
+@RestController
 public class SecKillScheduled {
     @Autowired
     SecKillService secKillService;
     @Autowired
     RedissonClient redissonClient;
-    private final String upload_lock = "seckill:upload:lock";
+    private final String upload_lock = "seckill:upload:lock:";
 
     @Scheduled(cron = "0 0 3 * * ?")
     public void uploadSecKillSkuLatest3Days() {
         // 分布式锁
-        RLock lock = redissonClient.getLock(upload_lock);
-        lock.lock(10, TimeUnit.SECONDS);
+        //RLock lock = redissonClient.getLock(upload_lock);
+       // lock.lock(10, TimeUnit.HOURS);
         try {
             secKillService.upload3Days();
         } catch (Exception e) {
             // TODO: handle exception
             log.error(e.getMessage());
         } finally {
-            lock.unlock();
+            //lock.unlock();
         }
+    }
 
+    @GetMapping("/test")
+    public void testUpload() {
+        uploadSecKillSkuLatest3Days();
     }
 }

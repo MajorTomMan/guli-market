@@ -25,7 +25,7 @@ public class SpuInfoEntity implements Serializable {
 	/**
 	 * 商品id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 商品名称
@@ -54,12 +54,12 @@ public class SpuInfoEntity implements Serializable {
 	/**
 	 * 
 	 */
-	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date createTime;
 	/**
 	 * 
 	 */
-	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date updateTime;
 
 }

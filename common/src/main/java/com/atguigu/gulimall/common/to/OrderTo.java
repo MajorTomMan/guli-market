@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Date;
 
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
 public class OrderTo {
@@ -26,6 +26,7 @@ public class OrderTo {
     /**
      * create_time
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date createTime;
     /**
      * 用户名
@@ -158,22 +159,27 @@ public class OrderTo {
     /**
      * 支付时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date paymentTime;
     /**
      * 发货时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date deliveryTime;
     /**
      * 确认收货时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date receiveTime;
     /**
      * 评价时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date commentTime;
     /**
      * 修改时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date modifyTime;
 
 }

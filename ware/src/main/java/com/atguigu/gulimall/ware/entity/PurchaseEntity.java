@@ -3,6 +3,7 @@ package com.atguigu.gulimall.ware.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public class PurchaseEntity implements Serializable {
 	/**
 	 * 
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 
@@ -57,10 +58,12 @@ public class PurchaseEntity implements Serializable {
 	/**
 	 * 
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date createTime;
 	/**
 	 * 
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date updateTime;
 
 }

@@ -5,6 +5,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * @Description:
  * @Created: with IntelliJ IDEA.
@@ -52,10 +54,12 @@ public class SpuInfoVo {
     /**
      *
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date createTime;
     /**
      *
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date updateTime;
 
 }

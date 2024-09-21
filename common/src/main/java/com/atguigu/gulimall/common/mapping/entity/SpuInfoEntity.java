@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.io.Serializable;
@@ -64,10 +65,12 @@ public class SpuInfoEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private Date createTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date createTime;
 	/**
 	 * 
 	 */
-	private Date updateTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date updateTime;
 
 }

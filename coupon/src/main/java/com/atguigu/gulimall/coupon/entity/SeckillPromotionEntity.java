@@ -7,10 +7,12 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 package com.atguigu.gulimall.coupon.entity;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -31,7 +33,7 @@ public class SeckillPromotionEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 活动标题
@@ -40,10 +42,12 @@ public class SeckillPromotionEntity implements Serializable {
 	/**
 	 * 开始日期
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date startTime;
 	/**
 	 * 结束日期
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date endTime;
 	/**
 	 * 上下线状态
@@ -52,6 +56,7 @@ public class SeckillPromotionEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date createTime;
 	/**
 	 * 创建人

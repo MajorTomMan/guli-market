@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @ToString
 @Data
 public class PayAsyncVo {
@@ -14,7 +16,7 @@ public class PayAsyncVo {
     private String gmt_create;
     private String charset;
     private String gmt_payment;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
     private Date notify_time;
     private String subject;
     private String sign;

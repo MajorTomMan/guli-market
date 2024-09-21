@@ -3,6 +3,7 @@ package com.atguigu.gulimall.order.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -36,7 +37,8 @@ public class OrderOperateHistoryEntity implements Serializable {
 	/**
 	 * 操作时间
 	 */
-	private Date createTime;
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date createTime;
 	/**
 	 * 订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】
 	 */

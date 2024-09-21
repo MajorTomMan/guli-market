@@ -35,13 +35,13 @@ public class SeckillSessionEntity implements Serializable {
 	/**
 	 * 每日开始时间
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Shanghai")
-	private Date startTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date startTime;
 	/**
 	 * 每日结束时间
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Shanghai")
-	private Date endTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date endTime;
 	/**
 	 * 启用状态
 	 */
@@ -49,8 +49,8 @@ public class SeckillSessionEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "Asia/Shanghai")
-	private Date createTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
+    private Date createTime;
 	/* 
 	 *  关联列表
 	 */

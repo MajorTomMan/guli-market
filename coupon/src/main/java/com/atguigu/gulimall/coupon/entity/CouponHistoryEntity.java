@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -24,7 +25,7 @@ public class CouponHistoryEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 	/**
 	 * 优惠券id
@@ -45,6 +46,7 @@ public class CouponHistoryEntity implements Serializable {
 	/**
 	 * 创建时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date createTime;
 	/**
 	 * 使用状态[0->未使用；1->已使用；2->已过期]
@@ -53,6 +55,7 @@ public class CouponHistoryEntity implements Serializable {
 	/**
 	 * 使用时间
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date useTime;
 	/**
 	 * 订单id

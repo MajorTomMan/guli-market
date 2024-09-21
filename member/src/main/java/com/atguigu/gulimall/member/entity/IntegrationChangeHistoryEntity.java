@@ -3,6 +3,7 @@ package com.atguigu.gulimall.member.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,7 +24,7 @@ public class IntegrationChangeHistoryEntity implements Serializable {
 	/**
 	 * id
 	 */
-	@TableId(value = "id",type = IdType.AUTO)
+	@TableId(value = "id", type = IdType.AUTO)
 	private Long id;
 	/**
 	 * member_id
@@ -32,6 +33,7 @@ public class IntegrationChangeHistoryEntity implements Serializable {
 	/**
 	 * create_time
 	 */
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX", timezone = "Asia/Shanghai")
 	private Date createTime;
 	/**
 	 * 变化的值
