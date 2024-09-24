@@ -36,7 +36,7 @@ public class OrderRabbitMQConfig {
         arguments.put("x-dead-letter-exchange", "order-event-exchange");
         // 死信路由键
         arguments.put("x-dead-letter-routing-key", "order.release.order");
-        arguments.put("x-message-ttl", Duration.ofMinutes(1).toMillis()); // 消息过期时间 1分钟
+        arguments.put("x-message-ttl", Duration.ofMinutes(30).toMillis()); // 消息过期时间 1分钟
         return new Queue("order.delay.queue", true, false, false, arguments);
     }
 

@@ -420,7 +420,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
             try {
                 // 保证消息一定会发送出去,每个消息都做好日志记录,给数据库保存每个消息的详细信息
                 // 定期扫描数据库,将失败的消息重新发送
-                rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", byId);
+                rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderTo);
             } catch (Exception e) {
                 // 重试发送失败消息
             }
@@ -531,7 +531,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
                 orderItemEntity.setSkuQuantity(to.getNum());
                 orderItemService.save(orderItemEntity);
                 // 定时关闭未支付的订单
-                //rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderEntity);
+                // rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other",
+                // orderEntity);
             }
         }
     }
