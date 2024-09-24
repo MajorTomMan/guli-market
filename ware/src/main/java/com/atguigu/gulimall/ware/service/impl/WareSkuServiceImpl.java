@@ -176,7 +176,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
                     BeanUtils.copyProperties(wareOrderTaskDetailEntity, stockDetailTo);
                     // 只发ID会导致找不到数据
                     stockLockedTo.setDetailTo(stockDetailTo);
-                    rabbitTemplate.convertAndSend("stock-event-exchange", "stock.lock", stockLockedTo);
+                    rabbitTemplate.convertAndSend("stock-event-exchange", "stock.locked", stockLockedTo);
                     break;
                 }
             }

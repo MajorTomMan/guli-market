@@ -7,9 +7,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.atguigu.gulimall.common.to.mq.SeckillOrderTo;
-import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.rabbitmq.client.Channel;
 
@@ -17,7 +17,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RabbitListener(queues = "order.seckill.order.queue")
-@Component
+@Service
 public class OrderSecKillListener {
     @Autowired
     private OrderService orderService;

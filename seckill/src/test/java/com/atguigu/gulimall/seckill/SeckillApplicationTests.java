@@ -9,8 +9,10 @@ class SeckillApplicationTests {
 	@Autowired
 	SecKillScheduled schedule;
 	@Test
-	void contextLoads() {
+	public void testUpload(){
 		schedule.uploadSecKillSkuLatest3Days();
 	}
-
+	public void testUpdate(){
+		
+	}
 }

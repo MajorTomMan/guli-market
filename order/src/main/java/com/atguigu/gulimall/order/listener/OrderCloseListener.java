@@ -12,6 +12,8 @@ import com.atguigu.gulimall.order.entity.OrderEntity;
 import com.atguigu.gulimall.order.service.OrderService;
 import com.rabbitmq.client.Channel;
 
+import lombok.extern.log4j.Log4j2;
+
 /* 
  *  加上ACKMODE避免
  * com.rabbitmq.client.ShutdownSignalException: 
@@ -20,7 +22,8 @@ import com.rabbitmq.client.Channel;
  *  - unknown delivery tag 1, class-id=60, method-id=80)
  */
 @Service
-@RabbitListener(queues = { "order.release.order.queue" }, ackMode = "MANUAL")
+@Log4j2
+@RabbitListener(queues = { "order.release.order.queue" })
 public class OrderCloseListener {
     @Autowired
     private OrderService orderService;
@@ -29,6 +32,7 @@ public class OrderCloseListener {
     public void closeListener(OrderEntity entity, Channel channel, Message message) throws IOException {
         // 关单逻辑
         try {
+            log.info("准备关单");
             orderService.closeOrder(entity);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {

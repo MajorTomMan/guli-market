@@ -35,15 +35,15 @@ public class SecKillScheduled {
     @Scheduled(cron = "0 0 3 * * ?")
     public void uploadSecKillSkuLatest3Days() {
         // 分布式锁
-        //RLock lock = redissonClient.getLock(upload_lock);
-       // lock.lock(10, TimeUnit.HOURS);
+        RLock lock = redissonClient.getLock(upload_lock);
+        lock.lock(100, TimeUnit.MICROSECONDS);
         try {
             secKillService.upload3Days();
         } catch (Exception e) {
             // TODO: handle exception
             log.error(e.getMessage());
         } finally {
-            //lock.unlock();
+            lock.unlock();
         }
     }
 

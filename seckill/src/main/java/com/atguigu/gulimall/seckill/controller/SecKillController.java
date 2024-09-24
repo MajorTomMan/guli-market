@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.seckill.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.seckill.service.SecKillService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Controller
+@RestController
 public class SecKillController {
     @Autowired
     SecKillService secKillService;
@@ -33,18 +34,20 @@ public class SecKillController {
     }
 
     @GetMapping("/kill")
-    public String secKill(@RequestParam("killId") String killId, @RequestParam("key") String key,
-            @RequestParam("num") Integer num, Model model) {
+    public ModelAndView secKill(@RequestParam("killId") String killId, @RequestParam("key") String key,
+            @RequestParam("num") Integer num, ModelAndView modelAndView) {
         String orderSn = null;
         try {
             // 1、判断是否登录
             orderSn = secKillService.kill(killId, key, num);
-            model.addAttribute("orderSn", orderSn);
-            return "success";
+            modelAndView.setViewName("success");
+            modelAndView.addObject("orderSn", orderSn);
+            return modelAndView;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "failed";
+        modelAndView.setViewName("success");
+        return modelAndView;
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -61,6 +62,7 @@ import com.atguigu.gulimall.order.vo.OrderItemVo;
 import com.atguigu.gulimall.order.vo.OrderSubmitVo;
 import com.atguigu.gulimall.order.vo.PayAsyncVo;
 import com.atguigu.gulimall.order.vo.PayVo;
+import com.atguigu.gulimall.order.vo.SeckillSkuInfoVo;
 import com.atguigu.gulimall.order.vo.SkuStockVo;
 import com.atguigu.gulimall.order.vo.SubmitOrderResponseVo;
 import com.atguigu.gulimall.order.vo.WareSkuLockVo;
@@ -434,7 +436,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         if (orderByOrderSn == null) {
             return null;
         }
-        BigDecimal totalAmount = orderByOrderSn.getTotalAmount().setScale(2, RoundingMode.UP);
+        BigDecimal totalAmount = orderByOrderSn.getPayAmount().setScale(2, RoundingMode.UP);
         payVo.setTotal_amount(totalAmount.toString());
         payVo.setOut_trade_no(orderByOrderSn.getOrderSn());
         List<OrderItemEntity> list = orderItemService
@@ -470,10 +472,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
         // 1. 保存交易流水
         PaymentInfoEntity paymentInfoEntity = new PaymentInfoEntity();
-        paymentInfoEntity.setAlipayTradeNo(vo.getTrade_no());
         paymentInfoEntity.setOrderSn(vo.getOut_trade_no());
+        paymentInfoEntity.setAlipayTradeNo(vo.getTrade_no());
+        paymentInfoEntity.setTotalAmount(new BigDecimal(vo.getBuyer_pay_amount()));
+        paymentInfoEntity.setSubject(vo.getBody());
         paymentInfoEntity.setPaymentStatus(vo.getTrade_status());
+        paymentInfoEntity.setCreateTime(new Date());
         paymentInfoEntity.setCallbackTime(vo.getNotify_time());
+        // 添加到数据库中
+        this.paymentInfoService.save(paymentInfoEntity);
         String status = vo.getTrade_status();
         if (status.equals(AlipayStatusConstant.TRADE_SUCCESS) || status.equals(AlipayStatusConstant.TRADE_FINISHED)) {
             String out_trade_no = vo.getOut_trade_no();
@@ -483,6 +490,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         return "failed";
     }
 
+    @Transactional
     @Override
     public void createSecKillOrder(SeckillOrderTo to) {
         // 保存订单信息
@@ -494,31 +502,37 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         orderEntity.setPayAmount(totalPrice);
         orderEntity.setStatus(OrderStatusEnum.CREATE_NEW.getCode());
 
-        // 保存订单
-        this.save(orderEntity);
-
+        // 保存订单,
+        // 使用update来防止上一次消息未消费完出现异常
+        // 导致消息不断重发造成程序不断循环
+        OrderEntity one = this.getOne(new QueryWrapper<OrderEntity>().eq("order_sn", to.getOrderSn()));
+        if (one == null) {
+            this.save(orderEntity);
+        }
         // 保存订单项信息
         OrderItemEntity orderItem = new OrderItemEntity();
         orderItem.setOrderSn(to.getOrderSn());
         orderItem.setRealAmount(totalPrice);
-
         orderItem.setSkuQuantity(to.getNum());
-
         // 保存商品的spu信息
-        R r = productFeignService.getSpuInfoBySkuId(to.getSkuId());
+        R r = productFeignService.getSkuInfo(to.getSkuId());
         if (r.getCode() == 0) {
-            SpuInfoVo data = (SpuInfoVo) r.getData(new TypeReference<SpuInfoVo>() {
+            SeckillSkuInfoVo skuInfo = (SeckillSkuInfoVo) r.getData(new TypeReference<SeckillSkuInfoVo>() {
             });
-            if (data != null) {
-                orderItem.setSpuId(data.getId());
-                orderItem.setSpuName(data.getSpuName());
-                orderItem.setSpuBrand(data.getBrandName());
-                orderItem.setCategoryId(data.getCatalogId());
+            if (skuInfo != null) {
+                OrderItemEntity orderItemEntity = new OrderItemEntity();
+                orderItemEntity.setOrderSn(to.getOrderSn());
+                orderItemEntity.setSpuId(skuInfo.getSpuId());
+                orderItemEntity.setCategoryId(skuInfo.getCatalogId());
+                orderItemEntity.setSkuId(skuInfo.getSkuId());
+                orderItemEntity.setSkuName(skuInfo.getSkuName());
+                orderItemEntity.setSkuPic(skuInfo.getSkuDefaultImg());
+                orderItemEntity.setSkuPrice(skuInfo.getPrice());
+                orderItemEntity.setSkuQuantity(to.getNum());
+                orderItemService.save(orderItemEntity);
+                // 定时关闭未支付的订单
+                //rabbitTemplate.convertAndSend("order-event-exchange", "order.release.other", orderEntity);
             }
         }
-
-        // 保存订单项数据
-        orderItemService.save(orderItem);
     }
-
 }

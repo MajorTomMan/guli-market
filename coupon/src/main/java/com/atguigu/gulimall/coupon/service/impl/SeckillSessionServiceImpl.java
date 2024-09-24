@@ -35,8 +35,8 @@ public class SeckillSessionServiceImpl extends ServiceImpl<SeckillSessionDao, Se
         return new PageUtils(page);
     }
 
-    /* 
-     *  查找在开始至结束时间段内开始的活动
+    /*
+     * 查找在开始至结束时间段内开始的活动
      */
     @Override
     public List<SeckillSessionEntity> getLatest3DaySession() {
@@ -64,7 +64,7 @@ public class SeckillSessionServiceImpl extends ServiceImpl<SeckillSessionDao, Se
     }
 
     private String startTime() {
-        LocalDateTime now = LocalDateTime.now().minusDays(1);
+        LocalDateTime now = LocalDateTime.now().minusDays(100);
         LocalDateTime min = now.with(LocalTime.MIN);
         // 直接使用 ISO_LOCAL_DATE_TIME 格式化
         return min.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);

@@ -7,7 +7,9 @@
  */
 package com.atguigu.gulimall.seckill.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -105,7 +107,7 @@ public class SecKillServiceImpl implements SecKillService {
                     seckillSkuRedisTo.setRandomCode(token);
                     boundHashOps.put(key, seckillSkuRedisTo);
                     // 5.使用库存作为分布式信号量
-                    RSemaphore semaphore = redissonClient.getSemaphore(key);
+                    RSemaphore semaphore = redissonClient.getSemaphore(SKU_STOCK_SEMAPHORE + token);
                     /*
                      * 商品可以秒杀的数量作为信号量
                      */
@@ -204,8 +206,12 @@ public class SecKillServiceImpl implements SecKillService {
         Object json = boundHashOps.get(killId);
         if (json != null || !ObjectUtils.isEmpty(json)) {
             SeckillSkuRedisTo to = gson.fromJson(gson.toJson(json), SeckillSkuRedisTo.class);
-            // 校验合法性
+            // 校验合法性 
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
             long time = new Date().getTime();
+            log.info("start time :" + formatter.format(to.getStartTime()));
+            log.info("current time:" + formatter.format(time));
+            log.info("end time :" + formatter.format(to.getEndTime()));
             if (time >= to.getStartTime() && time <= to.getEndTime()) {
                 // 校验随机码和商品id是否正确
                 String randomCode = to.getRandomCode();
@@ -218,13 +224,13 @@ public class SecKillServiceImpl implements SecKillService {
                                 + to.getSkuId();
                         // 自动过期时间
                         long ttl = to.getEndTime() - time;
-                        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(redisKey, num.toString(), ttl,
+                        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(redisKey, num, ttl,
                                 TimeUnit.MILLISECONDS);
                         // 成功则说明该用户从未秒杀过该商品
                         if (setIfAbsent) {
                             RSemaphore semaphore = redissonClient.getSemaphore(SKU_STOCK_SEMAPHORE + randomCode);
                             try {
-                                boolean tryAcquire = semaphore.tryAcquire(num, Duration.ofMillis(100));
+                                boolean tryAcquire = semaphore.tryAcquire(num, Duration.ofMillis(1000));
                                 if (tryAcquire) {
                                     // 快速下单,发送MQ消息
                                     String timeId = IdWorker.getTimeId();
@@ -235,7 +241,7 @@ public class SecKillServiceImpl implements SecKillService {
                                     seckillOrderTo.setPromotionSessionId(to.getPromotionSessionId());
                                     seckillOrderTo.setSkuId(to.getSkuId());
                                     seckillOrderTo.setSeckillPrice(to.getSeckillPrice());
-                                    rabbitTemplate.convertAndSend("order-event-exchange", "order-seckill.order",
+                                    rabbitTemplate.convertAndSend("order-event-exchange", "order.seckill.order",
                                             seckillOrderTo);
                                     Long endTime = System.currentTimeMillis();
                                     log.info("耗时时间:" + (endTime - startTime));

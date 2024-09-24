@@ -7,6 +7,7 @@
  */
 package com.atguigu.gulimall.ware.config;
 
+import java.time.Duration;
 import java.util.HashMap;
 
 import org.springframework.amqp.core.Binding;
@@ -26,8 +27,6 @@ public class WareRabbitMQConfig {
 
         return new TopicExchange("stock-event-exchange", true, false);
     }
-
-
 
     /**
      * 普通队列，用于解锁库存
@@ -57,7 +56,7 @@ public class WareRabbitMQConfig {
         arguments.put("x-dead-letter-exchange", "stock-event-exchange");
         arguments.put("x-dead-letter-routing-key", "stock.release");
         // 消息过期时间 2分钟
-        arguments.put("x-message-ttl", 120000);
+        arguments.put("x-message-ttl", Duration.ofMinutes(2).toMillis());
         Queue queue = new Queue("stock.delay.queue", true, false, false, arguments);
         return queue;
     }
