@@ -7,3 +7,4 @@ com.atguigu.gulimall.common.config.ThreadConfig
 com.atguigu.gulimall.common.config.FeignConfig
 com.atguigu.gulimall.common.config.RabbitMQConfig
 com.atguigu.gulimall.common.config.RabbitMessageCallBackConfig
+com.atguigu.gulimall.common.config.SentinelBlockExceptionHandler

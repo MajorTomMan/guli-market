@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import com.alibaba.cloud.sentinel.custom.SentinelAutoConfiguration;
 import com.atguigu.gulimall.common.config.RedisConfig;
 import com.atguigu.gulimall.common.config.SessionConfig;
 import com.atguigu.gulimall.common.config.ThreadConfig;
@@ -22,7 +23,7 @@ import com.atguigu.gulimall.common.config.ThreadConfig;
 @EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, RedissonAutoConfigurationV2.class,
-        RedisConfig.class, SessionConfig.class, ThreadConfig.class })
+        RedisConfig.class, SessionConfig.class, ThreadConfig.class})
 public class ThirdPartyApplication {
 
     public static void main(String[] args) {

@@ -72,7 +72,7 @@ spring:
           uri: lb://seckill
           predicates:
             - Host=seckill.gulimall.com
-        - id: host_route
+        - id: index_route
           uri: lb://product
           predicates:
             - Host=gulimall.com,item.gulimall.com

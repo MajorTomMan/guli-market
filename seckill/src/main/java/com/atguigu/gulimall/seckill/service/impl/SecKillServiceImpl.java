@@ -30,6 +30,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.alibaba.csp.sentinel.Entry;
+import com.alibaba.csp.sentinel.SphU;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.atguigu.gulimall.common.to.mq.SeckillOrderTo;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.seckill.feign.CouponFeignService;
@@ -133,33 +136,46 @@ public class SecKillServiceImpl implements SecKillService {
         });
     }
 
+    public static List<SeckillSkuRedisTo> seckillSkusHandler() {
+        log.error("限流,降级处理");
+        return null;
+    }
+
+    @SentinelResource(value = "getCurrentSeckillSkus", blockHandler = "seckillSkusHandler")
     @Override
     public List<SeckillSkuRedisTo> getCurrentSeckillSkus() {
         // TODO Auto-generated method stub
-        Set<String> keys = redisTemplate.keys(SESSION_CACHE_PREFIX + "*");
-        if (keys != null && keys.size() > 0) {
-            long currentTime = System.currentTimeMillis();
-            for (String key : keys) {
-                String replace = key.replace(SESSION_CACHE_PREFIX, "");
-                String[] split = replace.split("_");
-                long startTime = Long.parseLong(split[0]);
-                long endTime = Long.parseLong(split[1]);
-                // 当前秒杀活动处于有效期内
-                if (currentTime > startTime && currentTime < endTime) {
-                    // 取出当前秒杀活动对应商品存储的hash key
-                    List<Object> range = redisTemplate.opsForList().range(key, -100, 100);
-                    List<Object> list = transList2String(range);
-                    BoundHashOperations<String, Object, Object> ops = redisTemplate.boundHashOps(SKUKILL_CACHE_PREFIX);
-                    // 取出存储的商品信息并返回
-                    List<Object> multiGet = ops.multiGet(list);
-                    List<SeckillSkuRedisTo> collect = multiGet.stream().map(json -> {
-                        SeckillSkuRedisTo redisTo = gson.fromJson(gson.toJson(json),
-                                SeckillSkuRedisTo.class);
-                        return redisTo;
-                    }).collect(Collectors.toList());
-                    return collect;
+        // 加try风格的限流
+        try (Entry entry = SphU.entry("seckillSkus")) {
+            Set<String> keys = redisTemplate.keys(SESSION_CACHE_PREFIX + "*");
+            if (keys != null && keys.size() > 0) {
+                long currentTime = System.currentTimeMillis();
+                for (String key : keys) {
+                    String replace = key.replace(SESSION_CACHE_PREFIX, "");
+                    String[] split = replace.split("_");
+                    long startTime = Long.parseLong(split[0]);
+                    long endTime = Long.parseLong(split[1]);
+                    // 当前秒杀活动处于有效期内
+                    if (currentTime > startTime && currentTime < endTime) {
+                        // 取出当前秒杀活动对应商品存储的hash key
+                        List<Object> range = redisTemplate.opsForList().range(key, -100, 100);
+                        List<Object> list = transList2String(range);
+                        BoundHashOperations<String, Object, Object> ops = redisTemplate
+                                .boundHashOps(SKUKILL_CACHE_PREFIX);
+                        // 取出存储的商品信息并返回
+                        List<Object> multiGet = ops.multiGet(list);
+                        List<SeckillSkuRedisTo> collect = multiGet.stream().map(json -> {
+                            SeckillSkuRedisTo redisTo = gson.fromJson(gson.toJson(json),
+                                    SeckillSkuRedisTo.class);
+                            return redisTo;
+                        }).collect(Collectors.toList());
+                        return collect;
+                    }
                 }
             }
+        } catch (Exception e) {
+            // TODO: handle exception
+            log.error("秒杀商品被限流,原因:" + e.getMessage());
         }
         return null;
     }
@@ -206,7 +222,7 @@ public class SecKillServiceImpl implements SecKillService {
         Object json = boundHashOps.get(killId);
         if (json != null || !ObjectUtils.isEmpty(json)) {
             SeckillSkuRedisTo to = gson.fromJson(gson.toJson(json), SeckillSkuRedisTo.class);
-            // 校验合法性 
+            // 校验合法性
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
             long time = new Date().getTime();
             log.info("start time :" + formatter.format(to.getStartTime()));
