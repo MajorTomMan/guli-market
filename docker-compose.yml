@@ -1,4 +1,4 @@
-version: '3'
+version: '2.1'
 services:
   mysql:
     container_name: mysql
@@ -20,6 +20,7 @@ services:
       #--default-authentication-plugin=mysql_native_password
       #--lower_case_table_names=1
     image: mysql
+    user: root
   redis:
     container_name: redis
     ports:
@@ -30,6 +31,7 @@ services:
       - ~/docker/redis/conf/redis.conf:/etc/redis/redis.conf
     image: redis
     command: "/etc/redis/redis.conf --requirepass root --appendonly yes"
+
   nginx:
     container_name: nginx
     ports:
@@ -41,6 +43,7 @@ services:
       - ~/docker/nginx/logs:/var/log/nginx
       - ~/docker/nginx/conf.d:/etc/nginx/conf.d
     image: nginx:stable
+
   elasticsearch:
     container_name: elasticsearch
     restart: always
@@ -55,7 +58,13 @@ services:
       - ~/docker/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ~/docker/es/data/:/usr/share/elasticsearch/data
       - ~/docker/es/plugins:/usr/share/elasticsearch/plugins
-    image: elasticsearch:8.15.1
+    healthcheck:
+      test: ["CMD", "curl", "-u", "elastic:your_password_here", "-f", "http://elasticsearch:9200/_cluster/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+
   kibana:
     container_name: kibana
     restart: always
@@ -78,6 +87,7 @@ services:
       - RABBITMQ_DEFAULT_USER=root
       - RABBITMQ_DEFAULT_PASS=root
     image: rabbitmq:management
+
   nacos:
     container_name: nacos
     ports:
@@ -101,24 +111,38 @@ services:
       - ~/docker/nacos/logs:/home/nacos/logs
       - ~/docker/nacos/conf:/home/nacos/conf
       - ~/docker/nacos/bin:/home/nacos/bin
-    # 限定v2.2.0版本
     image: nacos/nacos-server:latest
+
   sentinel:
     container_name: sentinel
     ports:
       - "8858:8858"
     restart: always
-    image: sentinel:latest
+    image: bladex/sentinel-dashboard:latest
+
   zipkin:
     container_name: zipkin
     ports:
       - "9411:9411"
     restart: always
     depends_on:
-      - elasticsearch
+      elasticsearch:
+         condition: service_healthy
     environment:
       - STORAGE_TYPE=elasticsearch
       - ES_HOSTS=elasticsearch
       - ES_USERNAME=elastic
       - ES_PASSWORD=elastic
-    image: openzipkin/zipkin:latest
+      - RABBIT_ADDRESSES=rabbitmq
+      - RABBIT_PASSWORD=root
+      - RABBIT_USER=root
+    image: ghcr.io/openzipkin/zipkin:latest
+  dependencies:
+    image: ghcr.io/openzipkin/zipkin-dependencies
+    container_name: dependencies
+    user: root
+    entrypoint: /usr/sbin/crond -f
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - ES_HOSTS=elasticsearch
+      - ZIPKIN_LOG_LEVEL=DEBUG
