@@ -53,17 +53,18 @@ services:
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - ELASTIC_PASSWORD=elastic
     volumes:
       - ~/docker/es/config:/usr/share/elasticsearch/config
       - ~/docker/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ~/docker/es/data/:/usr/share/elasticsearch/data
       - ~/docker/es/plugins:/usr/share/elasticsearch/plugins
     healthcheck:
-      test: ["CMD", "curl", "-u", "elastic:your_password_here", "-f", "http://elasticsearch:9200/_cluster/health"]
-      interval: 30s
+      test: ["CMD", "curl", "-u", "elastic:elastic", "-f", "http://elasticsearch:9200/_cluster/health"]
+      interval: 15s
       timeout: 10s
       retries: 5
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
 
   kibana:
     container_name: kibana
@@ -74,7 +75,7 @@ services:
       - elasticsearch
     volumes:
       - ~/docker/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-    image: kibana:8.15.1
+    image: kibana:8.2.0
   rabbitmq:
     container_name: rabbitmq
     ports:
@@ -136,6 +137,8 @@ services:
       - RABBIT_ADDRESSES=rabbitmq
       - RABBIT_PASSWORD=root
       - RABBIT_USER=root
+    command: 
+      --logging.level.zipkin2=DEBUG
     image: ghcr.io/openzipkin/zipkin:latest
   dependencies:
     image: ghcr.io/openzipkin/zipkin-dependencies
@@ -145,4 +148,10 @@ services:
     environment:
       - STORAGE_TYPE=elasticsearch
       - ES_HOSTS=elasticsearch
+      - ES_USERNAME=elastic
+      - ES_PASSWORD=elastic
+      - ES_NODES_WAN_ONLY=true
       - ZIPKIN_LOG_LEVEL=DEBUG
+    depends_on:
+      elasticsearch:
+         condition: service_healthy

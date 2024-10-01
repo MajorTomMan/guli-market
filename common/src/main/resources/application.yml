@@ -4,20 +4,6 @@ spring:
   #  password: root
   #  url: jdbc:mysql://192.168.253.131:3306/gulimall_sms
   #  driver-class-name: com.mysql.cj.jdbc.Driver
-  cloud:
-    sentinel:
-      transport:
-        dashboard: 192.168.31.110:8090
-        port: 8719
-      datasource:
-        ds1:
-          consul:
-            host: 192.168.31.110
-            port: 8500
-            ruleKey: sentinel_flow_rule
-            #watchTimeout: 5
-            ruleType: flow
-
   application:
     name: common
 mybatis-plus:

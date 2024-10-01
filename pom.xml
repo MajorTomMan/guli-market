@@ -25,6 +25,7 @@
     <spring-cloud.version>2023.0.3</spring-cloud.version>
     <alibaba-dependencies.version>2023.0.1.2</alibaba-dependencies.version>
     <micrometer-tracing-bom.version>1.3.4</micrometer-tracing-bom.version>
+    <opentelemetry-instrumentation-bom.version>2.6.0</opentelemetry-instrumentation-bom.version>
   </properties>
   <modules>
     <module>common</module>
@@ -73,7 +74,6 @@
         <version>${micrometer-tracing-bom.version}</version>
         <type>pom</type>
       </dependency>
-
     </dependencies>
   </dependencyManagement>
   <build>

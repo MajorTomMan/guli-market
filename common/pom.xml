@@ -250,13 +250,15 @@
         <!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bridge-otel -->
         <dependency>
             <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-exporter-zipkin -->
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-zipkin</artifactId>
-            <version>${opentelemetry-exporter-zipkin.version}</version>
         </dependency>
     </dependencies>
 
